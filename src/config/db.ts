@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const dbUrl: string | undefined = process.env.MONGO_URL;
 
 if (!dbUrl) {
-  console.error("MONGO_URI is undefined please provide database URL");
+  console.error("MONGO_URL is undefined please provide database URL");
   process.exit(1);
 }
 
