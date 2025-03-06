@@ -18,4 +18,20 @@ export default class CommonBaseRepository<
 
     return model.findOne(query);
   }
+    //create
+    createData<K extends keyof TModels>(
+      modelName: K,
+      data: Partial<TModels[K]>
+    ): Promise<TModels[K]> {
+      const model = this._models[modelName];
+      if (!model) throw new Error(`Model ${String(modelName)} not found`);
+  
+      return model.create(data);
+    }
+
+    findAll<K extends keyof TModels>(modelName: K, query: FilterQuery<TModels[K]>): Promise<TModels[K][]> {
+      const model = this._models[modelName];
+      if (!model) throw new Error(`Model ${String(modelName)} not found`);
+      return model.find(query);
+  }
 }

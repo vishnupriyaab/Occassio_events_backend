@@ -3,6 +3,7 @@ import { adminAuthController } from "../controllers/management/adminController/a
 import { IJWTService } from "../interfaces/integration/IJwt";
 import { JWTService } from "../integration/jwtServices";
 import AuthMiddleware from "../middleware/authenticateToken";
+import { adminVenueController } from "../controllers/management/adminController/venueController";
 
 const adminRouter = Router();
 const iJwtServices: IJWTService = new JWTService();
@@ -15,5 +16,7 @@ adminRouter.post("/login", adminAuthController.adminLogin.bind(adminAuthControll
 adminRouter.use(authMiddleware.authenticateToken.bind(authMiddleware));
 adminRouter
     .post( "/logOut", adminAuthController.logOut.bind(adminAuthController))
+    .post('/venues',adminVenueController.addVenue.bind(adminVenueController))
+    .get('/venues',adminVenueController.getVenue.bind(adminVenueController))
 
 export default adminRouter;
