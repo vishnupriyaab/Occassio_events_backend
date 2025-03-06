@@ -47,6 +47,14 @@ export class venueServices implements IVenueServices {
       throw error;
     }
   }
+  async updateVenue(venueId:string, updatedData: any):Promise<IVenue | null>{
+    try {
+        const updatedVenue = await this._venueRepo.updateVenue(venueId, updatedData)
+        return updatedVenue
+    } catch (error) {
+        throw error
+    }
+  }
 }
 
 const adminVenueRepository = new venueRepository();

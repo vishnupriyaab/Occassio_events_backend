@@ -14,11 +14,13 @@ export class venueRepository
   async findVenueByName(venueName: string): Promise<IVenue | null> {
     return this.findOne("venue", { venueName });
   }
-
   async addVenue(venue: any): Promise<IVenue> {
     return this.createData("venue", venue);
   }
   async getVenues(): Promise<IVenue[]> {
     return this.findAll("venue", {});
-}
+  }
+  async updateVenue( venueId: string, updatedData: Partial<IVenue>): Promise<IVenue | null> {
+    return this.updateById("venue", venueId, updatedData);
+  }
 }

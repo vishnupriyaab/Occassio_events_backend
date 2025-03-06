@@ -18,5 +18,6 @@ adminRouter
     .post( "/logOut", adminAuthController.logOut.bind(adminAuthController))
     .post('/venues',adminVenueController.addVenue.bind(adminVenueController))
     .get('/venues',adminVenueController.getVenue.bind(adminVenueController))
+    .put('/venues/:id',adminVenueController.updateVenue.bind(adminVenueController))
 
 export default adminRouter;
