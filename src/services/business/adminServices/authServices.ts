@@ -36,6 +36,7 @@ export class authService {
       const payload = { id: admin._id, role: "admin" };
       const accessToken = this._IjwtSevice.generateAccessToken(payload);
       const refreshToken = this._IjwtSevice.generateRefreshToken(payload);
+      console.log(accessToken,refreshToken)
       return {
         accessToken,
         refreshToken,
