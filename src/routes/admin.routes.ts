@@ -9,6 +9,7 @@ import { adminFoodController } from "../controllers/management/adminController/f
 import { admindecorationController } from "../controllers/management/adminController/decorationController";
 import { adminSoundController } from "../controllers/management/adminController/soundController";
 import { adminPhotoController } from "../controllers/management/adminController/photoController";
+import { adminMiscellaneousController } from "../controllers/management/adminController/miscellaneousController";
 
 const adminRouter = Router();
 const iJwtServices: IJWTService = new JWTService();
@@ -79,6 +80,12 @@ adminRouter.route("/photo/:id")
 adminRouter.patch("/photo/:id/status", adminPhotoController.isList.bind(adminPhotoController));
 
 /////////////////////////////////////////////////////////      Miscellaneous       //////////////////////////////////////////////////////////////////
-
+adminRouter.route("/miscellaneous")
+  .post(adminMiscellaneousController.addMiscellaneous.bind(adminMiscellaneousController))
+  .get(adminMiscellaneousController.getMiscellaneous.bind(adminMiscellaneousController))
+adminRouter.route("/miscellaneous/:id")
+  .put(adminMiscellaneousController.updateMiscellaneous.bind(adminMiscellaneousController))
+  .delete(adminMiscellaneousController.deleteMiscellaneous.bind(adminMiscellaneousController))
+adminRouter.patch("/miscellaneous/:id/status", adminMiscellaneousController.isList.bind(adminMiscellaneousController));
 
 export default adminRouter;
