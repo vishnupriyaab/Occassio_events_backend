@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import { ISound } from "../interfaces/entities/sound.entity";
+import { IPhoto } from "../interfaces/entities/photo.entity";
 
-const photoSchema: Schema = new Schema<ISound>(
+const photoSchema: Schema = new Schema<IPhoto>(
   {
     name: {
       type: String,
@@ -29,5 +29,5 @@ const photoSchema: Schema = new Schema<ISound>(
   { timestamps: true }
 );
 
-const Sound = mongoose.model<ISound & Document>("Photo", photoSchema);
-export default Sound;
+const Photo = mongoose.model<IPhoto & Document>("Photo", photoSchema);
+export default Photo;

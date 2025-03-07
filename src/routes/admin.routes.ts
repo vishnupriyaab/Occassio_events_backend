@@ -8,6 +8,7 @@ import { adminSeatingController } from "../controllers/management/adminControlle
 import { adminFoodController } from "../controllers/management/adminController/foodController";
 import { admindecorationController } from "../controllers/management/adminController/decorationController";
 import { adminSoundController } from "../controllers/management/adminController/soundController";
+import { adminPhotoController } from "../controllers/management/adminController/photoController";
 
 const adminRouter = Router();
 const iJwtServices: IJWTService = new JWTService();
@@ -70,12 +71,14 @@ adminRouter.patch("/sound/:id/status", adminSoundController.isList.bind(adminSou
 
 /////////////////////////////////////////////////////////      Photo & Video        ///////////////////////////////////////////////////////////////////
 adminRouter.route("/photo")
-  .post(adminSoundController.addSound.bind(adminSoundController))
-  .get(adminSoundController.getSounds.bind(adminSoundController))
+  .post(adminPhotoController.addPhoto.bind(adminPhotoController))
+  .get(adminPhotoController.getPhotos.bind(adminPhotoController))
 adminRouter.route("/photo/:id")
-  .put(adminSoundController.updateSound.bind(adminSoundController))
-  .delete(adminSoundController.deleteSound.bind(adminSoundController))
-adminRouter.patch("/photo/:id/status", adminSoundController.isList.bind(adminSoundController));
+  .put(adminPhotoController.updatePhoto.bind(adminPhotoController))
+  .delete(adminPhotoController.deletePhoto.bind(adminPhotoController))
+adminRouter.patch("/photo/:id/status", adminPhotoController.isList.bind(adminPhotoController));
+
+/////////////////////////////////////////////////////////      Miscellaneous       //////////////////////////////////////////////////////////////////
 
 
 export default adminRouter;
