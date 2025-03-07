@@ -28,6 +28,15 @@ export default class CommonBaseRepository<
 
     return model.create(data);
   }
+  findById<K extends keyof TModels>(
+    modelName: K,
+    id: string
+  ): Query<TModels[K] | null, TModels[K]> {
+    const model = this._models[modelName];
+    if (!model) throw new Error(`Model ${String(modelName)} not found`);
+
+    return model.findById(id);
+  }
 
   findAll<K extends keyof TModels>(
     modelName: K,
@@ -50,5 +59,14 @@ export default class CommonBaseRepository<
       { $set: updateData },
       { new: true, runValidators: true }
     );
+  }
+  deleteById<K extends keyof TModels>(
+    modelName: K,
+    id: string
+  ): Promise<TModels[K] | null> {
+    const model = this._models[modelName];
+    if (!model) throw new Error(`Model ${String(modelName)} not found`);
+
+    return model.findByIdAndDelete(id).exec();
   }
 }

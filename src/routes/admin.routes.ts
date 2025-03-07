@@ -19,5 +19,7 @@ adminRouter
     .post('/venues',adminVenueController.addVenue.bind(adminVenueController))
     .get('/venues',adminVenueController.getVenue.bind(adminVenueController))
     .put('/venues/:id',adminVenueController.updateVenue.bind(adminVenueController))
+    .delete('/venues/:id',adminVenueController.deleteVenue.bind(adminVenueController))
+    .patch('/venues/:id/status',adminVenueController.isList.bind(adminVenueController))
 
 export default adminRouter;

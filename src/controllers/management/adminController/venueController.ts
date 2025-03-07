@@ -65,6 +65,42 @@ export class venueController {
       );
     } catch (error: unknown) {}
   }
+  async deleteVenue(req:Request, res:Response):Promise<void>{
+    try {
+        const VenueId = req.params.id;
+      await this._venueService.deleteVenue(VenueId);
+
+      return successResponse(
+        res,
+        HttpStatusCode.OK,
+        "Venue successfully deleted"
+      );
+    } catch (error:unknown) {
+        
+    }
+  }
+  async isList(req:Request,res:Response):Promise<void>{
+    try {
+        const venueId = req.params.id
+        const { blocked } = req.body;
+        console.log(venueId, blocked, "Received on backend");
+        const updatedVenue = await this._venueService.isList(venueId, { list: blocked });
+
+    if (!updatedVenue) {
+        const error = new Error('Venue not found')
+        error.name = 'VenueNotFound'
+        throw error;
+    }
+    return successResponse(
+      res,
+      HttpStatusCode.OK,
+      "Venue listing status updated successfully",
+      updatedVenue
+    );
+    } catch (error:unknown) {
+        
+    }
+  }
 }
 
 export const adminVenueController = new venueController(adminVenueServices);

@@ -10,7 +10,6 @@ export class venueRepository
   constructor() {
     super({ venue: Venue });
   }
-
   async findVenueByName(venueName: string): Promise<IVenue | null> {
     return this.findOne("venue", { venueName });
   }
@@ -21,6 +20,15 @@ export class venueRepository
     return this.findAll("venue", {});
   }
   async updateVenue( venueId: string, updatedData: Partial<IVenue>): Promise<IVenue | null> {
+    return this.updateById("venue", venueId, updatedData);
+  }
+  async findVenueById(venueId: string): Promise<IVenue | null> {
+    return this.findById("venue", venueId);
+  }
+  async deleteVenue(venueId: string): Promise<void> {
+    await this.deleteById("venue", venueId);
+  }
+  async isList(venueId: string, updatedData: Partial<IVenue>): Promise<IVenue | null> {
     return this.updateById("venue", venueId, updatedData);
   }
 }

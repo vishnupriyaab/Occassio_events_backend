@@ -55,6 +55,36 @@ export class venueServices implements IVenueServices {
         throw error
     }
   }
+  async deleteVenue(venueId:string):Promise<void>{
+    try {
+        const venue = await this._venueRepo.findVenueById(venueId);
+      if (!venue) {
+        const error = new Error('Venue not found');
+        error.name = 'VenueNotFound'
+        throw error;
+      }
+
+      await this._venueRepo.deleteVenue(venueId);
+      return;
+    } catch (error) {
+        throw error;
+    }
+  }
+  async isList(venueId: string, updatedData: Partial<IVenue>): Promise<IVenue | null> {
+    try {
+      const venue = await this._venueRepo.findVenueById(venueId);
+      if (!venue) {
+        const error = new Error("Venue not found");
+        error.name = "VenueNotFound";
+        throw error;
+      }
+  
+      return await this._venueRepo.isList(venueId, updatedData);
+    } catch (error) {
+      throw error;
+    }
+  }
+  
 }
 
 const adminVenueRepository = new venueRepository();
