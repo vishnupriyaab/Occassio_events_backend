@@ -7,6 +7,7 @@ import { adminVenueController } from "../controllers/management/adminController/
 import { adminSeatingController } from "../controllers/management/adminController/seatingController";
 import { adminFoodController } from "../controllers/management/adminController/foodController";
 import { admindecorationController } from "../controllers/management/adminController/decorationController";
+import { adminSoundController } from "../controllers/management/adminController/soundController";
 
 const adminRouter = Router();
 const iJwtServices: IJWTService = new JWTService();
@@ -59,12 +60,22 @@ adminRouter.route("/decoration/:id")
 adminRouter.patch("/decoration/:id/status", admindecorationController.isList.bind(admindecorationController));
 
 //////////////////////////////////////////////////////////    Sound & Entertainment    /////////////////////////////////////////////////////////////////
-adminRouter.route("/decoration")
-  .post(admindecorationController.addDecoration.bind(admindecorationController))
-  .get(admindecorationController.getDecorations.bind(admindecorationController))
-adminRouter.route("/decoration/:id")
-  .put(admindecorationController.updateDecoration.bind(admindecorationController))
-  .delete(admindecorationController.deleteDecoration.bind(admindecorationController))
-adminRouter.patch("/decoration/:id/status", admindecorationController.isList.bind(admindecorationController));
+adminRouter.route("/sound")
+  .post(adminSoundController.addSound.bind(adminSoundController))
+  .get(adminSoundController.getSounds.bind(adminSoundController))
+adminRouter.route("/sound/:id")
+  .put(adminSoundController.updateSound.bind(adminSoundController))
+  .delete(adminSoundController.deleteSound.bind(adminSoundController))
+adminRouter.patch("/sound/:id/status", adminSoundController.isList.bind(adminSoundController));
+
+/////////////////////////////////////////////////////////      Photo & Video        ///////////////////////////////////////////////////////////////////
+adminRouter.route("/photo")
+  .post(adminSoundController.addSound.bind(adminSoundController))
+  .get(adminSoundController.getSounds.bind(adminSoundController))
+adminRouter.route("/photo/:id")
+  .put(adminSoundController.updateSound.bind(adminSoundController))
+  .delete(adminSoundController.deleteSound.bind(adminSoundController))
+adminRouter.patch("/photo/:id/status", adminSoundController.isList.bind(adminSoundController));
+
 
 export default adminRouter;
