@@ -5,6 +5,8 @@ import { JWTService } from "../integration/jwtServices";
 import AuthMiddleware from "../middleware/authenticateToken";
 import { adminVenueController } from "../controllers/management/adminController/venueController";
 import { adminSeatingController } from "../controllers/management/adminController/seatingController";
+import { adminFoodController } from "../controllers/management/adminController/foodController";
+import { admindecorationController } from "../controllers/management/adminController/decorationController";
 
 const adminRouter = Router();
 const iJwtServices: IJWTService = new JWTService();
@@ -39,12 +41,30 @@ adminRouter.route("/seatings/:id")
 adminRouter.patch("/seatings/:id/status", adminSeatingController.isList.bind(adminSeatingController));
 
 //////////////////////////////////////////////////////////////         Food         ////////////////////////////////////////////////////////////////////
-adminRouter.route("/seatings")
-  .post(adminSeatingController.addSeating.bind(adminSeatingController))
-  .get(adminSeatingController.getSeating.bind(adminSeatingController));
-adminRouter.route("/seatings/:id")
-  .put(adminSeatingController.updateSeating.bind(adminSeatingController))
-  .delete(adminSeatingController.deleteSeating.bind(adminSeatingController))
-adminRouter.patch("/seatings/:id/status", adminSeatingController.isList.bind(adminSeatingController));
+adminRouter.route("/food")
+  .post(adminFoodController.addFood.bind(adminFoodController))
+  .get(adminFoodController.getFood.bind(adminFoodController));
+adminRouter.route("/food/:id")
+  .put(adminFoodController.updateFood.bind(adminFoodController))
+  .delete(adminFoodController.deleteFood.bind(adminFoodController))
+adminRouter.patch("/food/:id/status", adminFoodController.isList.bind(adminFoodController));
+
+/////////////////////////////////////////////////////////////       Decoration      ///////////////////////////////////////////////////////////////////
+adminRouter.route("/decoration")
+  .post(admindecorationController.addDecoration.bind(admindecorationController))
+  .get(admindecorationController.getDecorations.bind(admindecorationController))
+adminRouter.route("/decoration/:id")
+  .put(admindecorationController.updateDecoration.bind(admindecorationController))
+  .delete(admindecorationController.deleteDecoration.bind(admindecorationController))
+adminRouter.patch("/decoration/:id/status", admindecorationController.isList.bind(admindecorationController));
+
+//////////////////////////////////////////////////////////    Sound & Entertainment    /////////////////////////////////////////////////////////////////
+adminRouter.route("/decoration")
+  .post(admindecorationController.addDecoration.bind(admindecorationController))
+  .get(admindecorationController.getDecorations.bind(admindecorationController))
+adminRouter.route("/decoration/:id")
+  .put(admindecorationController.updateDecoration.bind(admindecorationController))
+  .delete(admindecorationController.deleteDecoration.bind(admindecorationController))
+adminRouter.patch("/decoration/:id/status", admindecorationController.isList.bind(admindecorationController));
 
 export default adminRouter;
