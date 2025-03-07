@@ -20,6 +20,7 @@ export class venueRepository
     return this.findAll("venue", {});
   }
   async updateVenue( venueId: string, updatedData: Partial<IVenue>): Promise<IVenue | null> {
+    console.log(venueId, updatedData,"000")
     return this.updateById("venue", venueId, updatedData);
   }
   async findVenueById(venueId: string): Promise<IVenue | null> {
