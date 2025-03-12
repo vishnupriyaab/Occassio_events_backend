@@ -76,6 +76,7 @@ export class authController {
     }
   }
 
+  //Admin-Logout
   async logOut(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       res

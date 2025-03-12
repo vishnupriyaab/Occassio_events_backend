@@ -12,4 +12,3 @@ implements IAdminRepository{
         return this.findOne("admin", { email });
       }
 }
-
