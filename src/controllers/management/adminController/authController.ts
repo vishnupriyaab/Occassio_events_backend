@@ -7,15 +7,16 @@ import {
 } from "../../../integration/responseHandler";
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import { AuthenticatedRequest } from "../../../middleware/authenticateToken";
+import IAuthConrtoller from "../../../interfaces/controller/admin/auth.controller";
 
-export class authController {
+export class authController implements IAuthConrtoller{
   private _authService: IAuthService;
 
   constructor(authService: IAuthService) {
     this._authService = authService;
   }
   //Admin-Login
-  async adminLogin(req: Request, res: Response): Promise<any> {
+  async adminLogin(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;
       console.log(email, password);

@@ -3,8 +3,9 @@ import { IJWTService } from "../../../interfaces/integration/IJwt";
 import IAdminRepository from "../../../interfaces/repository/admin/auth.repository";
 import bcrypt from 'bcrypt'
 import { authRepository } from "../../../repositories/entities/adminRepositories.ts/authRepository";
+import IAuthService from "../../../interfaces/services/admin/auth.services";
 
-export class authService {
+export class authService implements IAuthService {
   private _adminRepo: IAdminRepository;
   private _IjwtSevice: IJWTService;
   constructor(adminRepo: IAdminRepository) {
