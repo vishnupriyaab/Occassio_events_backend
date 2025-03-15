@@ -1,4 +1,4 @@
-import { FilterQuery, Model, Query, UpdateQuery } from "mongoose";
+import { Document, FilterQuery, Model, Query, UpdateQuery } from "mongoose";
 
 export default class CommonBaseRepository<
   TModels extends Record<string, Document>

@@ -1,3 +1,4 @@
+import { Document } from "mongoose";
 import { IAdmin } from "../../../interfaces/entities/admin.entity";
 import IAdminRepository from "../../../interfaces/repository/admin/auth.repository";
 import Admin from "../../../models/adminModel";
@@ -9,6 +10,10 @@ implements IAdminRepository{
         super({ admin: Admin });
     }
     async findAdminByEmail(email: string): Promise<IAdmin | null> {
-        return this.findOne("admin", { email });
+        try {
+            return this.findOne("admin", { email });
+        } catch (error) {
+            throw error;
+        }
       }
 }

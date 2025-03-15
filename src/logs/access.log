@@ -1,0 +1,4 @@
+::1 - - [13/Mar/2025:09:34:52 +0000] "POST /admin/login HTTP/1.1" 200 74 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+::1 - - [15/Mar/2025:03:43:01 +0000] "POST /admin/login HTTP/1.1" 200 74 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+::1 - - [15/Mar/2025:04:40:05 +0000] "POST /entry-reg HTTP/1.1" 404 149 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+::1 - - [15/Mar/2025:05:12:25 +0000] "POST /entry-reg HTTP/1.1" 404 149 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"

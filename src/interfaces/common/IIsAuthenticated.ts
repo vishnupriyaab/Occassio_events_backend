@@ -5,7 +5,7 @@ export interface IsAuthenticatedUseCaseRES {
 
 export interface ISuccessResponseType {
   message: string;
-  success?: boolean;
+  success: boolean;
   data?: any;
   statusCode: number
 }

@@ -9,7 +9,7 @@ import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import { AuthenticatedRequest } from "../../../middleware/authenticateToken";
 import IAuthConrtoller from "../../../interfaces/controller/admin/auth.controller";
 
-export class authController implements IAuthConrtoller{
+export class AuthController implements IAuthConrtoller{
   private _authService: IAuthService;
 
   constructor(authService: IAuthService) {
@@ -30,7 +30,6 @@ export class authController implements IAuthConrtoller{
         email,
         password
       );
-      console.log(accessToken,"Vishnupriya", refreshToken, "123"); // here i got accesstoken and refresh token
 
       res
         .cookie("refresh_token", refreshToken, {
@@ -53,14 +52,6 @@ export class authController implements IAuthConrtoller{
     } catch (error: unknown) {
       console.log(error, "error");
       if (error instanceof Error) {
-        if (error.name === "FieldsAreRequired") {
-          ErrorResponse(
-            res,
-            HttpStatusCode.BAD_REQUEST,
-            "Email and password are required"
-          );
-          return;
-        }
         if (error.name === "AdminNotFound") {
           ErrorResponse(res, HttpStatusCode.NOT_FOUND, "Admin not found");
           return;
@@ -73,6 +64,11 @@ export class authController implements IAuthConrtoller{
           );
           return;
         }
+        return ErrorResponse(
+          res,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          "An unexpected error occurred"
+        );
       }
     }
   }
@@ -104,4 +100,4 @@ export class authController implements IAuthConrtoller{
   }
 }
 
-export const adminAuthController = new authController(adminAuthServices);
+export const adminAuthController = new AuthController(adminAuthServices);
