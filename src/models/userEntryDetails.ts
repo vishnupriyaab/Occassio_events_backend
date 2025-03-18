@@ -84,7 +84,7 @@ const entryRegFormSchema: Schema = new Schema<IEntryRegFormData>(
     entryPayment: {
       status: {
         type: String,
-        enum: ["pending", "completed", "failed"],
+        enum: ["pending", "completed", "failed", "refund"],
         default: "pending",
       },
       transactionId: {

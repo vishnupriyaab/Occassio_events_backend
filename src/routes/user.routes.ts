@@ -10,5 +10,6 @@ const authMiddleware = new AuthMiddleware("user", iJwtServices);
 
 
 userRouter.post('/entry-reg',userEntryRegController.entryReg.bind(userEntryRegController))
+userRouter.post('/entry-payment-link',userEntryRegController.entryPayment.bind(userEntryRegController))
 
 export default userRouter;
