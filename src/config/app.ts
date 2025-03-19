@@ -5,6 +5,7 @@ import adminRouter from "../routes/admin.routes";
 import morgan from "morgan";
 import logger from "./logger";
 import userRouter from "../routes/user.routes";
+import refreshTokenRoute from "../routes/refresh.routes";
 
 const app = express();
 const corsOptions = {
@@ -29,5 +30,6 @@ app.use(logger);
 
 app.use("/admin", adminRouter); 
 app.use("/user", userRouter); 
+app.use("/refreshToken", refreshTokenRoute);
 
 export default app;

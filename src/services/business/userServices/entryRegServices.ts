@@ -42,14 +42,20 @@ export class EntryRegService implements IEntryRegService {
               product_data: {
                 name: "Entry Registration Fee",
               },
-              unit_amount: 10000, // ₹100.00 (10000 paise)
+              unit_amount: 10000, // ₹100.00 
             },
             quantity: 1,
           },
         ],
+        // mode: "payment",
+        // success_url: `${process.env.FRONTEND_URL}/payment-success`,
+        // cancel_url: `${process.env.FRONTEND_URL}/payment-failed`,
         mode: "payment",
-        success_url: `${process.env.FRONTEND_URL}/payment-success`,
-        cancel_url: `${process.env.FRONTEND_URL}/payment-failed`,
+      success_url: `${process.env.FRONTEND_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL}/payment-failed`,
+      metadata: {
+        email,
+      },
       });
 
       if (!session.url) {

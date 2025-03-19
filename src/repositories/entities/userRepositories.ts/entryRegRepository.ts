@@ -22,5 +22,3 @@ export class EntryRegRepository
     }
   }
 }
-
-// export const userEntryRegRepository = new EntryRegRepository();
