@@ -8,8 +8,9 @@ import {
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import { AuthenticatedRequest } from "../../../middleware/authenticateToken";
 import IAuthConrtoller from "../../../interfaces/controller/admin/auth.controller";
+import { AppError } from "../../../middleware/errorHandling";
 
-export class AuthController implements IAuthConrtoller{
+export class AuthController implements IAuthConrtoller {
   private _authService: IAuthService;
 
   constructor(authService: IAuthService) {
@@ -22,10 +23,13 @@ export class AuthController implements IAuthConrtoller{
       console.log(email, password);
 
       if (!email || !password) {
-        const error = new Error("Email and password are required");
-        error.name = "FieldsAreRequired";
-        throw error;
+        throw new AppError(
+          "Email and password are required",
+          HttpStatusCode.BAD_REQUEST,
+          "FieldsAreRequired"
+        );
       }
+
       const { accessToken, refreshToken } = await this._authService.adminLogin(
         email,
         password
@@ -56,11 +60,11 @@ export class AuthController implements IAuthConrtoller{
           ErrorResponse(res, HttpStatusCode.NOT_FOUND, "Admin not found");
           return;
         }
-        if (error.name === "InvalidCredentials") {
+        if (error.name === "PasswordIsIncorrect") {
           ErrorResponse(
             res,
             HttpStatusCode.UNAUTHORIZED,
-            "Invalid credentials"
+            "Password is Incorrect"
           );
           return;
         }

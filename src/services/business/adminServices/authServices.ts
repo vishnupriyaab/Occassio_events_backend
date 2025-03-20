@@ -4,6 +4,8 @@ import IAdminRepository from "../../../interfaces/repository/admin/auth.reposito
 import bcrypt from 'bcrypt'
 import { authRepository } from "../../../repositories/entities/adminRepositories.ts/authRepository";
 import IAuthService from "../../../interfaces/services/admin/auth.services";
+import { AppError } from "../../../middleware/errorHandling";
+import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 
 export class authService implements IAuthService {
   private _adminRepo: IAdminRepository;
@@ -21,17 +23,15 @@ export class authService implements IAuthService {
 
       const admin = await this._adminRepo.findAdminByEmail(email);
       console.log(admin, "admin");
+    
       if (!admin) {
-        const error = new Error("Admin not found");
-        error.name = "AdminNotFound";
-        throw error;
+        throw new AppError("Admin not found", HttpStatusCode.NOT_FOUND, "AdminNotFound");
       }
 
       const isValid = await bcrypt.compare(password, admin.password);
+    
       if (!isValid) {
-        const error = new Error("Invalid credentials");
-        error.name = "InvalidCredentials";
-        throw error;
+        throw new AppError("Password is Incorrect", HttpStatusCode.UNAUTHORIZED, "PasswordIsIncorrect");
       }
 
       const payload = { id: admin._id, role: "admin" };

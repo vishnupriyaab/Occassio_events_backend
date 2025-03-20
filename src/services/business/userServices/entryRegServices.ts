@@ -1,9 +1,11 @@
+import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import { EmailService } from "../../../integration/emailServices";
 import stripe from "../../../integration/stripe";
 import IEntryRegFormData from "../../../interfaces/entities/IEntryFormReg.entity";
 import { IEmailService } from "../../../interfaces/integration/IEmail";
 import IEntryRegRepository from "../../../interfaces/repository/user/entryReg.repository";
 import IEntryRegService from "../../../interfaces/services/user/entryReg.services";
+import { AppError } from "../../../middleware/errorHandling";
 import { EntryRegRepository } from "../../../repositories/entities/userRepositories.ts/entryRegRepository";
 
 export class EntryRegService implements IEntryRegService {
@@ -31,7 +33,7 @@ export class EntryRegService implements IEntryRegService {
     }
   }
 
-  async createPaymentLink(email: string): Promise<string> {
+  async createPaymentLink(email: string, entryId: string): Promise<string> {
     try {
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
@@ -42,24 +44,26 @@ export class EntryRegService implements IEntryRegService {
               product_data: {
                 name: "Entry Registration Fee",
               },
-              unit_amount: 10000, // ₹100.00 
+              unit_amount: 10000, // ₹100.00
             },
             quantity: 1,
           },
         ],
-        // mode: "payment",
-        // success_url: `${process.env.FRONTEND_URL}/payment-success`,
-        // cancel_url: `${process.env.FRONTEND_URL}/payment-failed`,
         mode: "payment",
-      success_url: `${process.env.FRONTEND_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.FRONTEND_URL}/payment-failed`,
-      metadata: {
-        email,
-      },
+        success_url: `${process.env.FRONTEND_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.FRONTEND_URL}/payment-failed`,
+        metadata: {
+          email,
+          entryId,
+        },
       });
 
       if (!session.url) {
-        throw new Error("Failed to create Stripe payment link");
+        throw new AppError(
+          "Failed to create Stripe payment link",
+          HttpStatusCode.BAD_REQUEST,
+          "FailedToCreatePayment"
+        );
       }
       return session.url;
     } catch (error) {
@@ -70,15 +74,30 @@ export class EntryRegService implements IEntryRegService {
 
   async sendPaymentEmail(email: string, paymentLink: string): Promise<void> {
     try {
-      await this._emailService.sendPaymentLinkEmail(
-        email,
-        `${paymentLink}`
-      );
+      await this._emailService.sendPaymentLinkEmail(email, `${paymentLink}`);
     } catch (error) {
       console.error("Error sending payment email:", error);
       throw new Error("Failed to send payment email");
     }
   }
+
+  // async updatePaymentStatus(
+  //   entryId: string,
+  //   transactionId: string,
+  //   status: "pending" | "completed" | "failed" | "refund"
+  // ): Promise<IEntryRegFormData | null> {
+  //   try {
+  //     const updatedEntry = await this._entryRegRepo.updatePaymentStatus(
+  //       entryId,
+  //       transactionId,
+  //       status
+  //     );
+  //     return updatedEntry;
+  //   } catch (error) {
+  //     console.error("Error updating payment status:", error);
+  //     throw new Error("Failed to update payment status");
+  //   }
+  // }
 }
 
 const emailConfig = {

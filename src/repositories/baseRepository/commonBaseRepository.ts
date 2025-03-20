@@ -1,4 +1,4 @@
-import { Document, FilterQuery, Model, Query, UpdateQuery } from "mongoose";
+import { Document, FilterQuery, Model, Query } from "mongoose";
 
 export default class CommonBaseRepository<
   TModels extends Record<string, Document>
@@ -18,7 +18,6 @@ export default class CommonBaseRepository<
 
     return model.findOne(query);
   }
-  //create
   createData<K extends keyof TModels>(
     modelName: K,
     data: Partial<TModels[K]>
@@ -28,45 +27,45 @@ export default class CommonBaseRepository<
 
     return model.create(data);
   }
-  findById<K extends keyof TModels>(
-    modelName: K,
-    id: string
-  ): Query<TModels[K] | null, TModels[K]> {
-    const model = this._models[modelName];
-    if (!model) throw new Error(`Model ${String(modelName)} not found`);
+  // findById<K extends keyof TModels>(
+  //   modelName: K,
+  //   id: string
+  // ): Query<TModels[K] | null, TModels[K]> {
+  //   const model = this._models[modelName];
+  //   if (!model) throw new Error(`Model ${String(modelName)} not found`);
 
-    return model.findById(id);
-  }
+  //   return model.findById(id);
+  // }
 
-  findAll<K extends keyof TModels>(
-    modelName: K,
-    query: FilterQuery<TModels[K]>
-  ): Promise<TModels[K][]> {
-    const model = this._models[modelName];
-    if (!model) throw new Error(`Model ${String(modelName)} not found`);
-    return model.find(query);
-  }
-  updateById<K extends keyof TModels>(
-    modelName: K,
-    id: string,
-    updateData: UpdateQuery<TModels[K]>
-  ): Promise<TModels[K] | null> {
-    const model = this._models[modelName];
-    if (!model) throw new Error(`Model ${String(modelName)} not found`);
+  // findAll<K extends keyof TModels>(
+  //   modelName: K,
+  //   query: FilterQuery<TModels[K]>
+  // ): Promise<TModels[K][]> {
+  //   const model = this._models[modelName];
+  //   if (!model) throw new Error(`Model ${String(modelName)} not found`);
+  //   return model.find(query);
+  // }
+  // updateById<K extends keyof TModels>(
+  //   modelName: K,
+  //   id: string,
+  //   updateData: UpdateQuery<TModels[K]>
+  // ): Promise<TModels[K] | null> {
+  //   const model = this._models[modelName];
+  //   if (!model) throw new Error(`Model ${String(modelName)} not found`);
 
-    return model.findByIdAndUpdate(
-      id,
-      { $set: updateData },
-      { new: true, runValidators: true }
-    );
-  }
-  deleteById<K extends keyof TModels>(
-    modelName: K,
-    id: string
-  ): Promise<TModels[K] | null> {
-    const model = this._models[modelName];
-    if (!model) throw new Error(`Model ${String(modelName)} not found`);
+  //   return model.findByIdAndUpdate(
+  //     id,
+  //     { $set: updateData },
+  //     { new: true, runValidators: true }
+  //   );
+  // }
+  // deleteById<K extends keyof TModels>(
+  //   modelName: K,
+  //   id: string
+  // ): Promise<TModels[K] | null> {
+  //   const model = this._models[modelName];
+  //   if (!model) throw new Error(`Model ${String(modelName)} not found`);
 
-    return model.findByIdAndDelete(id).exec();
-  }
+  //   return model.findByIdAndDelete(id).exec();
+  // }
 }

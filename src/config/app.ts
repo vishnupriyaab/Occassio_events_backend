@@ -6,6 +6,7 @@ import morgan from "morgan";
 import logger from "./logger";
 import userRouter from "../routes/user.routes";
 import refreshTokenRoute from "../routes/refresh.routes";
+import { errorMiddleware } from "../middleware/errorHandling";
 
 const app = express();
 const corsOptions = {
@@ -21,15 +22,19 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+app.use('/user/webhook', express.raw({ type: 'application/json' }));
+
 app.use(express.json({limit:'50mb'}));
 app.use(express.urlencoded({ limit:'50mb',extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'))
 app.use(logger); 
 
-
 app.use("/admin", adminRouter); 
 app.use("/user", userRouter); 
 app.use("/refreshToken", refreshTokenRoute);
+
+app.use(errorMiddleware);
 
 export default app;
