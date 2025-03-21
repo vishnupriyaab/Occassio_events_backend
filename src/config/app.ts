@@ -7,6 +7,7 @@ import logger from "./logger";
 import userRouter from "../routes/user.routes";
 import refreshTokenRoute from "../routes/refresh.routes";
 import { errorMiddleware } from "../middleware/errorHandling";
+import { userEntryRegController } from "../controllers/management/userController/entryRegController";
 
 const app = express();
 const corsOptions = {
@@ -23,7 +24,12 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// Handle both potential webhook paths
 app.use('/user/webhook', express.raw({ type: 'application/json' }));
+app.use('/webhook', express.raw({ type: 'application/json' }));
+
+app.post('/webhook', userEntryRegController.handlePaymentWebhook.bind(userEntryRegController));
+
 
 app.use(express.json({limit:'50mb'}));
 app.use(express.urlencoded({ limit:'50mb',extended: true }));

@@ -22,18 +22,18 @@ export class EntryRegRepository
     }
   }
 
-  // async updatePaymentStatus(
-  //   entryId: string,
-  //   transactionId: string,
-  //   status: "pending" | "completed" | "failed" | "refund"
-  // ): Promise<IEntryRegFormData | null> {
-  //   try {
-  //     return this.updateById("entryRegForm", entryId, {
-  //       "entryPayment.status": status,
-  //       "entryPayment.transactionId": transactionId,
-  //     });
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
+  async updatePaymentStatus(
+    entryId: string,
+    transactionId: string,
+    status: "pending" | "completed" | "failed" | "refund"
+  ): Promise<IEntryRegFormData | null> {
+    try {
+      return this.updateById("entryRegForm", entryId, {
+        "entryPayment.status": status,
+        "entryPayment.transactionId": transactionId,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }

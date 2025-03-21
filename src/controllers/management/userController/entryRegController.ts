@@ -8,6 +8,7 @@ import {
   successResponse,
 } from "../../../integration/responseHandler";
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
+import stripe from "stripe";
 
 export class EntryRegController implements IEntryRegController {
   private _entryRegService: IEntryRegService;
@@ -72,38 +73,66 @@ export class EntryRegController implements IEntryRegController {
     }
   }
 
-  // async handlePaymentWebhook(req: Request, res: Response): Promise<void> {
-  //   try {
-  //     const sig = req.headers['stripe-signature'] as string;
+  async handlePaymentWebhook(req: Request, res: Response): Promise<void> {
+    try {
+      console.log("111");
+      const sig = req.headers["stripe-signature"] as string;
+      console.log("2222");
 
-  //     let event;
-  //     try {
-  //       event = stripe.webhooks.constructEvent(
-  //         req.body,
-  //         sig,
-  //         process.env.STRIPE_WEBHOOK_SECRET as string  /////////////////////////////////////////////////
-  //       );
-  //     } catch (err) {
-  //       console.error('Webhook signature verification failed:', err);
-  //       res.status(400).send(`Webhook Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
-  //       return;
-  //     }
-  //     if (event.type === 'checkout.session.completed') {
-  //       const session = event.data.object;
-  //       const { email, entryId } = session.metadata;
-  //       await this._entryRegService.updatePaymentStatus(
-  //         entryId,
-  //         session.id,
-  //         'completed'
-  //       );
-  //     }
+      let event;
+      try {
+        console.log("333333");
+        event = stripe.webhooks.constructEvent(
+          req.body,
+          sig,
+          process.env.STRIPE_WEBHOOK_SECRET as string
+        );
+      } catch (err) {
+        console.error("Webhook signature verification failed:", err);
+        res
+          .status(400)
+          .send(
+            `Webhook Error: ${
+              err instanceof Error ? err.message : "Unknown error"
+            }`
+          );
+        return;
+      }
+      if (event.type === "checkout.session.completed") {
+        const session = event.data.object;
+        if (session.metadata) {
+          console.log(
+            session.metadata,
+            "sessionmetadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          );
+          const email = session.metadata.email;
+          const entryId = session.metadata.entryId;
+          if (email && entryId) {
+            await this._entryRegService.updatePaymentStatus(
+              entryId,
+              session.id,
+              "completed"
+            );
+            console.log(
+              `Payment completed for entry ${entryId}, email: ${email}`
+            );
+          } else {
+            console.warn(
+              "Missing required metadata in session",
+              session.metadata
+            );
+          }
+        } else {
+          console.warn("No metadata found in the session");
+        }
+      }
 
-  //     res.status(200).json({ received: true });
-  //   } catch (error) {
-  //     console.error('Error handling webhook:', error);
-  //     res.status(500).send('Server error');
-  //   }
-  // }
+      res.status(200).json({ received: true });
+    } catch (error) {
+      console.error("Error handling webhook:", error);
+      res.status(500).send("Server error");
+    }
+  }
 }
 
 export const userEntryRegController = new EntryRegController(

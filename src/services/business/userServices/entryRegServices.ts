@@ -50,7 +50,7 @@ export class EntryRegService implements IEntryRegService {
           },
         ],
         mode: "payment",
-        success_url: `${process.env.FRONTEND_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${process.env.FRONTEND_URL}/entry-payment-success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.FRONTEND_URL}/payment-failed`,
         metadata: {
           email,
@@ -81,23 +81,23 @@ export class EntryRegService implements IEntryRegService {
     }
   }
 
-  // async updatePaymentStatus(
-  //   entryId: string,
-  //   transactionId: string,
-  //   status: "pending" | "completed" | "failed" | "refund"
-  // ): Promise<IEntryRegFormData | null> {
-  //   try {
-  //     const updatedEntry = await this._entryRegRepo.updatePaymentStatus(
-  //       entryId,
-  //       transactionId,
-  //       status
-  //     );
-  //     return updatedEntry;
-  //   } catch (error) {
-  //     console.error("Error updating payment status:", error);
-  //     throw new Error("Failed to update payment status");
-  //   }
-  // }
+  async updatePaymentStatus(
+    entryId: string,
+    transactionId: string,
+    status: "pending" | "completed" | "failed" | "refund"
+  ): Promise<IEntryRegFormData | null> {
+    try {
+      const updatedEntry = await this._entryRegRepo.updatePaymentStatus(
+        entryId,
+        transactionId,
+        status
+      );
+      return updatedEntry;
+    } catch (error) {
+      console.error("Error updating payment status:", error);
+      throw new Error("Failed to update payment status");
+    }
+  }
 }
 
 const emailConfig = {

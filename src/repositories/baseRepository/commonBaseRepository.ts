@@ -1,4 +1,4 @@
-import { Document, FilterQuery, Model, Query } from "mongoose";
+import { Document, FilterQuery, Model, Query, UpdateQuery } from "mongoose";
 
 export default class CommonBaseRepository<
   TModels extends Record<string, Document>
@@ -45,20 +45,20 @@ export default class CommonBaseRepository<
   //   if (!model) throw new Error(`Model ${String(modelName)} not found`);
   //   return model.find(query);
   // }
-  // updateById<K extends keyof TModels>(
-  //   modelName: K,
-  //   id: string,
-  //   updateData: UpdateQuery<TModels[K]>
-  // ): Promise<TModels[K] | null> {
-  //   const model = this._models[modelName];
-  //   if (!model) throw new Error(`Model ${String(modelName)} not found`);
+  updateById<K extends keyof TModels>(
+    modelName: K,
+    id: string,
+    updateData: UpdateQuery<TModels[K]>
+  ): Promise<TModels[K] | null> {
+    const model = this._models[modelName];
+    if (!model) throw new Error(`Model ${String(modelName)} not found`);
 
-  //   return model.findByIdAndUpdate(
-  //     id,
-  //     { $set: updateData },
-  //     { new: true, runValidators: true }
-  //   );
-  // }
+    return model.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+  }
   // deleteById<K extends keyof TModels>(
   //   modelName: K,
   //   id: string
