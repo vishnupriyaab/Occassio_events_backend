@@ -101,10 +101,6 @@ export class EntryRegController implements IEntryRegController {
       if (event.type === "checkout.session.completed") {
         const session = event.data.object;
         if (session.metadata) {
-          console.log(
-            session.metadata,
-            "sessionmetadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-          );
           const email = session.metadata.email;
           const entryId = session.metadata.entryId;
           if (email && entryId) {

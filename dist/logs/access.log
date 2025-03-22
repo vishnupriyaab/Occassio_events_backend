@@ -108,3 +108,5 @@
 ::1 - - [21/Mar/2025:08:06:46 +0000] "POST /user/entry-payment-link HTTP/1.1" 200 496 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
 ::1 - - [21/Mar/2025:08:21:58 +0000] "POST /user/entry-reg HTTP/1.1" 200 615 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
 ::1 - - [21/Mar/2025:08:22:01 +0000] "POST /user/entry-payment-link HTTP/1.1" 200 496 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+::1 - - [21/Mar/2025:11:00:28 +0000] "POST /admin/login HTTP/1.1" 200 74 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+::1 - - [22/Mar/2025:04:22:00 +0000] "POST /admin/employees HTTP/1.1" 404 155 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
