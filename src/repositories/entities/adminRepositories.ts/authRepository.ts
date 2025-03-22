@@ -4,16 +4,18 @@ import IAdminRepository from "../../../interfaces/repository/admin/auth.reposito
 import Admin from "../../../models/adminModel";
 import CommonBaseRepository from "../../baseRepository/commonBaseRepository";
 
-export class authRepository extends CommonBaseRepository<{ admin: Document & IAdmin }>
-implements IAdminRepository{
-    constructor(){
-        super({ admin: Admin });
+export class authRepository
+  extends CommonBaseRepository<{ admin: Document & IAdmin }>
+  implements IAdminRepository
+{
+  constructor() {
+    super({ admin: Admin });
+  }
+  async findAdminByEmail(email: string): Promise<IAdmin | null> {
+    try {
+      return this.findOne("admin", { email });
+    } catch (error) {
+      throw error;
     }
-    async findAdminByEmail(email: string): Promise<IAdmin | null> {
-        try {
-            return this.findOne("admin", { email });
-        } catch (error) {
-            throw error;
-        }
-      }
+  }
 }

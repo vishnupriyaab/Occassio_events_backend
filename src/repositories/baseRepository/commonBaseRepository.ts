@@ -27,15 +27,26 @@ export default class CommonBaseRepository<
 
     return model.create(data);
   }
-  // findById<K extends keyof TModels>(
-  //   modelName: K,
-  //   id: string
-  // ): Query<TModels[K] | null, TModels[K]> {
-  //   const model = this._models[modelName];
-  //   if (!model) throw new Error(`Model ${String(modelName)} not found`);
+  updateOne<K extends keyof TModels>(
+    modelName: K,
+    filter: FilterQuery<TModels[K]>,
+    updateData: UpdateQuery<TModels[K]>,
+    options?: { upsert?: boolean }
+  ): Promise<import("mongodb").UpdateResult> {
+    const model = this._models[modelName];
+    if (!model) throw new Error(`Model ${String(modelName)} not found`);
 
-  //   return model.findById(id);
-  // }
+    return model.updateOne(filter, { $set: updateData }, options);
+  }
+  findById<K extends keyof TModels>(
+    modelName: K,
+    id: string
+  ): Query<TModels[K] | null, TModels[K]> {
+    const model = this._models[modelName];
+    if (!model) throw new Error(`Model ${String(modelName)} not found`);
+
+    return model.findById(id);
+  }
 
   // findAll<K extends keyof TModels>(
   //   modelName: K,

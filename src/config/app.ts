@@ -8,6 +8,7 @@ import userRouter from "../routes/user.routes";
 import refreshTokenRoute from "../routes/refresh.routes";
 import { errorMiddleware } from "../middleware/errorHandling";
 import { userEntryRegController } from "../controllers/management/userController/entryRegController";
+import employeeRouter from "../routes/employee.routes";
 
 const app = express();
 const corsOptions = {
@@ -39,6 +40,7 @@ app.use(logger);
 
 app.use("/admin", adminRouter); 
 app.use("/user", userRouter); 
+app.use("/employee", employeeRouter); 
 app.use("/refreshToken", refreshTokenRoute);
 
 app.use(errorMiddleware);

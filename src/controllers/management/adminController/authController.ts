@@ -7,7 +7,7 @@ import {
 } from "../../../integration/responseHandler";
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import { AuthenticatedRequest } from "../../../middleware/authenticateToken";
-import IAuthConrtoller from "../../../interfaces/controller/admin/auth.controller";
+import IAuthConrtoller from "../../../interfaces/controller/admin/admin.auth.controller";
 import { AppError } from "../../../middleware/errorHandling";
 
 export class AuthController implements IAuthConrtoller {
