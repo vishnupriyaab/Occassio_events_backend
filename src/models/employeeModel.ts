@@ -17,6 +17,14 @@ const employeeSchema: Schema = new Schema<IEmployee>({
   password:{
     type: String,
   },
+  isBlocked:{
+    type: Boolean,
+    default: false,
+  },
+  isVerified:{
+    type: Boolean,
+    default: false,
+  },
   assigned:{
     type: Boolean,
     default: false,

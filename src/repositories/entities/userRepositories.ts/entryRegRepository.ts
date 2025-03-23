@@ -36,4 +36,5 @@ export class EntryRegRepository
       throw error;
     }
   }
+  
 }

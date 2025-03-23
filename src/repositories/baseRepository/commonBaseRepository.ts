@@ -79,4 +79,18 @@ export default class CommonBaseRepository<
 
   //   return model.findByIdAndDelete(id).exec();
   // }
+  findOneAndUpdate<K extends keyof TModels>(
+    modelName: K,
+    filter: FilterQuery<TModels[K]>,
+    updateData: UpdateQuery<TModels[K]>
+  ): Promise<TModels[K] | null> {
+    const model = this._models[modelName];
+    if (!model) throw new Error(`Model ${String(modelName)} not found`);
+
+    return model.findOneAndUpdate(
+      filter,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+  }
 }

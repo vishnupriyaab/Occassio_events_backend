@@ -7,4 +7,8 @@ export default interface IEmplAuthRepository {
   getPasswordResetToken(employeeId: string): Promise<string | null>;
   updatePassword(employeeId: string, hashedPassword: string): Promise<void>;
   clearPasswordResetToken(employeeId: string): Promise<void>;
+  updateActivatedStatus(
+    email: string,
+    isVerified: boolean
+  ): Promise<IEmployee | null>;
 }

@@ -29,14 +29,54 @@ export class EmailTemplates {
         </div>
       `;
   }
+  // static getEmployeeOnboardingTemplate(
+  //   employeeName: string,
+  //   email: string,
+  //   resetLink: string,
+  // ): string {
+  //   return `
+  //     <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 5px;">
+  //       <div style="text-align: center; margin-bottom: 20px;">
+  //         <h2 style="color: #4a5568;">Welcome to the Occasio Event Management Team!</h2>
+  //       </div>
+        
+  //       <p>Dear ${employeeName},</p>
+        
+  //       <p>We're excited to have you join our team! Your account has been created with the following email address: <strong>${email}</strong></p>
+        
+  //       <p>To complete your onboarding process, please follow these steps:</p>
+        
+  //       <ol style="margin-bottom: 20px;">
+  //         <li>Visit our employee portal</li>
+  //         <li>Click on "Forgot Password" since you don't have a password yet</li>
+  //         <li>Enter your email address: ${email}</li>
+  //         <li>Follow the instructions to set your new password</li>
+  //         <li>Once complete, log in with your email and newly created password</li>
+  //       </ol>
+        
+  //       <div style="background-color: #fffbea; border-left: 4px solid #f6e05e; padding: 12px; margin-bottom: 20px;">
+  //         <p style="margin: 0; font-weight: bold;">Important Security Notice:</p>
+  //         <p style="margin: 8px 0 0 0;">Your login credentials are confidential. Please do not share them with anyone. Our organization will never ask for your password.</p>
+  //       </div>
+        
+  //       <p>If you have any questions about the onboarding process, please contact the HR department.</p>
+        
+  //       <p>We look forward to working with you!</p>
+        
+  //       <p>Best regards,<br>Occasio Event Management Team</p>
+  //     </div>
+  //   `;
+  // }
+
   static getEmployeeOnboardingTemplate(
     employeeName: string,
-    email: string
+    email: string,
+    resetLink: string,
   ): string {
     return `
       <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 5px;">
         <div style="text-align: center; margin-bottom: 20px;">
-          <h2 style="color: #4a5568;">Welcome to the Team!</h2>
+          <h2 style="color: #4a5568;">Welcome to the Occasio Event Management Team!</h2>
         </div>
         
         <p>Dear ${employeeName},</p>
@@ -46,19 +86,21 @@ export class EmailTemplates {
         <p>To complete your onboarding process, please follow these steps:</p>
         
         <ol style="margin-bottom: 20px;">
-          <li>Visit our employee portal</li>
-          <li>Click on "Forgot Password" since you don't have a password yet</li>
-          <li>Enter your email address: ${email}</li>
+          <li>Click on the "Reset Password" button below</li>
           <li>Follow the instructions to set your new password</li>
-          <li>Once complete, log in with your email and newly created password</li>
+          <li>Once complete, log in with your registered email and newly created password</li>
         </ol>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${resetLink}" style="background-color: #4a5568; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Reset Password</a>
+        </div>
         
         <div style="background-color: #fffbea; border-left: 4px solid #f6e05e; padding: 12px; margin-bottom: 20px;">
           <p style="margin: 0; font-weight: bold;">Important Security Notice:</p>
           <p style="margin: 8px 0 0 0;">Your login credentials are confidential. Please do not share them with anyone. Our organization will never ask for your password.</p>
         </div>
         
-        <p>If you have any questions about the onboarding process, please contact the HR department.</p>
+        <p>If you have any confusion or questions about the onboarding process, please contact the HR department.</p>
         
         <p>We look forward to working with you!</p>
         
@@ -66,6 +108,7 @@ export class EmailTemplates {
       </div>
     `;
   }
+
   static getPasswordResetTemplate(resetLink: string): string {
     return `
         <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
@@ -129,13 +172,17 @@ export class EmailService implements IEmailService {
 
   async sendEmployeeOnboardingEmail(
     employeeName: string,
-    employeeEmail: string
+    employeeEmail: string,
+    token:string,
   ): Promise<string> {
+    
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
     const content: EmailContent = {
       from: this._senderEmail!,
       to: employeeEmail,
       subject: "Welcome to the Occasio Event Management Team - Account Setup Instructions",
-      html: EmailTemplates.getEmployeeOnboardingTemplate(employeeName, employeeEmail),
+      html: EmailTemplates.getEmployeeOnboardingTemplate(employeeName, employeeEmail, resetLink),
     };
     
     return await this._emailTransport.sendMail(content);

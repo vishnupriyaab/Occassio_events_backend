@@ -8,8 +8,9 @@ import { IJWTService } from "../../../interfaces/integration/IJwt";
 import IEmplAuthRepository from "../../../interfaces/repository/employee/empl.auth.repository";
 import IEmplAuthService from "../../../interfaces/services/employee/empl.auth.services";
 import { EmplAuthRepository } from "../../../repositories/entities/employeeRepository/authRepository";
+import bcrypt from "bcrypt";
 
-export class EmploAuthService implements IEmplAuthService{
+export class EmploAuthService implements IEmplAuthService {
   private _emplRepo: IEmplAuthRepository;
   private _cryptoService: ICryptoService;
   private _jwtService: IJWTService;
@@ -28,6 +29,45 @@ export class EmploAuthService implements IEmplAuthService{
     this._emplRepo = emplRepo;
     this._cryptoService = cryptoService;
     this._jwtService = jwtService;
+  }
+
+  async loginEmployee(
+    email: string,
+    password: string
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    try {
+      const employee = await this._emplRepo.findEmplByEmail(email);
+      if (!employee) {
+        const error = new Error("Employee not found");
+        error.name = "EmployeeNotFound";
+        throw error;
+      }
+      
+      if (!employee.isVerified) {
+        await this._emplRepo.updateActivatedStatus(email, true);
+      }
+
+      if (employee.isBlocked) {
+        const error = new Error("Your account is blocked");
+        error.name = "AccountIsBlocked";
+        throw error;
+      }
+      const isPasswordValid = await bcrypt.compare(
+        password,
+        employee.password as string
+      );
+      if (!isPasswordValid) {
+        const error = new Error("Invalid password");
+        error.name = "InvalidPassword";
+        throw error;
+      }
+      const payload = { id: employee._id, role: "employee" };
+      const accessToken = this._jwtService.generateAccessToken(payload);
+      const refreshToken = this._jwtService.generateRefreshToken(payload);
+      return { accessToken, refreshToken };
+    } catch (error) {
+      throw error;
+    }
   }
 
   async forgotPassword(email: string): Promise<void> {
@@ -93,7 +133,6 @@ export class EmploAuthService implements IEmplAuthService{
   }
 }
 
-
 const emplAuthRepository = new EmplAuthRepository();
 const IjwtService: IJWTService = new JWTService();
 const cryptoService: ICryptoService = new CryptoService();
@@ -103,4 +142,9 @@ const emailConfig = {
   frontendUrl: process.env.FRONTEND_URL,
 };
 
-export const adminAuthServices = new EmploAuthService(emplAuthRepository, emailConfig, IjwtService, cryptoService)
+export const adminAuthServices = new EmploAuthService(
+  emplAuthRepository,
+  emailConfig,
+  IjwtService,
+  cryptoService
+);

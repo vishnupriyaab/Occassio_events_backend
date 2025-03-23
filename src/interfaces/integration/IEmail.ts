@@ -2,7 +2,8 @@ export interface IEmailService {
   sendPaymentLinkEmail(email: string, paymentLink: string): Promise<string>;
   sendEmployeeOnboardingEmail(
     employeeName: string,
-    employeeEmail: string
+    employeeEmail: string,
+    token:string,
   ): Promise<string>;
   sendPasswordResetEmail(email: string, resetLink: string): Promise<string>;
 }

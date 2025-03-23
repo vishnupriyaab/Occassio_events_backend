@@ -2,8 +2,6 @@ import { Request, Response } from "express";
 import IEmployeeController from "../../../interfaces/controller/admin/employee.controller";
 import IEmployeeService from "../../../interfaces/services/admin/employee.services";
 import { adminEmplServices } from "../../../services/business/adminServices/employeeServices";
-import { ErrorResponse, successResponse } from "../../../integration/responseHandler";
-import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 
 export class EmployeeController implements IEmployeeController {
   private _emplService: IEmployeeService;

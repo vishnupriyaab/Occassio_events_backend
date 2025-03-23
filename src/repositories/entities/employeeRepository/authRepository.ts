@@ -63,4 +63,13 @@ constructor() {
       throw error;
     }
   }
+
+  async updateActivatedStatus(
+    email: string,
+    isVerified: boolean
+  ): Promise<IEmployee | null> {
+    return this.findOneAndUpdate("employee", { email }, { isVerified });
+  }
+
 }
+  

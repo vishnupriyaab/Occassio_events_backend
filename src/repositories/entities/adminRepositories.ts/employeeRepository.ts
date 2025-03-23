@@ -21,4 +21,20 @@ export class EmployeeRepository
       throw error;
     }
   }
+
+  async savePasswordResetToken(
+    employeeId: string,
+    token: string
+  ): Promise<void> {
+    await this.updateOne(
+      "employee",
+      { _id: employeeId },
+      {
+        resetPasswordToken: token,
+        resetPasswordExpires: Date.now() + 3600000, // 1 hour expiry
+      },
+      { upsert: true }
+    );
+    return;
+  }
 }
