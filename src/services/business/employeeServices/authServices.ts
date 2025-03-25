@@ -87,6 +87,7 @@ export class EmploAuthService implements IEmplAuthService {
         role: "employee",
       });
       await this._emplRepo.savePasswordResetToken(employee._id, token);
+      console.log(token,"tokennnnnnnnnnnnnn")
       const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
       await this._emailService.sendPasswordResetEmail(email, resetLink);
     } catch (error) {

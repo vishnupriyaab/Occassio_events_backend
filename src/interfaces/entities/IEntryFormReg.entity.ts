@@ -1,7 +1,7 @@
 export default interface IEntryRegFormData {
   name: string;
   email: string;
-  phone: string;
+  phone: number;
   eventName: string;
   startDate: string;
   endDate: string;

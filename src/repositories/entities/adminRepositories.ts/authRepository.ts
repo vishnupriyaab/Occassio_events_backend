@@ -18,4 +18,17 @@ export class authRepository
       throw error;
     }
   }
+
+  async createAdmin(email: string, hashedPassword: string): Promise<IAdmin> {
+  try {
+    const adminData = {
+      email,
+      password: hashedPassword
+    };
+    
+    return await this.createData("admin", adminData);
+  } catch (error) {
+    throw error;
+  }
+}
 }

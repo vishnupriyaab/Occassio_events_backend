@@ -10,11 +10,9 @@ const authMiddleware = new AuthMiddleware("employee", iJwtServices);
 
 //private - routes
 employeeRouter.post('/login',emplAuthController.employeeLogin.bind(emplAuthController))
+employeeRouter.post( "/forgotPassword", emplAuthController.forgotPassword.bind(emplAuthController)).post( "/resetPassword", emplAuthController.resetPassword.bind(emplAuthController))
 
 // Protected routes (middleware applied)
 employeeRouter.use(authMiddleware.authenticateToken.bind(authMiddleware));
-employeeRouter
-    .post( "/forgotPassword", emplAuthController.forgotPassword.bind(emplAuthController))
-    .post( "/resetPassword", emplAuthController.resetPassword.bind(emplAuthController))
 
 export default employeeRouter;

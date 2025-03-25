@@ -6,14 +6,26 @@ import { authRepository } from "../../../repositories/entities/adminRepositories
 import IAuthService from "../../../interfaces/services/admin/auth.services";
 import { AppError } from "../../../middleware/errorHandling";
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
+import ICryptoService from "../../../interfaces/integration/ICrypto";
+import { CryptoService } from "../../../integration/cryptoServices";
 
 export class authService implements IAuthService {
   private _adminRepo: IAdminRepository;
   private _IjwtSevice: IJWTService;
-  constructor(adminRepo: IAdminRepository) {
+  private _cryptoService: ICryptoService;
+  constructor(adminRepo: IAdminRepository,  cryptoService: ICryptoService) {
     this ._adminRepo = adminRepo
     this._IjwtSevice = new JWTService()
+    this._cryptoService = cryptoService;
   }
+
+  async register(email:string,password:string):Promise<void>{
+    const hashedPassword = await this._cryptoService.hashData(
+      password
+    );
+    const admin = await this._adminRepo.createAdmin(email,hashedPassword);
+  }
+
   async adminLogin(
     email: string,
     password: string
@@ -49,4 +61,5 @@ export class authService implements IAuthService {
 }
 
 const adminAuthRepository = new authRepository();
-export const adminAuthServices = new authService(adminAuthRepository);
+const cryptoService: ICryptoService = new CryptoService();
+export const adminAuthServices = new authService(adminAuthRepository, cryptoService);

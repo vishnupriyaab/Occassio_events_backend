@@ -19,6 +19,7 @@ export default class AuthMiddleware {
     next: NextFunction
   ): Promise<void> {
     try {
+      console.log(req.cookies,"0000000000000000000000")
       const token = req.cookies.access_token;
       console.log(token,"qwertyuiodfghjk");
       if (!token) {
@@ -26,13 +27,13 @@ export default class AuthMiddleware {
         return;
       }
       const decode = this._jwtService.verifyAccessToken(token);
-      console.log(decode,"decode");
+      console.log(decode,"decode111111111111111111111111111111111111");
       if(decode.role !== this.role){
         res.status( HttpStatusCode.UNAUTHORIZED ).json({ message: "Unauthorized: You do not have permission to access this resource" });
         return;
       }
       req.id = decode.id
-      next()
+      next();
     } catch (error) {
         console.log(error,"error");
         res.status(HttpStatusCode.FORBIDDEN).json({ message: "Forbidden: Invalid token" });

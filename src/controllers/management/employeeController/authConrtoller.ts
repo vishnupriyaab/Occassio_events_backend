@@ -97,7 +97,8 @@ export class EmplAuthController implements IEmplAuthController{
       const { password, token } = req.body;
       console.log(password, token, "req.bodyyy");
       const result = await this._emplService.resetPassword(token, password);
-      return successResponse(res, HttpStatusCode.OK, "Password has been reset");
+      console.log(result,"resultttttttttttttttttttt");
+      return successResponse(res, HttpStatusCode.OK, "Password has been reset", result);
     } catch (error: unknown) {
       if (error instanceof Error) {
         if (error.name === "InvalidResetToken") {

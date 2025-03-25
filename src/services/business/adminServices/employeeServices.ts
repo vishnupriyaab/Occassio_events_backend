@@ -38,6 +38,9 @@ export class EmployeeService implements IEmployeeService {
           id: savedEmployee._id || "",
           role: "employee",
         });
+        console.log(token,"00000000000000000000000000000000000");
+        const decode = this._jwtService.verifyAccessToken(token)
+        console.log(decode,"11111111111111111111111111111111")
         await this._emplRepository.savePasswordResetToken(savedEmployee._id, token);
         await this._emailService.sendEmployeeOnboardingEmail(
           savedEmployee.name,

@@ -12,7 +12,7 @@ const entryRegFormSchema: Schema = new Schema<IEntryRegFormData>(
       required: true,
     },
     phone: {
-      type: String,
+      type: Number,
       required: true,
     },
     eventName: {

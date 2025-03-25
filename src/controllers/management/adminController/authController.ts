@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import IAuthService from "../../../interfaces/services/admin/auth.services";
-import { adminAuthServices } from "../../../services/business/adminServices/authServices";
+import { adminAuthServices, authService } from "../../../services/business/adminServices/authServices";
 import {
   ErrorResponse,
   successResponse,
@@ -16,6 +16,12 @@ export class AuthController implements IAuthConrtoller {
   constructor(authService: IAuthService) {
     this._authService = authService;
   }
+
+  async adminRegister(req:Request,res:Response):Promise<void>{
+    const {email, password} = req.body;
+    const admin = this._authService.register(email,password)
+  }
+
   //Admin-Login
   async adminLogin(req: Request, res: Response): Promise<void> {
     try {
