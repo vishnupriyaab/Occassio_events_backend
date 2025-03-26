@@ -7,4 +7,5 @@ export default interface IEntryRegRepository{
       transactionId: string,
       status: 'pending' | 'completed' | 'failed' | 'refund'
     ): Promise<IEntryRegFormData | null>
+    findUserById(entryId: string): Promise<IEntryRegFormData | null>
 }   

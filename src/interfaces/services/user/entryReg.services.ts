@@ -9,4 +9,5 @@ export default interface IEntryRegService {
     transactionId: string,
     status: "pending" | "completed" | "failed" | "refund"
   ): Promise<IEntryRegFormData | null>;
+  createUserDb(entryId: string): Promise<IEntryRegFormData | null | undefined>
 }

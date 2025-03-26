@@ -26,21 +26,23 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Handle both potential webhook paths
-app.use('/user/webhook', express.raw({ type: 'application/json' }));
-app.use('/webhook', express.raw({ type: 'application/json' }));
+app.use("/user/webhook", express.raw({ type: "application/json" }));
+app.use("/webhook", express.raw({ type: "application/json" }));
 
-app.post('/webhook', userEntryRegController.handlePaymentWebhook.bind(userEntryRegController));
+app.post(
+  "/webhook",
+  userEntryRegController.handlePaymentWebhook.bind(userEntryRegController)
+);
 
-
-app.use(express.json({limit:'50mb'}));
-app.use(express.urlencoded({ limit:'50mb',extended: true }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
-app.use(morgan('dev'))
-app.use(logger); 
+app.use(morgan("dev"));
+app.use(logger);
 
-app.use("/admin", adminRouter); 
-app.use("/user", userRouter); 
-app.use("/employee", employeeRouter); 
+app.use("/admin", adminRouter);
+app.use("/user", userRouter);
+app.use("/employee", employeeRouter);
 app.use("/refreshToken", refreshTokenRoute);
 
 app.use(errorMiddleware);

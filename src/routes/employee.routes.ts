@@ -5,14 +5,16 @@ import AuthMiddleware from "../middleware/authenticateToken";
 import { emplAuthController } from "../controllers/management/employeeController/authConrtoller";
 
 const employeeRouter = Router()
-const iJwtServices: IJWTService = new JWTService();
-const authMiddleware = new AuthMiddleware("employee", iJwtServices);
+// const iJwtServices: IJWTService = new JWTService();
+// const authMiddleware = new AuthMiddleware("employee", iJwtServices);
 
 //private - routes
-employeeRouter.post('/login',emplAuthController.employeeLogin.bind(emplAuthController))
-employeeRouter.post( "/forgotPassword", emplAuthController.forgotPassword.bind(emplAuthController)).post( "/resetPassword", emplAuthController.resetPassword.bind(emplAuthController))
+employeeRouter
+    .post('/login',emplAuthController.employeeLogin.bind(emplAuthController))
+    .post( "/forgotPassword", emplAuthController.forgotPassword.bind(emplAuthController))
+    .post( "/resetPassword", emplAuthController.resetPassword.bind(emplAuthController));
 
-// Protected routes (middleware applied)
-employeeRouter.use(authMiddleware.authenticateToken.bind(authMiddleware));
+// // Protected routes (middleware applied)
+// employeeRouter.use(authMiddleware.authenticateToken.bind(authMiddleware));
 
 export default employeeRouter;

@@ -3,9 +3,15 @@ export interface IEmailService {
   sendEmployeeOnboardingEmail(
     employeeName: string,
     employeeEmail: string,
-    token:string,
+    token: string
   ): Promise<string>;
   sendPasswordResetEmail(email: string, resetLink: string): Promise<string>;
+  sendEmployeeAssignedEmailToUser(
+    employeeName: string,
+    userName: string,
+    userEmail: string,
+    token:string,
+  ): Promise<string>;
 }
 
 export interface EmailConfig {

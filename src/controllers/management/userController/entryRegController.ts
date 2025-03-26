@@ -75,13 +75,10 @@ export class EntryRegController implements IEntryRegController {
 
   async handlePaymentWebhook(req: Request, res: Response): Promise<void> {
     try {
-      console.log("111");
       const sig = req.headers["stripe-signature"] as string;
-      console.log("2222");
 
       let event;
       try {
-        console.log("333333");
         event = stripe.webhooks.constructEvent(
           req.body,
           sig,
@@ -112,6 +109,9 @@ export class EntryRegController implements IEntryRegController {
             console.log(
               `Payment completed for entry ${entryId}, email: ${email}`
             );
+            const createUserDB = await this._entryRegService.createUserDb(entryId)
+            // const user = this._entryRegService.createUser()
+            //assign employee to a user
           } else {
             console.warn(
               "Missing required metadata in session",

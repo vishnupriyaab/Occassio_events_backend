@@ -4,12 +4,13 @@ import IEmplAuthRepository from "../../../interfaces/repository/employee/empl.au
 import Employee from "../../../models/employeeModel";
 import CommonBaseRepository from "../../baseRepository/commonBaseRepository";
 
-export class EmplAuthRepository extends CommonBaseRepository<{ employee: Document & IEmployee }>
-implements IEmplAuthRepository
+export class EmplAuthRepository
+  extends CommonBaseRepository<{ employee: Document & IEmployee }>
+  implements IEmplAuthRepository
 {
-constructor() {
-  super({ employee: Employee });
-}
+  constructor() {
+    super({ employee: Employee });
+  }
 
   async findEmplByEmail(email: string): Promise<IEmployee | null> {
     return this.findOne("employee", { email });
@@ -70,6 +71,4 @@ constructor() {
   ): Promise<IEmployee | null> {
     return this.findOneAndUpdate("employee", { email }, { isVerified });
   }
-
 }
-  

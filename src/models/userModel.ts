@@ -1,20 +1,35 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import { IUser } from "../interfaces/entities/user.entity";
 
-const userSchema: Schema = new Schema<IUser>({
-  name: {
-    type: String,
-    required: true,
+const userSchema: Schema = new Schema<IUser>(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+    },
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+    phone: {
+      type: Number,
+      required: true,
+    },
+    assignedEmployee: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Employee',
+      default: null
+    },
   },
-  email: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: Number,
-    required: true,
-  },
-});
+  { timestamps: true }
+);
 
 const User = mongoose.model<IUser & Document>("User", userSchema);
 export default User;

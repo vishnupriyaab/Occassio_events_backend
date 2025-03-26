@@ -37,4 +37,29 @@ export class EmployeeRepository
     );
     return;
   }
+
+  async findUnassignedEmployee(): Promise<IEmployee | null> {
+    try {
+      return await this.findOne("employee",{ 
+        assigned: false,
+        isBlocked: false,
+        isVerified: true
+      });
+    } catch (error) {
+      console.error("Error finding unassigned employee:", error);
+      throw error;
+    }
+  }
+
+  async markEmployeeAsAssigned(employeeId: string): Promise<void> {
+    try {
+      await this.updateById("employee",employeeId, {
+        assigned: true
+      });
+    } catch (error) {
+      console.error("Error marking employee as assigned:", error);
+      throw error;
+    }
+  }
+
 }

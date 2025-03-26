@@ -87,7 +87,6 @@ export class EmploAuthService implements IEmplAuthService {
         role: "employee",
       });
       await this._emplRepo.savePasswordResetToken(employee._id, token);
-      console.log(token,"tokennnnnnnnnnnnnn")
       const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
       await this._emailService.sendPasswordResetEmail(email, resetLink);
     } catch (error) {
@@ -98,7 +97,6 @@ export class EmploAuthService implements IEmplAuthService {
   async resetPassword(token: string, newPassword: string): Promise<void> {
     try {
       const decoded = this._jwtService.verifyAccessToken(token);
-      console.log(decoded, "decodeddddddd");
 
       if (!decoded.id) {
         const error = new Error("Invalid reset token");
@@ -107,7 +105,6 @@ export class EmploAuthService implements IEmplAuthService {
       }
 
       const employee = await this._emplRepo.findEmplById(decoded.id);
-      console.log(employee, "employee of employeeUseCase");
       if (!employee) {
         const error = new Error("Employee not found");
         error.name = "EmployeeNotFound";
@@ -117,7 +114,6 @@ export class EmploAuthService implements IEmplAuthService {
       const storedToken = await this._emplRepo.getPasswordResetToken(
         decoded.id
       );
-      console.log(storedToken, "storedToken in EmployeeuseCse");
       if (!storedToken || storedToken !== token) {
         const error = new Error("Invalid or expired reset token");
         error.name = "InvalidOrExpiredResetToken";
@@ -125,7 +121,6 @@ export class EmploAuthService implements IEmplAuthService {
       }
 
       const hashedPassword = await this._cryptoService.hashData(newPassword);
-      console.log(hashedPassword, "hashedPassword in employeeUseCase");
       await this._emplRepo.updatePassword(decoded.id, hashedPassword);
       await this._emplRepo.clearPasswordResetToken(decoded.id);
     } catch (error) {

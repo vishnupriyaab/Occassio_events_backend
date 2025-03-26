@@ -36,5 +36,9 @@ export class EntryRegRepository
       throw error;
     }
   }
+
+  async findUserById(entryId: string): Promise<IEntryRegFormData | null> {
+    return this.findById("entryRegForm", entryId);
+  }
   
 }

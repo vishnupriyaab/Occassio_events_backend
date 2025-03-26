@@ -33,9 +33,9 @@ export class EmailTemplates {
   static getEmployeeOnboardingTemplate(
     employeeName: string,
     email: string,
-    resetLink: string,
+    resetLink: string
   ): string {
-    console.log(resetLink,"resetlink")
+    console.log(resetLink, "resetlink");
     return `
       <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 5px;">
         <div style="text-align: center; margin-bottom: 20px;">
@@ -80,6 +80,117 @@ export class EmailTemplates {
         </div>
       `;
   }
+ 
+  // static getEmployeeAssignmentTemplate(
+  //   userName: string,
+  //   employeeName: string,
+  //   resetLink: string
+  // ): string {
+  //   console.log(resetLink, "resetLink");
+  //   return `
+  //     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #333;">
+  //       <div style="padding: 20px; text-align: center; border-bottom: 3px solid #4a5568;">
+  //         <h1 style="color: #4a5568; margin: 0;">Occasio Event Management</h1>
+  //       </div>
+        
+  //       <div style="padding: 20px;">
+  //         <p>Dear ${userName},</p>
+          
+  //         <p>This is ${employeeName}, your dedicated employee for event management.</p>
+          
+  //         <div style="background-color: #fffbea; border-left: 4px solid #f6e05e; padding: 15px; margin: 20px 0;">
+  //           <p style="margin: 0; font-weight: bold;">Account Setup Instructions</p>
+  //           <p>Before we connect, please follow these steps:</p>
+  //           <ol>
+  //             <li>Click on the "Reset Password" button below</li>
+  //             <li>Follow the instructions to set your new password</li>
+  //             <li>Log in with your registered email and newly created password</li>
+  //           </ol>
+  //           <div style="text-align: center">
+  //           <a href="${resetLink}" style="display: inline-block; background-color:rgb(25, 214, 0); color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Reset Password</a>
+  //        </div>
+  //           </div>
+          
+  //         <p style="font-weight: bold;">Our employee will be in touch with you within the next 24 hours to discuss your event details and provide personalized support.</p>
+          
+  //         <div style="background-color: #ff7f7f ; padding: 15px; margin: 20px 0;">
+  //           <p style="margin: 0; font-weight: bold;">Customer Support Information</p>
+  //           <p style="margin: 5px 0 0;">If you do not hear from your assigned employee within 24 hours or if you have any confusion or questions about the login process, please contact our customer service:</p>
+  //           <address style="font-style: normal; margin-top: 10px;">
+  //             <strong>Occasio Events Customer Service</strong><br>
+  //             123 Avenue des Champs-Élysées<br>
+  //             75008 Paris, France<br>
+  //             Email: occasioevents@gmail.com
+  //           </address>
+  //         </div>
+          
+  //         <p>Thank you for choosing Occasio Event Management. We look forward to making your event exceptional!</p>
+          
+  //         <p style="font-weight: bold;">Best regards,<br>Occasio Event Management Team</p>
+  //       </div>
+        
+  //       <div style="background-color: #f4f4f4; padding: 10px; text-align: center; font-size: 0.8em; color: #666;">
+  //         © ${new Date().getFullYear()} Occasio Event Management. All rights reserved.
+  //       </div>
+  //     </div>
+  //   `;
+  // }
+
+  static getEmployeeAssignmentTemplate(
+    userName: string,
+    employeeName: string,
+    resetLink: string
+  ): string {
+    console.log(resetLink, "resetLink");
+    return `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #333;">
+        <div style="padding: 20px; text-align: center; border-bottom: 3px solid #4a5568;">
+          <h1 style="color: #4a5568; margin: 0;">Occasio Event Management</h1>
+        </div>
+        
+        <div style="padding: 20px;">
+          <p>Dear ${userName},</p>
+          
+          <p>On behalf of the Occasio Event Management team, I am reaching out to you. Our team member, ${employeeName}, will be coordinating your event.</p>
+          
+          <div style="background-color: #fffbea; border-left: 4px solid #f6e05e; padding: 15px; margin: 20px 0;">
+            <p style="margin: 0; font-weight: bold;">Account Setup Instructions</p>
+            <p>Please ensure you complete these steps to enable our team to connect with you:</p>
+            <ol>
+              <li>Click on the "Reset Password" button below</li>
+              <li>Follow the instructions to set your new password</li>
+              <li>Log in with your registered email and newly created password</li>
+            </ol>
+            <div style="text-align: center">
+            <a href="${resetLink}" style="display: inline-block; background-color:rgb(25, 214, 0); color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Reset Password</a>
+         </div>
+            </div>
+          
+          <p style="font-weight: bold;">Our employee will be in touch with you within the next 24 hours to discuss your event details and provide personalized support.</p>
+          
+          <div style="background-color:rgb(245, 228, 228) ; padding: 15px; margin: 20px 0;">
+            <p style="margin: 0; font-weight: bold;">Customer Support Information</p>
+            <p style="margin: 5px 0 0;">If you do not hear from your assigned employee within 24 hours or if you have any confusion or questions about the login process, please contact our customer service:</p>
+            <address style="font-style: normal; margin-top: 10px;">
+              <strong>Occasio Events Customer Service</strong><br>
+              123 Avenue des Champs-Élysées<br>
+              75008 Paris, France<br>
+              Email: occasioevents@gmail.com
+            </address>
+          </div>
+          
+          <p>Thank you for choosing Occasio Event Management. We look forward to making your event exceptional!</p>
+          
+          <p style="font-weight: bold;">Best regards,<br>Occasio Event Management Team</p>
+        </div>
+        
+        <div style="background-color: #f4f4f4; padding: 10px; text-align: center; font-size: 0.8em; color: #666;">
+          © ${new Date().getFullYear()} Occasio Event Management. All rights reserved.
+        </div>
+      </div>
+    `;
+  }
+
 }
 
 export class EmailTransport {
@@ -136,19 +247,46 @@ export class EmailService implements IEmailService {
   async sendEmployeeOnboardingEmail(
     employeeName: string,
     employeeEmail: string,
-    token:string,
+    token: string
   ): Promise<string> {
-
-    console.log(token,"qwerty")
+    console.log(token, "qwerty");
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
     const content: EmailContent = {
       from: this._senderEmail!,
       to: employeeEmail,
-      subject: "Welcome to the Occasio Event Management Team - Account Setup Instructions",
-      html: EmailTemplates.getEmployeeOnboardingTemplate(employeeName, employeeEmail, resetLink),
+      subject:
+        "Welcome to the Occasio Event Management Team - Account Setup Instructions",
+      html: EmailTemplates.getEmployeeOnboardingTemplate(
+        employeeName,
+        employeeEmail,
+        resetLink
+      ),
     };
-    
+
+    return await this._emailTransport.sendMail(content);
+  }
+
+  async sendEmployeeAssignedEmailToUser(
+    employeeName: string,
+    userName: string,
+    userEmail: string,
+    token: string
+  ): Promise<string> {
+    console.log(token, "token");
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+    const content: EmailContent = {
+      from: this._senderEmail!,
+      to: userEmail,
+      subject: "Your Dedicated Event Management Support",
+      html: EmailTemplates.getEmployeeAssignmentTemplate(
+        userName,
+        employeeName,
+        resetLink
+      ),
+    };
+
     return await this._emailTransport.sendMail(content);
   }
 
@@ -165,5 +303,4 @@ export class EmailService implements IEmailService {
 
     return await this._emailTransport.sendMail(content);
   }
-
 }

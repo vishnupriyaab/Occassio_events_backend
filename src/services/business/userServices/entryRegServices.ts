@@ -1,16 +1,26 @@
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import { EmailService } from "../../../integration/emailServices";
+import { JWTService } from "../../../integration/jwtServices";
 import stripe from "../../../integration/stripe";
 import IEntryRegFormData from "../../../interfaces/entities/IEntryFormReg.entity";
+import { IUser, IUserReg } from "../../../interfaces/entities/user.entity";
 import { IEmailService } from "../../../interfaces/integration/IEmail";
+import { IJWTService } from "../../../interfaces/integration/IJwt";
+import IEmployeeRepository from "../../../interfaces/repository/admin/employee.repository";
+import IUserRepository from "../../../interfaces/repository/user/auth.repository";
 import IEntryRegRepository from "../../../interfaces/repository/user/entryReg.repository";
 import IEntryRegService from "../../../interfaces/services/user/entryReg.services";
 import { AppError } from "../../../middleware/errorHandling";
+import { EmployeeRepository } from "../../../repositories/entities/adminRepositories.ts/employeeRepository";
+import { UserRepository } from "../../../repositories/entities/userRepositories.ts/authRepository";
 import { EntryRegRepository } from "../../../repositories/entities/userRepositories.ts/entryRegRepository";
 
 export class EntryRegService implements IEntryRegService {
   private _entryRegRepo: IEntryRegRepository;
   private _emailService: IEmailService;
+  private _userRepo: IUserRepository;
+  private _employeeRepo: IEmployeeRepository;
+  private _jwtService: IJWTService;
 
   constructor(
     entryRegRepo: IEntryRegRepository,
@@ -18,10 +28,16 @@ export class EntryRegService implements IEntryRegService {
       user: string | undefined;
       pass: string | undefined;
       frontendUrl: string | undefined;
-    }
+    },
+    userRepo: IUserRepository,
+    employeeRepo: IEmployeeRepository,
+    jwtService: IJWTService
   ) {
     this._entryRegRepo = entryRegRepo;
     this._emailService = new EmailService(emailConfig);
+    this._userRepo = userRepo;
+    this._employeeRepo = employeeRepo;
+    this._jwtService = jwtService;
   }
   async registerEntry(
     data: IEntryRegFormData
@@ -98,6 +114,81 @@ export class EntryRegService implements IEntryRegService {
       throw new Error("Failed to update payment status");
     }
   }
+  async createUserDb(
+    entryId: string
+  ): Promise<IEntryRegFormData | null | undefined> {
+    try {
+      const entryUser = await this._entryRegRepo.findUserById(entryId);
+      console.log(entryUser, "12121212123232");
+      if (!entryUser) {
+        throw new AppError(
+          "Entry User is not found",
+          HttpStatusCode.NOT_FOUND,
+          "EntryUserIsNotFound"
+        );
+      }
+      const user: IUser = {
+        name: entryUser.name,
+        email: entryUser.email,
+        phone: entryUser.phone,
+      };
+      const createdUser = await this._userRepo.createUser(user);
+      console.log(createdUser,"userr")
+
+      if (!createdUser) {
+        throw new AppError(
+          "Failed to create user",
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          "UserCreationFailed"
+        );
+      }
+
+      await this.assignEmployeeToUser(createdUser);
+
+      return entryUser;
+    } catch (error) {}
+  }
+  async assignEmployeeToUser(user: IUser): Promise<void> {
+    try {
+      const unassignedEmployee =
+        await this._employeeRepo.findUnassignedEmployee();
+
+      if (!unassignedEmployee) {
+        console.warn(`No unassigned employee found for user: ${user.email}`);
+        return;
+      }
+      
+      await this._userRepo.updateUserAssignedEmployee(
+        user._id!,
+        unassignedEmployee._id
+      );
+      
+      await this._employeeRepo.markEmployeeAsAssigned(unassignedEmployee._id!);
+      
+      const token = this._jwtService.generateAccessToken({
+        id: user._id || "",
+        role: "user",
+      });
+      console.log(token, "token");
+      const decode = this._jwtService.verifyAccessToken(token);
+      console.log(decode, "decode");
+      await this._userRepo.savePasswordResetToken(user._id, token);
+
+      await this._emailService.sendEmployeeAssignedEmailToUser(
+        unassignedEmployee.name,
+        user.name,
+        user.email,
+        token
+      );
+    } catch (error) {
+      console.error(`Error assigning employee to user: ${error}`);
+      throw new AppError(
+        "Failed to assign employee",
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        "EmployeeAssignmentFailed"
+      );
+    }
+  }
 }
 
 const emailConfig = {
@@ -107,7 +198,13 @@ const emailConfig = {
 };
 
 const userEntryRegRepository = new EntryRegRepository();
+const userRepository = new UserRepository();
+const employeeRepository = new EmployeeRepository();
+const IjwtService: IJWTService = new JWTService();
 export const userEntryRegService = new EntryRegService(
   userEntryRegRepository,
-  emailConfig
+  emailConfig,
+  userRepository,
+  employeeRepository,
+  IjwtService
 );
