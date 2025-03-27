@@ -15,4 +15,8 @@ export default interface IUserRepository {
   getPasswordResetToken(userId: string): Promise<string | null>;
   clearPasswordResetToken(userId: string): Promise<void>;
   findUserByEmail(email: string): Promise<IUser | null>
+  updateActivatedStatus(
+    email: string,
+    isVerified: boolean
+  ): Promise<IUser | null>
 }

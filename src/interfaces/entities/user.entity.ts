@@ -6,6 +6,8 @@ export interface IUser {
   password?: string;
   email: string;
   phone: number;
+  isVerified?: boolean;
+  isBlocked?: boolean;
   assignedEmployee?: mongoose.Types.ObjectId;
   resetPasswordToken?: string;
 }

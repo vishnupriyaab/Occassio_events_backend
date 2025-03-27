@@ -16,5 +16,7 @@ userRouter
   .post( "/entry-payment-link", userEntryRegController.entryPayment.bind(userEntryRegController))
   .post("/resetPassword", userAuthController.resetPassword.bind(userAuthController))
   .post("/forgotPassword", userAuthController.forgotPassword.bind(userAuthController))
+  .post("/login", userAuthController.userLogin.bind(userAuthController))
+  .post("/google-login", userAuthController.googleLogin.bind(userAuthController))
 
 export default userRouter;

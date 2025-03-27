@@ -53,8 +53,8 @@ export class UserAuthController implements IUserAuthController {
     }
   }
 
-   //forgotPassword
-   async forgotPassword(req: Request, res: Response): Promise<void> {
+  //forgotPassword
+  async forgotPassword(req: Request, res: Response): Promise<void> {
     try {
       const { email } = req.body;
       console.log(email, "emailgot itttt");
@@ -80,8 +80,130 @@ export class UserAuthController implements IUserAuthController {
       return;
     }
   }
+
+  //User-Login
+  async userLogin(req: Request, res: Response): Promise<void> {
+    try {
+      const { email, password } = req.body;
+      console.log(email, password);
+      const { accessToken, refreshToken } = await this._userService.loginUser(
+        email,
+        password
+      );
+      res
+        .cookie("refresh_token", refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        })
+        .cookie("access_token", accessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          maxAge: 24 * 60 * 60 * 1000, // 1 day
+        });
+      return successResponse(
+        res,
+        HttpStatusCode.OK,
+        "User logged in successfully",
+        { accessToken, refreshToken }
+      );
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.name === "UserNotFound") {
+          ErrorResponse(res, HttpStatusCode.NOT_FOUND, "User not found");
+          return;
+        }
+        if (error.name === "AcntNotVerified") {
+          ErrorResponse(
+            res,
+            HttpStatusCode.BAD_REQUEST,
+            "Account not verified. Please verify your account"
+          );
+          return;
+        }
+        if (error.name === "AccountIsBlocked") {
+          ErrorResponse(
+            res,
+            HttpStatusCode.BAD_REQUEST,
+            "Your account is blocked"
+          );
+          return;
+        }
+        if (error.name === "InvalidPassword") {
+          ErrorResponse(res, HttpStatusCode.BAD_REQUEST, "Invalid password");
+          return;
+        }
+      }
+      return ErrorResponse(
+        res,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        "Internal Server Error"
+      );
+    }
+  }
+
+  //googleLogin
+  async googleLogin(req: Request, res: Response): Promise<void> {
+    try {
+      const { credential } = req.body;
+      const jwtToken = credential.credential;
+
+      if (!jwtToken) {
+        const error = new Error("Google credential is required");
+        error.name = "GoogleCredentialIsRequired";
+        throw error;
+      }
+
+      const { accessToken, refreshToken } = await this._userService.googleLogin(
+        jwtToken
+      );
+
+      res
+        .cookie("refresh_token", refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        })
+        .cookie("access_token", accessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          maxAge: 24 * 60 * 60 * 1000, // 1 day
+        });
+      return successResponse(
+        res,
+        HttpStatusCode.OK,
+        "User logged in successfully",
+        { accessToken, refreshToken }
+      );
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.name === "GoogleCredentialIsRequired") {
+          ErrorResponse(
+            res,
+            HttpStatusCode.BAD_REQUEST,
+            "Google credential is required"
+          );
+          return;
+        }
+        if (error.name === "InvalidToken") {
+          ErrorResponse(res, HttpStatusCode.UNAUTHORIZED, "Invalid token");
+          return;
+        }
+        if (error.name === "UserIsBlocked") {
+          ErrorResponse(
+            res,
+            HttpStatusCode.FORBIDDEN,
+            "User is blocked. Please contact support"
+          );
+          return;
+        }
+      }
+    }
+  }
 }
 
-export const userAuthController = new UserAuthController(
-  userAuthService
-);
+export const userAuthController = new UserAuthController(userAuthService);
