@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 import {
   IEmployee,
   IEmplRegData,
@@ -38,28 +38,42 @@ export class EmployeeRepository
     return;
   }
 
-  async findUnassignedEmployee(): Promise<IEmployee | null> {
+  async findEmployeeWithLeastAssignments(): Promise<IEmployee | null> {
     try {
-      return await this.findOne("employee",{ 
-        assigned: false,
+      const employee = await this.findOne("employee", {
         isBlocked: false,
-        isVerified: true
-      });
+        isVerified: true,
+      })
+        .sort({ assignedUsersCount: 1 })
+        .limit(1);
+
+      if (!employee) {
+        return this.findOne("employee", {
+          isBlocked: false,
+        })
+          .sort({ assignedUsersCount: 1 })
+          .limit(1);
+      }
+      console.log(employee, "employeeeeeeeeeeeeeeeeeeee");
+      return employee;
     } catch (error) {
       console.error("Error finding unassigned employee:", error);
       throw error;
     }
   }
 
-  async markEmployeeAsAssigned(employeeId: string): Promise<void> {
+  async markEmployeeAsAssigned(
+    employeeId: string,
+    userId: Types.ObjectId | string
+  ): Promise<IEmployee | null> {
     try {
-      await this.updateById("employee",employeeId, {
-        assigned: true
+      return await this.updateById("employee", employeeId, {
+        $addToSet: { assignedUsers: userId },
+        $inc: { assignedUsersCount: 1 }
       });
     } catch (error) {
       console.error("Error marking employee as assigned:", error);
       throw error;
     }
   }
-
 }

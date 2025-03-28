@@ -63,12 +63,10 @@ export default class CommonBaseRepository<
   ): Promise<TModels[K] | null> {
     const model = this._models[modelName];
     if (!model) throw new Error(`Model ${String(modelName)} not found`);
-
-    return model.findByIdAndUpdate(
-      id,
-      { $set: updateData },
-      { new: true, runValidators: true }
-    );
+    return model.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    });
   }
   // deleteById<K extends keyof TModels>(
   //   modelName: K,

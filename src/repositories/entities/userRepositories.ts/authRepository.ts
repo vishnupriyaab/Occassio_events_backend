@@ -25,7 +25,7 @@ export class UserRepository
   ): Promise<IUser | null> {
     try {
       return this.updateById("user", userId, {
-        assignedEmployee: employeeId,
+        $set: { assignedEmployee: employeeId },
       });
     } catch (error) {
       console.error("Error updating user's assigned employee:", error);

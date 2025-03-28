@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 import { IEmployee } from "../interfaces/entities/employee.entity";
 
 const employeeSchema: Schema = new Schema<IEmployee>({
@@ -25,9 +25,14 @@ const employeeSchema: Schema = new Schema<IEmployee>({
     type: Boolean,
     default: false,
   },
-  assigned:{
-    type: Boolean,
-    default: false,
+  assignedUsers: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: [],
+  }],
+  assignedUsersCount:{
+    type: Number,
+    default: 0
   },
   resetPasswordToken: {
     type: String,

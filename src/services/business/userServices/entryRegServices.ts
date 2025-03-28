@@ -133,7 +133,7 @@ export class EntryRegService implements IEntryRegService {
         phone: entryUser.phone,
       };
       const createdUser = await this._userRepo.createUser(user);
-      console.log(createdUser,"userr")
+      console.log(createdUser, "userr");
 
       if (!createdUser) {
         throw new AppError(
@@ -148,34 +148,40 @@ export class EntryRegService implements IEntryRegService {
       return entryUser;
     } catch (error) {}
   }
+
   async assignEmployeeToUser(user: IUser): Promise<void> {
     try {
-      const unassignedEmployee =
-        await this._employeeRepo.findUnassignedEmployee();
+      const employeeWithLeastAssignments =
+      await this._employeeRepo.findEmployeeWithLeastAssignments();
 
-      if (!unassignedEmployee) {
+      if (!employeeWithLeastAssignments) {
         console.warn(`No unassigned employee found for user: ${user.email}`);
         return;
       }
-      
-      await this._userRepo.updateUserAssignedEmployee(
+
+      const userChange = await this._userRepo.updateUserAssignedEmployee(
         user._id!,
-        unassignedEmployee._id
+        employeeWithLeastAssignments._id
       );
-      
-      await this._employeeRepo.markEmployeeAsAssigned(unassignedEmployee._id!);
-      
+      console.log(userChange,"userrrrrrrrChangeeeeeeeeee")
+
+      const emplChange = await this._employeeRepo.markEmployeeAsAssigned(
+        employeeWithLeastAssignments._id!,
+        user._id!
+      );
+      console.log(emplChange, 'employeeeChangeeee')
+
       const token = this._jwtService.generateAccessToken({
         id: user._id || "",
         role: "user",
       });
       console.log(token, "token");
-      const decode = this._jwtService.verifyAccessToken(token);
-      console.log(decode, "decode");
+      // const decode = this._jwtService.verifyAccessToken(token);
+      // console.log(decode, "decode");
       await this._userRepo.savePasswordResetToken(user._id, token);
 
       await this._emailService.sendEmployeeAssignedEmailToUser(
-        unassignedEmployee.name,
+        employeeWithLeastAssignments.name,
         user.name,
         user.email,
         token
@@ -189,6 +195,49 @@ export class EntryRegService implements IEntryRegService {
       );
     }
   }
+  // async assignEmployeeToUser(user: IUser): Promise<void> {
+  //   try {
+  //     // Find the employee with the least number of assigned users
+  //     const employeeWithLeastAssignments =
+  //       await this._employeeRepo.findEmployeeWithLeastAssignments();
+
+  //     if (!employeeWithLeastAssignments) {
+  //       console.warn(`No unassigned employee found for user: ${user.email}`);
+  //       return;
+  //     }
+
+  //     await this._userRepo.updateUserAssignedEmployee(
+  //       user._id!,
+  //       employeeWithLeastAssignments._id
+  //     );
+
+  //     await this._employeeRepo.markEmployeeAsAssigned(
+  //       employeeWithLeastAssignments._id!,
+  //       user._id!
+  //     );
+
+  //     const token = this._jwtService.generateAccessToken({
+  //       id: user._id || "",
+  //       role: "user",
+  //     });
+
+  //     await this._userRepo.savePasswordResetToken(user._id, token);
+
+  //     await this._emailService.sendEmployeeAssignedEmailToUser(
+  //       employeeWithLeastAssignments.name,
+  //       user.name,
+  //       user.email,
+  //       token
+  //     );
+  //   } catch (error) {
+  //     console.error(`Error assigning employee to user: ${error}`);
+  //     throw new AppError(
+  //       "Failed to assign employee",
+  //       HttpStatusCode.INTERNAL_SERVER_ERROR,
+  //       "EmployeeAssignmentFailed"
+  //     );
+  //   }
+  // }
 }
 
 const emailConfig = {
