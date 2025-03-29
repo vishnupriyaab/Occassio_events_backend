@@ -17,4 +17,10 @@ export default interface IEmployeeRepository{
         totalPages: number;
         currentPage: number;
       }>
+      findByEmployeeId(id: string): Promise<IEmployee | null>
+      updateEmployee(
+        id: string,
+        updatedData: Partial<IEmployee>
+      ): Promise<IEmployee | null>
+      deleteEmployee(id: string): Promise<void>
 }

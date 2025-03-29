@@ -68,15 +68,17 @@ export default class CommonBaseRepository<
       runValidators: true,
     });
   }
-  // deleteById<K extends keyof TModels>(
-  //   modelName: K,
-  //   id: string
-  // ): Promise<TModels[K] | null> {
-  //   const model = this._models[modelName];
-  //   if (!model) throw new Error(`Model ${String(modelName)} not found`);
 
-  //   return model.findByIdAndDelete(id).exec();
-  // }
+  deleteById<K extends keyof TModels>(
+    modelName: K,
+    id: string
+  ): Promise<TModels[K] | null> {
+    const model = this._models[modelName];
+    if (!model) throw new Error(`Model ${String(modelName)} not found`);
+
+    return model.findByIdAndDelete(id).exec();
+  }
+  
   findOneAndUpdate<K extends keyof TModels>(
     modelName: K,
     filter: FilterQuery<TModels[K]>,

@@ -19,8 +19,11 @@ adminRouter.post("/register",adminAuthController.adminRegister.bind(adminAuthCon
 // Protected routes (middleware applied)
 adminRouter.use(authMiddleware.authenticateToken.bind(authMiddleware));
 adminRouter.post( "/logOut", adminAuthController.logOut.bind(adminAuthController));
-
-adminRouter.post('/employees', adminEmplController.addEmployee.bind(adminEmplController)).get("/employees", adminEmplController.getEmployee.bind(adminEmplController))
+adminRouter
+.get("/employees", adminEmplController.getEmployee.bind(adminEmplController))
+.post('/employees', adminEmplController.addEmployee.bind(adminEmplController))
+.patch("/employees/:id", adminEmplController.blockEmployee.bind(adminEmplController))
+.delete("/employees/:id",adminEmplController.deleteEmployee.bind(adminEmplController));
 
 
 export default adminRouter;

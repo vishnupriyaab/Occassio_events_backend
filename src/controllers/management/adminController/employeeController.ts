@@ -103,6 +103,58 @@ export class EmployeeController implements IEmployeeController {
     }
   }
 
+  async blockEmployee(req: Request, res: Response): Promise<void> {
+    try {
+      const employeeId = req.params.id;
+      console.log(employeeId, "employeeId");
+      const result = await this._emplService.blockEmployee(employeeId);
+
+      const response = result?.isBlocked
+        ? "Employee blocked successfully"
+        : "Employee unblocked successfully";
+
+      return successResponse(res, HttpStatusCode.OK, response, result);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.name === "EmployeeNotFound") {
+          ErrorResponse(res, HttpStatusCode.NOT_FOUND, "Employee not found");
+          return;
+        }
+      }
+      return ErrorResponse(
+        res,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        "Internal Server Error"
+      );
+    }
+  }
+
+  //deleteEmployee
+  async deleteEmployee(req: Request, res: Response): Promise<void> {
+    try {
+      const employeeId = req.params.id;
+      await this._emplService.deleteEmployee(employeeId);
+
+      return successResponse(
+        res,
+        HttpStatusCode.OK,
+        "Employee successfully deleted"
+      );
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.name === "EmployeeNotFound") {
+          ErrorResponse(res, HttpStatusCode.NOT_FOUND, "Employee not found");
+          return;
+        }
+      }
+      return ErrorResponse(
+        res,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        "Internal Server Error"
+      );
+    }
+  }
+
 }
 
 export const adminEmplController = new EmployeeController(adminEmplServices);

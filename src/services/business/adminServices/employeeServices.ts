@@ -84,6 +84,43 @@ export class EmployeeService implements IEmployeeService {
       throw error;
     }
   }
+
+   //blockEmployee
+   async blockEmployee(employeeId: string): Promise<IEmployee | null> {
+    try {
+      const employee = await this._emplRepository.findByEmployeeId(employeeId);
+      if (!employee) {
+        const error = new Error('Employee not found');
+        error.name = 'EmployeeNotFound'
+        throw error;
+      }
+
+      employee.isBlocked = !employee.isBlocked;
+      return await this._emplRepository.updateEmployee(employeeId, {
+        isBlocked: employee.isBlocked,
+      });
+    } catch (error: unknown) {
+      throw error;
+    }
+  }
+
+  //DeleteEmployee
+  async deleteEmployee(employeeId: string): Promise<void> {
+    try {
+      const employee = await this._emplRepository.findByEmployeeId(employeeId);
+      if (!employee) {
+        const error = new Error('employee not found');
+        error.name = 'employeeNotFound'
+        throw error;
+      }
+
+      await this._emplRepository.deleteEmployee(employeeId);
+      return;
+    } catch (error:unknown) {
+      throw error;
+    }
+  }
+
 }
 
 const emailConfig = {

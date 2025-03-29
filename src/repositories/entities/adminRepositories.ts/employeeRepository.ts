@@ -69,7 +69,7 @@ export class EmployeeRepository
     try {
       return await this.updateById("employee", employeeId, {
         $addToSet: { assignedUsers: userId },
-        $inc: { assignedUsersCount: 1 }
+        $inc: { assignedUsersCount: 1 },
       });
     } catch (error) {
       console.error("Error marking employee as assigned:", error);
@@ -119,7 +119,11 @@ export class EmployeeRepository
       const skip = Math.max(0, (page - 1) * limit);
 
       const [employees, totalEmployees] = await Promise.all([
-        this.findMany("employee", query, { skip, limit, sort: { createdAt: -1 } }),
+        this.findMany("employee", query, {
+          skip,
+          limit,
+          sort: { createdAt: -1 },
+        }),
         this.count("employee", query),
       ]);
 
@@ -136,4 +140,18 @@ export class EmployeeRepository
     }
   }
 
+  async findByEmployeeId(id: string): Promise<IEmployee | null> {
+    return this.findById("employee", id).exec();
+  }
+
+  async updateEmployee(
+    id: string,
+    updatedData: Partial<IEmployee>
+  ): Promise<IEmployee | null> {
+    return this.updateById("employee", id, updatedData);
+  }
+
+  async deleteEmployee(id: string): Promise<void> {
+    await this.deleteById("employee", id);
+  }
 }

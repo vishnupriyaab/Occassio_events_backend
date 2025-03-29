@@ -13,4 +13,6 @@ export default interface IEmployeeService{
         totalPages: number;
         currentPage: number;
       }>
+      blockEmployee(employeeId: string): Promise<IEmployee | null>
+      deleteEmployee(employeeId: string): Promise<void>
 }
