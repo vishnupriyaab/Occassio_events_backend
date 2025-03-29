@@ -1,6 +1,6 @@
 import { EmailService } from "../../../integration/emailServices";
 import { JWTService } from "../../../integration/jwtServices";
-import { IEmplRegData } from "../../../interfaces/entities/employee.entity";
+import { IEmployee, IEmplRegData } from "../../../interfaces/entities/employee.entity";
 import { IEmailService } from "../../../interfaces/integration/IEmail";
 import { IJWTService } from "../../../interfaces/integration/IJwt";
 import IEmployeeRepository from "../../../interfaces/repository/admin/employee.repository";
@@ -23,6 +23,35 @@ export class EmployeeService implements IEmployeeService {
     this._emplRepository = employeeRepo;
     this._emailService = new EmailService(emailConfig);
     this._jwtService = jwtService;
+  }
+
+  async fetchEmployee(
+    searchTerm: string,
+    filterStatus: string | undefined,
+    page: number,
+    limit: number
+  ): Promise<{
+    employees: IEmployee[];
+    totalEmployees: number;
+    totalPages: number;
+    currentPage: number;
+  }> {
+    try {
+      if (page < 1 || limit < 1) {
+        const error = new Error("Invalid Page Or Limit");
+        error.name = "InvalidPageOrLimit";
+        throw error;
+      }
+
+      return await this._emplRepository.fetchEmployee(
+        searchTerm,
+        filterStatus,
+        page,
+        limit
+      );
+    } catch (error) {
+      throw error;
+    }
   }
 
   async addEmployee(employeeData: IEmplRegData): Promise<IEmplRegData | null> {

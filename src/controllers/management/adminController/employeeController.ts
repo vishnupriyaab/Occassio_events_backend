@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import IEmployeeController from "../../../interfaces/controller/admin/employee.controller";
 import IEmployeeService from "../../../interfaces/services/admin/employee.services";
 import { adminEmplServices } from "../../../services/business/adminServices/employeeServices";
+import { ErrorResponse, successResponse } from "../../../integration/responseHandler";
+import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 
 export class EmployeeController implements IEmployeeController {
   private _emplService: IEmployeeService;
@@ -9,10 +11,47 @@ export class EmployeeController implements IEmployeeController {
   constructor(emplService: IEmployeeService) {
     this._emplService = emplService;
   }
+
+  async getEmployee(req:Request,res:Response):Promise<void>{
+    try {
+      const searchTerm = (req.query.searchTerm as string | undefined) || "";
+      const filterStatus = req.query.filterStatus as string | undefined;
+      
+      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+      const limit = req.query.limit
+      ? parseInt(req.query.limit as string, 10)
+      : 10;
+      console.log(searchTerm,filterStatus,page, limit, "qwertyuio");
+
+      const result = await this._emplService.fetchEmployee(
+        searchTerm,
+        filterStatus,
+        page,
+        limit
+      );
+        return successResponse(
+        res,
+        HttpStatusCode.OK,
+        "Users fetched successfully",
+        result
+      );
+      
+    } catch (error) {
+      console.log(error, "errorrrrrr");
+      if (error instanceof Error) {
+        if (error.name === "InvalidPageOrLimit") {
+          ErrorResponse(res, 401, "InvalidPageOrLimit");
+          return ;
+        }
+      }
+      ErrorResponse(res, 500, 'Internal Server Error')
+      return;
+    }
+  }
+
   async addEmployee(req: Request, res: Response): Promise<void> {
     try {
       const { name, email, phone } = req.body;
-      console.log(name, email, phone, "1111111111111111");
       if (!name || !email || !phone) {
         res.status(400).json({
           success: false,
@@ -23,7 +62,6 @@ export class EmployeeController implements IEmployeeController {
         return;
       }
 
-      // Validate email format
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         res.status(400).json({

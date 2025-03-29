@@ -91,4 +91,29 @@ export default class CommonBaseRepository<
       { new: true, runValidators: true }
     );
   }
+
+  findMany<K extends keyof TModels>(
+    modelName: K,
+    query: FilterQuery<TModels[K]>,
+    options?: { skip?: number; limit?: number; sort?: Record<string, 1 | -1> }
+  ): Promise<TModels[K][]> {
+    const model = this._models[modelName];
+    if (!model) throw new Error(`Model ${String(modelName)} not found`);
+
+    return model
+      .find(query)
+      .skip(options?.skip ?? 0)
+      .limit(options?.limit ?? 0)
+      .sort(options?.sort ?? {});
+  }
+
+  count<K extends keyof TModels>(
+    modelName: K,
+    query: FilterQuery<TModels[K]>
+  ): Promise<number> {
+    const model = this._models[modelName];
+    if (!model) throw new Error(`Model ${String(modelName)} not found`);
+
+    return model.countDocuments(query);
+  }
 }

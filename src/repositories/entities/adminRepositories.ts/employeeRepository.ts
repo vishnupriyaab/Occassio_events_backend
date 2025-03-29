@@ -1,4 +1,4 @@
-import { Document, Types } from "mongoose";
+import { Document, FilterQuery, Types } from "mongoose";
 import {
   IEmployee,
   IEmplRegData,
@@ -76,4 +76,64 @@ export class EmployeeRepository
       throw error;
     }
   }
+
+  async fetchEmployee(
+    searchTerm: string,
+    filterStatus: string | undefined,
+    page: number,
+    limit: number
+  ): Promise<{
+    employees: IEmployee[];
+    totalEmployees: number;
+    totalPages: number;
+    currentPage: number;
+  }> {
+    try {
+      console.log(searchTerm, filterStatus, page, limit, "inRepository");
+
+      const query: FilterQuery<IEmployee> = {};
+
+      if (searchTerm?.trim()) {
+        query.name = { $regex: searchTerm.trim(), $options: "i" };
+      }
+
+      let status = filterStatus;
+      try {
+        if (
+          filterStatus &&
+          typeof filterStatus === "string" &&
+          filterStatus.startsWith("{")
+        ) {
+          const parsedFilter = JSON.parse(filterStatus);
+          status = parsedFilter.status;
+        }
+      } catch (e) {
+        console.error("Error parsing filterStatus:", e);
+        status = "all";
+      }
+
+      if (status && status !== "all") {
+        query.isBlocked = status === "blocked";
+      }
+
+      const skip = Math.max(0, (page - 1) * limit);
+
+      const [employees, totalEmployees] = await Promise.all([
+        this.findMany("employee", query, { skip, limit, sort: { createdAt: -1 } }),
+        this.count("employee", query),
+      ]);
+
+      const totalPages = Math.max(1, Math.ceil(totalEmployees / limit));
+
+      return {
+        employees,
+        totalEmployees,
+        totalPages: totalPages,
+        currentPage: page,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }

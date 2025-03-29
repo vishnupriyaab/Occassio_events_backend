@@ -6,4 +6,15 @@ export default interface IEmployeeRepository{
     savePasswordResetToken(employeeId: string | undefined, token: string): Promise<void>;
     findEmployeeWithLeastAssignments(): Promise<IEmployee | null>;
     markEmployeeAsAssigned(employeeId: string, userId: Types.ObjectId| string): Promise<IEmployee | null>;
+    fetchEmployee(
+        searchTerm: string,
+        filterStatus: string | undefined,
+        page: number,
+        limit: number
+      ): Promise<{
+        employees: IEmployee[];
+        totalEmployees: number;
+        totalPages: number;
+        currentPage: number;
+      }>
 }
