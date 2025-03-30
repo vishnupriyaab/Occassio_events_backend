@@ -4,6 +4,7 @@ import { IJWTService } from "../interfaces/integration/IJwt";
 import { JWTService } from "../integration/jwtServices";
 import AuthMiddleware from "../middleware/authenticateToken";
 import { adminEmplController } from "../controllers/management/adminController/employeeController";
+import { adminUserController } from "../controllers/management/adminController/userController";
 
 const adminRouter = Router();
 const iJwtServices: IJWTService = new JWTService();
@@ -19,11 +20,17 @@ adminRouter.post("/register",adminAuthController.adminRegister.bind(adminAuthCon
 // Protected routes (middleware applied)
 adminRouter.use(authMiddleware.authenticateToken.bind(authMiddleware));
 adminRouter.post( "/logOut", adminAuthController.logOut.bind(adminAuthController));
+
+/////////////////////////////////////////////////        Employee - Management          /////////////////////////////////////////////////////////////
 adminRouter
 .get("/employees", adminEmplController.getEmployee.bind(adminEmplController))
 .post('/employees', adminEmplController.addEmployee.bind(adminEmplController))
 .patch("/employees/:id", adminEmplController.blockEmployee.bind(adminEmplController))
 .delete("/employees/:id",adminEmplController.deleteEmployee.bind(adminEmplController));
 
+
+/////////////////////////////////////////////////        Client - Management          /////////////////////////////////////////////////////////////
+adminRouter.get("/clients", adminUserController.getUsers.bind(adminUserController))
+.patch("/clients/:id", adminUserController.blockUser.bind(adminUserController))
 
 export default adminRouter;
