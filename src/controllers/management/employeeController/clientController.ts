@@ -28,12 +28,8 @@ export class ClientController implements IClientController {
       });
     } catch (error: unknown) {
       console.error("Error in fetchClients controller:", error);
-
-      
     }
   }
 }
 
-
-
-export const emplClientController = new ClientController(emplClientService)
+export const emplClientController = new ClientController(emplClientService);

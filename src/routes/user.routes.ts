@@ -6,6 +6,7 @@ import { JWTService } from "../integration/jwtServices";
 import AuthMiddleware from "../middleware/authenticateToken";
 import { userEntryRegController } from "../controllers/management/userController/entryRegController";
 import { userAuthController } from "../controllers/management/userController/authController";
+import { subClientController } from "../controllers/management/userController/subscribtionClientController";
 
 const userRouter = Router();
 const iJwtServices: IJWTService = new JWTService();
@@ -18,5 +19,10 @@ userRouter
   .post("/forgotPassword", userAuthController.forgotPassword.bind(userAuthController))
   .post("/login", userAuthController.userLogin.bind(userAuthController))
   .post("/google-login", userAuthController.googleLogin.bind(userAuthController))
+  
+  // Protected routes (middleware applied)
+userRouter.use(authMiddleware.authenticateToken.bind(authMiddleware));
+
+userRouter.get("/sub-details", subClientController.fetchSubClientData.bind(subClientController));
 
 export default userRouter;
