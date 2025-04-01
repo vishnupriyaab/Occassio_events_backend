@@ -5,6 +5,7 @@ import AuthMiddleware from "../middleware/authenticateToken";
 import { emplAuthController } from "../controllers/management/employeeController/authConrtoller";
 import { emplProfileController } from "../controllers/management/employeeController/profileController";
 import { upload } from "../middleware/claudinaryUpload";
+import { emplClientController } from "../controllers/management/employeeController/clientController";
 
 const employeeRouter = Router()
 const iJwtServices: IJWTService = new JWTService();
@@ -23,5 +24,6 @@ employeeRouter
     .get("/showProfile", emplProfileController.showProfile.bind(emplProfileController))
     .put("/updateProfile", emplProfileController.updateProfile.bind(emplProfileController))
     .put("/profileImage",upload.single("img"), emplProfileController.updateProfileImage.bind(emplProfileController))
+    .get("/fetchClient", emplClientController.fetchClients.bind(emplClientController))
 
 export default employeeRouter;

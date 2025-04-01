@@ -5,6 +5,7 @@ export interface IUser {
   name: string;
   password?: string;
   email: string;
+  entryId: string;
   phone: number;
   isVerified?: boolean;
   isBlocked?: boolean;

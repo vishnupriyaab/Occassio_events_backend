@@ -127,10 +127,12 @@ export class EntryRegService implements IEntryRegService {
           "EntryUserIsNotFound"
         );
       }
+      console.log(entryId,"entryId");
       const user: IUser = {
         name: entryUser.name,
         email: entryUser.email,
         phone: entryUser.phone,
+        entryId: entryId,
       };
       const createdUser = await this._userRepo.createUser(user);
       console.log(createdUser, "userr");
