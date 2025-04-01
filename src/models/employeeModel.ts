@@ -21,6 +21,9 @@ const employeeSchema: Schema = new Schema<IEmployee>({
     type: Boolean,
     default: false,
   },
+  imageUrl:{
+    type: String,
+  },
   isVerified:{
     type: Boolean,
     default: false,

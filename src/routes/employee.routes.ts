@@ -3,10 +3,12 @@ import { IJWTService } from "../interfaces/integration/IJwt";
 import { JWTService } from "../integration/jwtServices";
 import AuthMiddleware from "../middleware/authenticateToken";
 import { emplAuthController } from "../controllers/management/employeeController/authConrtoller";
+import { emplProfileController } from "../controllers/management/employeeController/profileController";
+import { upload } from "../middleware/claudinaryUpload";
 
 const employeeRouter = Router()
-// const iJwtServices: IJWTService = new JWTService();
-// const authMiddleware = new AuthMiddleware("employee", iJwtServices);
+const iJwtServices: IJWTService = new JWTService();
+const authMiddleware = new AuthMiddleware("employee", iJwtServices);
 
 //private - routes
 employeeRouter
@@ -14,7 +16,12 @@ employeeRouter
     .post( "/forgotPassword", emplAuthController.forgotPassword.bind(emplAuthController))
     .post( "/resetPassword", emplAuthController.resetPassword.bind(emplAuthController));
 
-// // Protected routes (middleware applied)
-// employeeRouter.use(authMiddleware.authenticateToken.bind(authMiddleware));
+// Protected routes (middleware applied)
+employeeRouter.use(authMiddleware.authenticateToken.bind(authMiddleware));
+
+employeeRouter
+    .get("/showProfile", emplProfileController.showProfile.bind(emplProfileController))
+    .put("/updateProfile", emplProfileController.updateProfile.bind(emplProfileController))
+    .put("/profileImage",upload.single("img"), emplProfileController.updateProfileImage.bind(emplProfileController))
 
 export default employeeRouter;

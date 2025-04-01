@@ -5,12 +5,13 @@ export interface IEmployee {
   name: string;
   email: string;
   phone: string;
-  password: string;
+  password?: string;
   assignedUsers: Types.ObjectId[]
   assignedUsersCount:number
   resetPasswordToken: string;
   isVerified: boolean;
   isBlocked: boolean;
+  imageUrl: string;
 }
 
 export interface IEmplRegData {

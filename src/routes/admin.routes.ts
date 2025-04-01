@@ -11,10 +11,7 @@ const iJwtServices: IJWTService = new JWTService();
 const authMiddleware = new AuthMiddleware("admin", iJwtServices);
 
 //private - routes
-adminRouter.post(
-  "/login",
-  adminAuthController.adminLogin.bind(adminAuthController)
-);
+adminRouter.post( "/login", adminAuthController.adminLogin.bind(adminAuthController))
 adminRouter.post("/register",adminAuthController.adminRegister.bind(adminAuthController))
 
 // Protected routes (middleware applied)
@@ -30,7 +27,8 @@ adminRouter
 
 
 /////////////////////////////////////////////////        Client - Management          /////////////////////////////////////////////////////////////
-adminRouter.get("/clients", adminUserController.getUsers.bind(adminUserController))
+adminRouter
+.get("/clients", adminUserController.getUsers.bind(adminUserController))
 .patch("/clients/:id", adminUserController.blockUser.bind(adminUserController))
 
-export default adminRouter;
+export default adminRouter; 
