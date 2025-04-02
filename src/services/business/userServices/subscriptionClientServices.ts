@@ -1,6 +1,8 @@
+import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import { IClientData } from "../../../interfaces/entities/user.entity";
 import ISubClientRepository from "../../../interfaces/repository/user/subscription.client.repository";
 import ISubClientService from "../../../interfaces/services/user/subscription.client.services";
+import { AppError } from "../../../middleware/errorHandling";
 import { SubClientRepository } from "../../../repositories/entities/userRepositories.ts/subscriptionClientRepository";
 
 export class SubClientService implements ISubClientService {
@@ -12,19 +14,27 @@ export class SubClientService implements ISubClientService {
     try {
       const user = await this._subClientRepository.findUserById(clientId);
       if (!user) {
-        throw new Error("User not found");
+        throw new AppError(
+          "User not found",
+          HttpStatusCode.NOT_FOUND,
+          "UserNotFound"
+        );
       }
-
-      
-      const clientData = await this._subClientRepository.getClientData(clientId);
-      
+      const clientData = await this._subClientRepository.getClientData(
+        clientId
+      );
       if (!clientData) {
-        throw new Error("Client data not found");
+        throw new AppError(
+          "Client data not found",
+          HttpStatusCode.NOT_FOUND,
+          "ClientDataNotFound"
+        );
       }
-      
-      return clientData;
 
-    } catch (error) {}
+      return clientData;
+    } catch (error: unknown) {
+      throw error;
+    }
   }
 }
 

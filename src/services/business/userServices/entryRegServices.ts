@@ -44,7 +44,7 @@ export class EntryRegService implements IEntryRegService {
   ): Promise<IEntryRegFormData | null> {
     try {
       return await this._entryRegRepo.createEntryReg(data);
-    } catch (error) {
+    } catch (error: unknown) {
       throw error;
     }
   }
@@ -82,9 +82,9 @@ export class EntryRegService implements IEntryRegService {
         );
       }
       return session.url;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error creating payment link:", error);
-      throw new Error("Failed to generate payment link");
+      throw error;
     }
   }
 
@@ -93,7 +93,7 @@ export class EntryRegService implements IEntryRegService {
       await this._emailService.sendPaymentLinkEmail(email, `${paymentLink}`);
     } catch (error) {
       console.error("Error sending payment email:", error);
-      throw new Error("Failed to send payment email");
+      throw error;
     }
   }
 
@@ -111,7 +111,7 @@ export class EntryRegService implements IEntryRegService {
       return updatedEntry;
     } catch (error) {
       console.error("Error updating payment status:", error);
-      throw new Error("Failed to update payment status");
+      throw error;
     }
   }
   async createUserDb(
@@ -127,7 +127,7 @@ export class EntryRegService implements IEntryRegService {
           "EntryUserIsNotFound"
         );
       }
-      console.log(entryId,"entryId");
+      console.log(entryId, "entryId");
       const user: IUser = {
         name: entryUser.name,
         email: entryUser.email,
@@ -154,7 +154,7 @@ export class EntryRegService implements IEntryRegService {
   async assignEmployeeToUser(user: IUser): Promise<void> {
     try {
       const employeeWithLeastAssignments =
-      await this._employeeRepo.findEmployeeWithLeastAssignments();
+        await this._employeeRepo.findEmployeeWithLeastAssignments();
 
       if (!employeeWithLeastAssignments) {
         console.warn(`No unassigned employee found for user: ${user.email}`);
@@ -165,13 +165,13 @@ export class EntryRegService implements IEntryRegService {
         user._id!,
         employeeWithLeastAssignments._id
       );
-      console.log(userChange,"userrrrrrrrChangeeeeeeeeee")
+      console.log(userChange, "userrrrrrrrChangeeeeeeeeee");
 
       const emplChange = await this._employeeRepo.markEmployeeAsAssigned(
         employeeWithLeastAssignments._id!,
         user._id!
       );
-      console.log(emplChange, 'employeeeChangeeee')
+      console.log(emplChange, "employeeeChangeeee");
 
       const token = this._jwtService.generateAccessToken({
         id: user._id || "",
@@ -188,13 +188,9 @@ export class EntryRegService implements IEntryRegService {
         user.email,
         token
       );
-    } catch (error) {
+    } catch (error:unknown) {
       console.error(`Error assigning employee to user: ${error}`);
-      throw new AppError(
-        "Failed to assign employee",
-        HttpStatusCode.INTERNAL_SERVER_ERROR,
-        "EmployeeAssignmentFailed"
-      );
+      throw error;
     }
   }
 }

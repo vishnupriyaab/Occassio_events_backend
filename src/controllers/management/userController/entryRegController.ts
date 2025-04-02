@@ -125,8 +125,21 @@ export class EntryRegController implements IEntryRegController {
 
       res.status(200).json({ received: true });
     } catch (error) {
-      console.error("Error handling webhook:", error);
-      res.status(500).send("Server error");
+      if(error instanceof Error){
+        if(error.name === 'EntryUserIsNotFound'){
+          ErrorResponse(res, HttpStatusCode.NOT_FOUND, 'Entry User is not found')
+          return;
+        }
+        if(error.name === 'UserCreationFailed'){
+          ErrorResponse(res, HttpStatusCode.INTERNAL_SERVER_ERROR, 'Failed to create user')
+          return;
+        }
+      }
+      return ErrorResponse(
+        res,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        "Entry registration failed. Please try again."
+      );
     }
   }
 }

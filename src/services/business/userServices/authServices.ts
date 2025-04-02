@@ -13,6 +13,8 @@ import { UserRepository } from "../../../repositories/entities/userRepositories.
 import bcrypt from "bcrypt";
 import { ICloudinaryService } from "../../../interfaces/integration/IClaudinary";
 import { CloudinaryService } from "../../../integration/claudinaryService";
+import { AppError } from "../../../middleware/errorHandling";
+import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 
 export class UserAuthServices implements IUserAuthService {
   private _jwtService: IJWTService;
@@ -40,60 +42,7 @@ export class UserAuthServices implements IUserAuthService {
     this._googleAuthService = googleAuthService;
     this._cloudinaryService = cloudinaryService;
   }
-  async resetPassword(token: string, newPassword: string): Promise<void> {
-    try {
-      const decoded = this._jwtService.verifyAccessToken(token);
 
-      if (!decoded.id) {
-        const error = new Error("Invalid reset token");
-        error.name = "InvalidResetToken";
-        throw error;
-      }
-
-      const user = await this._userRepo.findUserById(decoded.id);
-      if (!user) {
-        const error = new Error("User not found");
-        error.name = "UserNotFound";
-        throw error;
-      }
-
-      const storedToken = await this._userRepo.getPasswordResetToken(
-        decoded.id
-      );
-      if (!storedToken || storedToken !== token) {
-        const error = new Error("Invalid or expired reset token");
-        error.name = "InvalidOrExpiredResetToken";
-        throw error;
-      }
-
-      const hashedPassword = await this._cryptoService.hashData(newPassword);
-      await this._userRepo.updatePassword(decoded.id, hashedPassword);
-      await this._userRepo.clearPasswordResetToken(decoded.id);
-    } catch (error) {
-      throw error;
-    }
-  }
-  async forgotPassword(email: string): Promise<void> {
-    try {
-      const user: IUser | null = await this._userRepo.findUserByEmail(email);
-      if (!user) {
-        console.log("qwert");
-        const error = new Error("User not found!");
-        error.name = "UserNotFound";
-        throw error;
-      }
-
-      const token = this._jwtService.generateAccessToken({
-        id: user._id || "",
-        role: "user",
-      });
-      await this._userRepo.savePasswordResetToken(user._id, token);
-      const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
-      await this._emailService.sendPasswordResetEmail(email, resetLink);
-    } catch (error) {
-      throw error;
-    }
-  }
   async loginUser(
     email: string,
     password: string
@@ -102,9 +51,11 @@ export class UserAuthServices implements IUserAuthService {
       const user = await this._userRepo.findUserByEmail(email);
 
       if (!user) {
-        const error = new Error("User not found");
-        error.name = "UserNotFound";
-        throw error;
+        throw new AppError(
+          "User not found",
+          HttpStatusCode.NOT_FOUND,
+          "UserNotFound"
+        );
       }
 
       if (!user.isVerified) {
@@ -112,18 +63,22 @@ export class UserAuthServices implements IUserAuthService {
       }
 
       if (user.isBlocked) {
-        const error = new Error("Your account is blocked");
-        error.name = "AccountIsBlocked";
-        throw error;
+        throw new AppError(
+          "Your account is blocked",
+          HttpStatusCode.BAD_REQUEST,
+          "AccountIsBlocked"
+        );
       }
       const isPasswordValid = await bcrypt.compare(
         password,
         user.password as string
       );
       if (!isPasswordValid) {
-        const error = new Error("Invalid password");
-        error.name = "InvalidPassword";
-        throw error;
+        throw new AppError(
+          "Invalid password",
+          HttpStatusCode.BAD_REQUEST,
+          "InvalidPassword"
+        );
       }
       const payload = { id: user._id || "", role: "user" };
       const accessToken = this._jwtService.generateAccessToken(payload);
@@ -141,9 +96,11 @@ export class UserAuthServices implements IUserAuthService {
       console.log(token, "qwertyuiop");
       const tokenPayload = await this._googleAuthService.verifyIdToken(token);
       if (!tokenPayload) {
-        const error = new Error("Invalid token");
-        error.name = "InvalidToken";
-        throw error;
+        throw new AppError(
+          "Invalid token",
+          HttpStatusCode.UNAUTHORIZED,
+          "InvalidToken"
+        );
       }
 
       const googleImageUrl = tokenPayload.picture as string;
@@ -166,9 +123,11 @@ export class UserAuthServices implements IUserAuthService {
       console.log(existingUser, "user in userUseCase");
       if (existingUser) {
         if (existingUser.isBlocked) {
-          const error = new Error("User is blocked. Please contact support");
-          error.name = "UserIsBlocked";
-          throw error;
+          throw new AppError(
+            "User is blocked. Please contact support",
+            HttpStatusCode.FORBIDDEN,
+            "UserIsBlocked"
+          );
         }
       }
 
@@ -192,6 +151,69 @@ export class UserAuthServices implements IUserAuthService {
       console.log("Generated Tokens:", { accessToken, refreshToken });
 
       return { accessToken, refreshToken };
+    } catch (error: unknown) {
+      throw error;
+    }
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    try {
+      const decoded = this._jwtService.verifyAccessToken(token);
+
+      if (!decoded.id) {
+        throw new AppError(
+          "Invalid reset token",
+          HttpStatusCode.BAD_REQUEST,
+          "InvalidResetToken"
+        );
+      }
+
+      const user = await this._userRepo.findUserById(decoded.id);
+      if (!user) {
+        throw new AppError(
+          "User not found",
+          HttpStatusCode.NOT_FOUND,
+          "UserNotFound"
+        );
+      }
+
+      const storedToken = await this._userRepo.getPasswordResetToken(
+        decoded.id
+      );
+      if (!storedToken || storedToken !== token) {
+        throw new AppError(
+          "Invalid or expired reset token",
+          HttpStatusCode.BAD_REQUEST,
+          "InvalidOrExpiredResetToken"
+        );
+      }
+
+      const hashedPassword = await this._cryptoService.hashData(newPassword);
+      await this._userRepo.updatePassword(decoded.id, hashedPassword);
+      await this._userRepo.clearPasswordResetToken(decoded.id);
+    } catch (error) {
+      throw error;
+    }
+  }
+  async forgotPassword(email: string): Promise<void> {
+    try {
+      const user: IUser | null = await this._userRepo.findUserByEmail(email);
+      if (!user) {
+        console.log("qwert");
+        throw new AppError(
+          "User not found",
+          HttpStatusCode.NOT_FOUND,
+          "UserNotFound"
+        );
+      }
+
+      const token = this._jwtService.generateAccessToken({
+        id: user._id || "",
+        role: "user",
+      });
+      await this._userRepo.savePasswordResetToken(user._id, token);
+      const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+      await this._emailService.sendPasswordResetEmail(email, resetLink);
     } catch (error: unknown) {
       throw error;
     }
