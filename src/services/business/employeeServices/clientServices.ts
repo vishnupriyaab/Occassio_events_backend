@@ -1,6 +1,8 @@
+import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import { IClientData } from "../../../interfaces/entities/user.entity";
 import IClientRepository from "../../../interfaces/repository/employee/client.repository";
 import IClientService from "../../../interfaces/services/employee/client.services";
+import { AppError } from "../../../middleware/errorHandling";
 import { ClientRepository } from "../../../repositories/entities/employeeRepository/clientRepository";
 
 export class ClientService implements IClientService {
@@ -14,7 +16,11 @@ export class ClientService implements IClientService {
       const employee = await this._clientRepo.findEmployeeById(employeeId);
 
       if (!employee) {
-        throw new Error("Employee not found");
+        throw new AppError(
+          "Employee not found",
+          HttpStatusCode.NOT_FOUND,
+          "EmployeeNotFound"
+        );
       }
       const assignedUserIds = employee.assignedUsers;
       const users = await this._clientRepo.findAssignedUsers(assignedUserIds);
@@ -29,7 +35,11 @@ export class ClientService implements IClientService {
           }
 
           if (!user._id) {
-            throw new Error("User ID is undefined");
+            throw new AppError(
+              "UserId not found",
+              HttpStatusCode.NOT_FOUND,
+              "UserIdNotFound"
+            );
           }
 
           return {

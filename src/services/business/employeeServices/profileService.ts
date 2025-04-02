@@ -1,8 +1,10 @@
+import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import { CryptoService } from "../../../integration/cryptoServices";
 import { IEmployee } from "../../../interfaces/entities/employee.entity";
 import ICryptoService from "../../../interfaces/integration/ICrypto";
 import IEmplProfileRepository from "../../../interfaces/repository/employee/profile.repository";
 import IEmplProfileService from "../../../interfaces/services/employee/profile.services";
+import { AppError } from "../../../middleware/errorHandling";
 import { EmplProfileRepository } from "../../../repositories/entities/employeeRepository/profileReposiory";
 
 export class EmplProfileService implements IEmplProfileService {
@@ -20,9 +22,11 @@ export class EmplProfileService implements IEmplProfileService {
     try {
       const employee = await this._emplRepository.findEmplById(employeeId);
       if (!employee) {
-        const error = new Error("employee not found");
-        error.name = "employeeNotFound";
-        throw error;
+        throw new AppError(
+          "Employee not found",
+          HttpStatusCode.BAD_REQUEST,
+          "EmployeeNotFound"
+        );
       }
       const employeeProfile = {
         _id: employee._id,
@@ -37,7 +41,7 @@ export class EmplProfileService implements IEmplProfileService {
         isBlocked: employee.isBlocked,
       };
       return employeeProfile;
-    } catch (error) {
+    } catch (error: unknown) {
       throw error;
     }
   }
@@ -57,9 +61,11 @@ export class EmplProfileService implements IEmplProfileService {
           existingEmployee &&
           existingEmployee._id.toString() !== employeeId
         ) {
-          const error = new Error("Email already in use by another user");
-          error.name = "EmailAlreadyUse";
-          throw error;
+          throw new AppError(
+            "Email already in use by another user",
+            HttpStatusCode.CONFLICT,
+            "EmailAlreadyUse"
+          );
         }
       }
       if (password) {
@@ -72,13 +78,15 @@ export class EmplProfileService implements IEmplProfileService {
         updateData
       );
       if (!updatedEmployee) {
-        const error = new Error("User not found or update failed");
-        error.name = "UserNotFound";
-        throw error;
+        throw new AppError(
+          "User not found or update failed",
+          HttpStatusCode.NOT_FOUND,
+          "UserNotFound"
+        );
       }
 
       return updatedEmployee;
-    } catch (error) {
+    } catch (error:unknown) {
       throw error;
     }
   }
@@ -95,9 +103,11 @@ export class EmplProfileService implements IEmplProfileService {
       );
       console.log(updatedEmployee, "updatedEmployee");
       if (!updatedEmployee) {
-        const error = new Error("Employee not found or update failed");
-        error.name = "EmployeeNotFound";
-        throw error;
+        throw new AppError(
+          "Employee not found or update failed",
+          HttpStatusCode.NOT_FOUND,
+          "EmployeeNotFound"
+        );
       }
       return updatedEmployee;
     } catch (error) {

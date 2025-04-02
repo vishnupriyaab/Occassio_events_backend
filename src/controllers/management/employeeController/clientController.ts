@@ -3,6 +3,12 @@ import IClientController from "../../../interfaces/controller/employee/client.co
 import IClientService from "../../../interfaces/services/employee/client.services";
 import { AuthenticatedRequest } from "../../../middleware/authenticateToken";
 import { emplClientService } from "../../../services/business/employeeServices/clientServices";
+import { AppError } from "../../../middleware/errorHandling";
+import { HttpStatusCode } from "../../../constant/httpStatusCodes";
+import {
+  ErrorResponse,
+  successResponse,
+} from "../../../integration/responseHandler";
 
 export class ClientController implements IClientController {
   private _clientService: IClientService;
@@ -14,20 +20,47 @@ export class ClientController implements IClientController {
       const employeeId = req.id;
       console.log(employeeId, "employeeId");
       if (!employeeId) {
-        const error = new Error("Employee ID is required");
-        error.name = "EmployeeIDIsRequired";
-        throw error;
+        throw new AppError(
+          "Employee ID is required",
+          HttpStatusCode.BAD_REQUEST,
+          "EmployeeIDIsRequired"
+        );
       }
 
       const clientsData = await this._clientService.fetchClients(employeeId);
 
-      res.status(200).json({
-        status: "success",
-        message: "Clients fetched successfully",
-        data: clientsData,
-      });
+      return successResponse(
+        res,
+        HttpStatusCode.OK,
+        "Clients fetched successfully",
+        clientsData
+      );
     } catch (error: unknown) {
       console.error("Error in fetchClients controller:", error);
+      if (error instanceof Error) {
+        if (error.name === "EmployeeIDIsRequired") {
+          ErrorResponse(
+            res,
+            HttpStatusCode.BAD_REQUEST,
+            "Employee ID is required"
+          );
+          return;
+        }
+        if (error.name === "EmployeeNotFound") {
+          ErrorResponse(res, HttpStatusCode.NOT_FOUND, "Employee not found");
+          return;
+        }
+        if (error.name === "UserIdNotFound") {
+          ErrorResponse(res, HttpStatusCode.NOT_FOUND, "UserId not found");
+          return;
+        }
+      }
+      ErrorResponse(
+        res,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        "Internal Server Error"
+      );
+      return;
     }
   }
 }

@@ -1,3 +1,4 @@
+import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import { CryptoService } from "../../../integration/cryptoServices";
 import { EmailService } from "../../../integration/emailServices";
 import { JWTService } from "../../../integration/jwtServices";
@@ -7,6 +8,7 @@ import { IEmailService } from "../../../interfaces/integration/IEmail";
 import { IJWTService } from "../../../interfaces/integration/IJwt";
 import IEmplAuthRepository from "../../../interfaces/repository/employee/empl.auth.repository";
 import IEmplAuthService from "../../../interfaces/services/employee/empl.auth.services";
+import { AppError } from "../../../middleware/errorHandling";
 import { EmplAuthRepository } from "../../../repositories/entities/employeeRepository/authRepository";
 import bcrypt from "bcrypt";
 
@@ -38,28 +40,34 @@ export class EmploAuthService implements IEmplAuthService {
     try {
       const employee = await this._emplRepo.findEmplByEmail(email);
       if (!employee) {
-        const error = new Error("Employee not found");
-        error.name = "EmployeeNotFound";
-        throw error;
+        throw new AppError(
+          "Employee not found",
+          HttpStatusCode.NOT_FOUND,
+          "EmployeeNotFound"
+        );
       }
-      
+
       if (!employee.isVerified) {
         await this._emplRepo.updateActivatedStatus(email, true);
       }
 
       if (employee.isBlocked) {
-        const error = new Error("Your account is blocked");
-        error.name = "AccountIsBlocked";
-        throw error;
+        throw new AppError(
+          "Your account is blocked",
+          HttpStatusCode.BAD_REQUEST,
+          "AccountIsBlocked"
+        );
       }
       const isPasswordValid = await bcrypt.compare(
         password,
         employee.password as string
       );
       if (!isPasswordValid) {
-        const error = new Error("Invalid password");
-        error.name = "InvalidPassword";
-        throw error;
+        throw new AppError(
+          "Invalid password",
+          HttpStatusCode.BAD_REQUEST,
+          "InvalidPassword"
+        );
       }
       const payload = { id: employee._id, role: "employee" };
       const accessToken = this._jwtService.generateAccessToken(payload);
@@ -77,9 +85,11 @@ export class EmploAuthService implements IEmplAuthService {
       );
       if (!employee) {
         console.log("qwert");
-        const error = new Error("Employee not found!");
-        error.name = "EmployeeNotFound";
-        throw error;
+        throw new AppError(
+          "Employee not found!",
+          HttpStatusCode.NOT_FOUND,
+          "EmployeeNotFound"
+        );
       }
 
       const token = this._jwtService.generateAccessToken({
@@ -99,25 +109,31 @@ export class EmploAuthService implements IEmplAuthService {
       const decoded = this._jwtService.verifyAccessToken(token);
 
       if (!decoded.id) {
-        const error = new Error("Invalid reset token");
-        error.name = "InvalidResetToken";
-        throw error;
+        throw new AppError(
+          "Invalid reset token",
+          HttpStatusCode.BAD_REQUEST,
+          "InvalidResetToken"
+        );
       }
 
       const employee = await this._emplRepo.findEmplById(decoded.id);
       if (!employee) {
-        const error = new Error("Employee not found");
-        error.name = "EmployeeNotFound";
-        throw error;
+        throw new AppError(
+          "Employee not found",
+          HttpStatusCode.NOT_FOUND,
+          "EmployeeNotFound"
+        );
       }
 
       const storedToken = await this._emplRepo.getPasswordResetToken(
         decoded.id
       );
       if (!storedToken || storedToken !== token) {
-        const error = new Error("Invalid or expired reset token");
-        error.name = "InvalidOrExpiredResetToken";
-        throw error;
+        throw new AppError(
+          "Invalid or expired reset token",
+          HttpStatusCode.BAD_REQUEST,
+          "InvalidOrExpiredResetToken"
+        );
       }
 
       const hashedPassword = await this._cryptoService.hashData(newPassword);

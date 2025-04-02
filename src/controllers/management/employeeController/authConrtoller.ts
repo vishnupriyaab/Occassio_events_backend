@@ -8,60 +8,68 @@ import IEmplAuthService from "../../../interfaces/services/employee/empl.auth.se
 import IEmplAuthController from "../../../interfaces/controller/employee/empl.auth.controller";
 import { adminAuthServices } from "../../../services/business/employeeServices/authServices";
 
-export class EmplAuthController implements IEmplAuthController{
+export class EmplAuthController implements IEmplAuthController {
   private _emplService: IEmplAuthService;
   constructor(emplService: IEmplAuthService) {
     this._emplService = emplService;
   }
 
-    //login
-    async employeeLogin(req: Request, res: Response): Promise<void> {
-      const { email, password } = req.body;
-      console.log(email, password, "employeelogin");
-      try {
-        const { accessToken, refreshToken } =
-          await this._emplService.loginEmployee(email, password);
-        res
-          .cookie("refresh_token", refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-          })
-          .cookie("access_token", accessToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 24 * 60 * 60 * 1000, // 1 day
-          });
-        return successResponse(
-          res,
-          HttpStatusCode.OK,
-          "Employee logged in successfully",
-          { accessToken, refreshToken }
-        );
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          if (error.name === "EmployeeNotFound") {
-            ErrorResponse(res, HttpStatusCode.NOT_FOUND, "Employee not found");
-            return;
-          }
-          if (error.name === "AccountIsBlocked") {
-            ErrorResponse(
-              res,
-              HttpStatusCode.BAD_REQUEST,
-              "Your account is blocked"
-            );
-            return;
-          }
+  //login
+  async employeeLogin(req: Request, res: Response): Promise<void> {
+    const { email, password } = req.body;
+    console.log(email, password, "employeelogin");
+    try {
+      const { accessToken, refreshToken } =
+        await this._emplService.loginEmployee(email, password);
+      res
+        .cookie("refresh_token", refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        })
+        .cookie("access_token", accessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          maxAge: 24 * 60 * 60 * 1000, // 1 day
+        });
+      return successResponse(
+        res,
+        HttpStatusCode.OK,
+        "Employee logged in successfully",
+        { accessToken, refreshToken }
+      );
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.name === "EmployeeNotFound") {
+          ErrorResponse(res, HttpStatusCode.NOT_FOUND, "Employee not found");
+          return;
         }
-        return ErrorResponse(
-          res,
-          HttpStatusCode.INTERNAL_SERVER_ERROR,
-          "Internal Server Error"
-        );
+        if (error.name === "AccountIsBlocked") {
+          ErrorResponse(
+            res,
+            HttpStatusCode.BAD_REQUEST,
+            "Your account is blocked"
+          );
+          return;
+        }
+        if (error.name === "InvalidPassword") {
+          ErrorResponse(
+            res,
+            HttpStatusCode.BAD_REQUEST,
+            "Invalid password"
+          );
+          return;
+        }
       }
+      return ErrorResponse(
+        res,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        "Internal Server Error"
+      );
     }
+  }
 
   //forgotPassword
   async forgotPassword(req: Request, res: Response): Promise<void> {
@@ -97,7 +105,12 @@ export class EmplAuthController implements IEmplAuthController{
       const { password, token } = req.body;
       console.log(password, token, "req.bodyyy");
       const result = await this._emplService.resetPassword(token, password);
-      return successResponse(res, HttpStatusCode.OK, "Password has been reset", result);
+      return successResponse(
+        res,
+        HttpStatusCode.OK,
+        "Password has been reset",
+        result
+      );
     } catch (error: unknown) {
       if (error instanceof Error) {
         if (error.name === "InvalidResetToken") {

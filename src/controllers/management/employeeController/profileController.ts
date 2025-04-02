@@ -8,6 +8,7 @@ import IEmplProfileService from "../../../interfaces/services/employee/profile.s
 import { AuthenticatedRequest } from "../../../middleware/authenticateToken";
 import { emplProfileService } from "../../../services/business/employeeServices/profileService";
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
+import { AppError } from "../../../middleware/errorHandling";
 
 export class EmplProfileController implements IEmplProfileController {
   private _emplService: IEmplProfileService;
@@ -20,9 +21,11 @@ export class EmplProfileController implements IEmplProfileController {
       console.log(req.id, "Vishnu12345"); //editProfile
       const employeeId = req.id;
       if (!employeeId) {
-        const error = new Error("Employee ID is required");
-        error.name = "EmployeeIDIsRequired";
-        throw error;
+        throw new AppError(
+          "Employee ID is required",
+          HttpStatusCode.BAD_REQUEST,
+          "EmployeeIDIsRequired"
+        );
       }
 
       const profile = await this._emplService.showProfile(employeeId);
@@ -63,15 +66,19 @@ export class EmplProfileController implements IEmplProfileController {
       const { name, email, password, confirmPassword } = req.body;
       console.log(name, email, password, confirmPassword, "1111111111111");
       if (!name || !email || !password || !confirmPassword) {
-        const error = new Error("All fields are required");
-        error.name = "AllFieldsAreRequired";
-        throw error;
+        throw new AppError(
+          "All fields are required",
+          HttpStatusCode.BAD_REQUEST,
+          "AllFieldsAreRequired"
+        );
       }
 
       if (password !== confirmPassword) {
-        const error = new Error("Passwords do not match");
-        error.name = "PasswordsDoNotMatch";
-        throw error;
+        throw new AppError(
+          "Passwords do not match",
+          HttpStatusCode.BAD_REQUEST,
+          "PasswordsDoNotMatch"
+        );
       }
       const updatedUser = await this._emplService.updateProfile(employeeId, {
         name,
@@ -103,6 +110,22 @@ export class EmplProfileController implements IEmplProfileController {
           );
           return;
         }
+        if (error.name === "EmailAlreadyUse") {
+          ErrorResponse(
+            res,
+            HttpStatusCode.BAD_REQUEST,
+            "Email already in use by another user"
+          );
+          return;
+        }
+        if (error.name === "UserNotFound") {
+          ErrorResponse(
+            res,
+            HttpStatusCode.BAD_REQUEST,
+            "User not found or update failed"
+          );
+          return;
+        }
       }
       ErrorResponse(
         res,
@@ -123,9 +146,11 @@ export class EmplProfileController implements IEmplProfileController {
       const image = req.file?.path;
 
       if (!image) {
-        const error = new Error("Image is required");
-        error.name = "ImageIsRequired";
-        throw error;
+        throw new AppError(
+          "Image is required",
+          HttpStatusCode.BAD_REQUEST,
+          "ImageIsRequired"
+        );
       }
 
       const updatedUser = await this._emplService.updateProfileImage(
@@ -144,7 +169,21 @@ export class EmplProfileController implements IEmplProfileController {
           ErrorResponse(res, HttpStatusCode.BAD_REQUEST, "Image is required");
           return;
         }
+        if (error.name === "EmployeeNotFound") {
+          ErrorResponse(
+            res,
+            HttpStatusCode.NOT_FOUND,
+            "Employee not found or update failed"
+          );
+          return;
+        }
       }
+      ErrorResponse(
+        res,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        "Internal Server Error"
+      );
+      return;
     }
   }
 }
