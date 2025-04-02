@@ -1,12 +1,14 @@
+import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import { IUser } from "../../../interfaces/entities/user.entity";
 import IUserRepository from "../../../interfaces/repository/admin/user.repository";
 import IUserService from "../../../interfaces/services/admin/user.services";
+import { AppError } from "../../../middleware/errorHandling";
 import { UserRepository } from "../../../repositories/entities/adminRepositories.ts/userRepository";
 
 export class UserService implements IUserService {
   private _userRepo: IUserRepository;
   constructor(userRepo: IUserRepository) {
-    this._userRepo = userRepo
+    this._userRepo = userRepo;
   }
 
   async fetchUser(
@@ -22,9 +24,11 @@ export class UserService implements IUserService {
   }> {
     try {
       if (page < 1 || limit < 1) {
-        const error = new Error("Invalid Page Or Limit");
-        error.name = "InvalidPageOrLimit";
-        throw error;
+        throw new AppError(
+          "Invalid Page Or Limit",
+          HttpStatusCode.BAD_REQUEST,
+          "InvalidPageOrLimit"
+        );
       }
 
       return await this._userRepo.fetchUser(
@@ -38,26 +42,27 @@ export class UserService implements IUserService {
     }
   }
 
-     //blockclient
-     async blockClient(clientId: string): Promise<IUser | null> {
-      try {
-        const client = await this._userRepo.findByClientId(clientId);
-        if (!client) {
-          const error = new Error('Client not found');
-          error.name = 'ClientNotFound'
-          throw error;
-        }
-  
-        client.isBlocked = !client.isBlocked;
-        return await this._userRepo.updateClient(clientId, {
-          isBlocked: client.isBlocked,
-        });
-      } catch (error: unknown) {
-        throw error;
+  //blockclient
+  async blockClient(clientId: string): Promise<IUser | null> {
+    try {
+      const client = await this._userRepo.findByClientId(clientId);
+      if (!client) {
+        throw new AppError(
+          "Client not found",
+          HttpStatusCode.NOT_FOUND,
+          "ClientNotFound"
+        );
       }
-    }
 
+      client.isBlocked = !client.isBlocked;
+      return await this._userRepo.updateClient(clientId, {
+        isBlocked: client.isBlocked,
+      });
+    } catch (error: unknown) {
+      throw error;
+    }
+  }
 }
 
 const adminUserRepository = new UserRepository();
-export const adminUserService = new UserService(adminUserRepository)
+export const adminUserService = new UserService(adminUserRepository);

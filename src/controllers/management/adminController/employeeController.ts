@@ -2,7 +2,10 @@ import { Request, Response } from "express";
 import IEmployeeController from "../../../interfaces/controller/admin/employee.controller";
 import IEmployeeService from "../../../interfaces/services/admin/employee.services";
 import { adminEmplServices } from "../../../services/business/adminServices/employeeServices";
-import { ErrorResponse, successResponse } from "../../../integration/responseHandler";
+import {
+  ErrorResponse,
+  successResponse,
+} from "../../../integration/responseHandler";
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 
 export class EmployeeController implements IEmployeeController {
@@ -12,16 +15,16 @@ export class EmployeeController implements IEmployeeController {
     this._emplService = emplService;
   }
 
-  async getEmployee(req:Request,res:Response):Promise<void>{
+  async getEmployee(req: Request, res: Response): Promise<void> {
     try {
       const searchTerm = (req.query.searchTerm as string | undefined) || "";
       const filterStatus = req.query.filterStatus as string | undefined;
-      
+
       const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
       const limit = req.query.limit
-      ? parseInt(req.query.limit as string, 10)
-      : 10;
-      console.log(searchTerm,filterStatus,page, limit, "qwertyuio");
+        ? parseInt(req.query.limit as string, 10)
+        : 10;
+      console.log(searchTerm, filterStatus, page, limit, "qwertyuio");
 
       const result = await this._emplService.fetchEmployee(
         searchTerm,
@@ -29,22 +32,21 @@ export class EmployeeController implements IEmployeeController {
         page,
         limit
       );
-        return successResponse(
+      return successResponse(
         res,
         HttpStatusCode.OK,
         "Users fetched successfully",
         result
       );
-      
     } catch (error) {
       console.log(error, "errorrrrrr");
       if (error instanceof Error) {
         if (error.name === "InvalidPageOrLimit") {
           ErrorResponse(res, 401, "InvalidPageOrLimit");
-          return ;
+          return;
         }
       }
-      ErrorResponse(res, 500, 'Internal Server Error')
+      ErrorResponse(res, 500, "Internal Server Error");
       return;
     }
   }
@@ -53,6 +55,7 @@ export class EmployeeController implements IEmployeeController {
     try {
       const { name, email, phone } = req.body;
       if (!name || !email || !phone) {
+
         res.status(400).json({
           success: false,
           message: "Missing required fields",
@@ -77,29 +80,32 @@ export class EmployeeController implements IEmployeeController {
       const result = await this._emplService.addEmployee(employeeData);
 
       if (result) {
-        res.status(201).json({
-          success: true,
-          message:
-            "Employee added successfully. Onboarding email has been sent.",
-          statusCode: 201,
-          data: result,
-        });
+        return successResponse(res, HttpStatusCode.CREATED, 'Employee added successfully. Onboarding email has been sent.', result)
+        // res.status(201).json({
+        //   success: true,
+        //   message:
+        //     "Employee added successfully. Onboarding email has been sent.",
+        //   statusCode: 201,
+        //   data: result,
+        // });
       } else {
-        res.status(500).json({
-          success: false,
-          message: "Failed to add employee",
-          statusCode: 500,
-          data: null,
-        });
+       return  ErrorResponse(res, HttpStatusCode.INTERNAL_SERVER_ERROR, 'Failed to add employee')
+        // res.status(500).json({
+        //   success: false,
+        //   message: "Failed to add employee",
+        //   statusCode: 500,
+        //   data: null,
+        // });
       }
     } catch (error) {
       console.log(error, "errorrrrrr");
-      res.status(500).json({
-        success: false,
-        message: "An error occurred while adding employee",
-        statusCode: 500,
-        data: null,
-      });
+      return ErrorResponse(res, HttpStatusCode.INTERNAL_SERVER_ERROR, 'An error occurred while adding employee')
+      // res.status(500).json({
+      //   success: false,
+      //   message: "An error occurred while adding employee",
+      //   statusCode: 500,
+      //   data: null,
+      // });
     }
   }
 
@@ -154,7 +160,6 @@ export class EmployeeController implements IEmployeeController {
       );
     }
   }
-
 }
 
 export const adminEmplController = new EmployeeController(adminEmplServices);

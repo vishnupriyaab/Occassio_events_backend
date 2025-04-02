@@ -22,7 +22,7 @@ export class EmplProfileRepository
       async updateUserProfile(userId: string, updateData: Partial<IEmployee>): Promise<IEmployee | null> {
         try {
           const updatedUser = await this.updateById("employee", userId, updateData);
-          return updatedUser ? (updatedUser as any).toObject() : null;
+          return updatedUser ? (updatedUser).toObject() : null;
         } catch (error) {
           console.error("Error updating user profile:", error);
           throw error;
@@ -37,7 +37,7 @@ export class EmplProfileRepository
             { imageUrl: imageUrl }
           );
           
-          return updatedUser ? (updatedUser as any).toObject() : null;
+          return updatedUser ? updatedUser.toObject() : null;
         } catch (error) {
           console.error("Error updating user profile image:", error);
           throw error;

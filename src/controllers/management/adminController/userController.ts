@@ -74,7 +74,6 @@ export class UserController implements IUserController {
       );
     }
   }
-
 }
 
-export const adminUserController = new UserController(adminUserService)
+export const adminUserController = new UserController(adminUserService);

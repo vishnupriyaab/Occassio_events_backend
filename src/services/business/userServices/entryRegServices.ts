@@ -3,7 +3,7 @@ import { EmailService } from "../../../integration/emailServices";
 import { JWTService } from "../../../integration/jwtServices";
 import stripe from "../../../integration/stripe";
 import IEntryRegFormData from "../../../interfaces/entities/IEntryFormReg.entity";
-import { IUser, IUserReg } from "../../../interfaces/entities/user.entity";
+import { IUser } from "../../../interfaces/entities/user.entity";
 import { IEmailService } from "../../../interfaces/integration/IEmail";
 import { IJWTService } from "../../../interfaces/integration/IJwt";
 import IEmployeeRepository from "../../../interfaces/repository/admin/employee.repository";
@@ -197,49 +197,6 @@ export class EntryRegService implements IEntryRegService {
       );
     }
   }
-  // async assignEmployeeToUser(user: IUser): Promise<void> {
-  //   try {
-  //     // Find the employee with the least number of assigned users
-  //     const employeeWithLeastAssignments =
-  //       await this._employeeRepo.findEmployeeWithLeastAssignments();
-
-  //     if (!employeeWithLeastAssignments) {
-  //       console.warn(`No unassigned employee found for user: ${user.email}`);
-  //       return;
-  //     }
-
-  //     await this._userRepo.updateUserAssignedEmployee(
-  //       user._id!,
-  //       employeeWithLeastAssignments._id
-  //     );
-
-  //     await this._employeeRepo.markEmployeeAsAssigned(
-  //       employeeWithLeastAssignments._id!,
-  //       user._id!
-  //     );
-
-  //     const token = this._jwtService.generateAccessToken({
-  //       id: user._id || "",
-  //       role: "user",
-  //     });
-
-  //     await this._userRepo.savePasswordResetToken(user._id, token);
-
-  //     await this._emailService.sendEmployeeAssignedEmailToUser(
-  //       employeeWithLeastAssignments.name,
-  //       user.name,
-  //       user.email,
-  //       token
-  //     );
-  //   } catch (error) {
-  //     console.error(`Error assigning employee to user: ${error}`);
-  //     throw new AppError(
-  //       "Failed to assign employee",
-  //       HttpStatusCode.INTERNAL_SERVER_ERROR,
-  //       "EmployeeAssignmentFailed"
-  //     );
-  //   }
-  // }
 }
 
 const emailConfig = {

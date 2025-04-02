@@ -1,10 +1,15 @@
+import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import { EmailService } from "../../../integration/emailServices";
 import { JWTService } from "../../../integration/jwtServices";
-import { IEmployee, IEmplRegData } from "../../../interfaces/entities/employee.entity";
+import {
+  IEmployee,
+  IEmplRegData,
+} from "../../../interfaces/entities/employee.entity";
 import { IEmailService } from "../../../interfaces/integration/IEmail";
 import { IJWTService } from "../../../interfaces/integration/IJwt";
 import IEmployeeRepository from "../../../interfaces/repository/admin/employee.repository";
 import IEmployeeService from "../../../interfaces/services/admin/employee.services";
+import { AppError } from "../../../middleware/errorHandling";
 import { EmployeeRepository } from "../../../repositories/entities/adminRepositories.ts/employeeRepository";
 
 export class EmployeeService implements IEmployeeService {
@@ -38,9 +43,11 @@ export class EmployeeService implements IEmployeeService {
   }> {
     try {
       if (page < 1 || limit < 1) {
-        const error = new Error("Invalid Page Or Limit");
-        error.name = "InvalidPageOrLimit";
-        throw error;
+        throw new AppError(
+          "Invalid Page Or Limit",
+          HttpStatusCode.BAD_REQUEST,
+          "InvalidPageOrLimit"
+        );
       }
 
       return await this._emplRepository.fetchEmployee(
@@ -67,10 +74,13 @@ export class EmployeeService implements IEmployeeService {
           id: savedEmployee._id || "",
           role: "employee",
         });
-        console.log(token,"00000000000000000000000000000000000");
-        const decode = this._jwtService.verifyAccessToken(token)
-        console.log(decode,"11111111111111111111111111111111")
-        await this._emplRepository.savePasswordResetToken(savedEmployee._id, token);
+        console.log(token, "00000000000000000000000000000000000");
+        const decode = this._jwtService.verifyAccessToken(token);
+        console.log(decode, "11111111111111111111111111111111");
+        await this._emplRepository.savePasswordResetToken(
+          savedEmployee._id,
+          token
+        );
         await this._emailService.sendEmployeeOnboardingEmail(
           savedEmployee.name,
           savedEmployee.email,
@@ -85,14 +95,16 @@ export class EmployeeService implements IEmployeeService {
     }
   }
 
-   //blockEmployee
-   async blockEmployee(employeeId: string): Promise<IEmployee | null> {
+  //blockEmployee
+  async blockEmployee(employeeId: string): Promise<IEmployee | null> {
     try {
       const employee = await this._emplRepository.findByEmployeeId(employeeId);
       if (!employee) {
-        const error = new Error('Employee not found');
-        error.name = 'EmployeeNotFound'
-        throw error;
+        throw new AppError(
+          "Employee not found",
+          HttpStatusCode.NOT_FOUND,
+          "EmployeeNotFound"
+        );
       }
 
       employee.isBlocked = !employee.isBlocked;
@@ -109,18 +121,19 @@ export class EmployeeService implements IEmployeeService {
     try {
       const employee = await this._emplRepository.findByEmployeeId(employeeId);
       if (!employee) {
-        const error = new Error('employee not found');
-        error.name = 'employeeNotFound'
-        throw error;
+        throw new AppError(
+          "employee not found",
+          HttpStatusCode.NOT_FOUND,
+          "employeeNotFound"
+        );
       }
 
       await this._emplRepository.deleteEmployee(employeeId);
       return;
-    } catch (error:unknown) {
+    } catch (error: unknown) {
       throw error;
     }
   }
-
 }
 
 const emailConfig = {

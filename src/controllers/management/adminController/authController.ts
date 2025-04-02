@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import IAuthService from "../../../interfaces/services/admin/auth.services";
-import { adminAuthServices, authService } from "../../../services/business/adminServices/authServices";
+import {
+  adminAuthServices
+} from "../../../services/business/adminServices/authServices";
 import {
   ErrorResponse,
   successResponse,
@@ -17,17 +19,13 @@ export class AuthController implements IAuthConrtoller {
     this._authService = authService;
   }
 
-  async adminRegister(req:Request,res:Response):Promise<void>{
-    const {email, password} = req.body;
-    const admin = this._authService.register(email,password)
-  }
-
+  
   //Admin-Login
   async adminLogin(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;
       console.log(email, password);
-
+      
       if (!email || !password) {
         throw new AppError(
           "Email and password are required",
@@ -35,20 +33,20 @@ export class AuthController implements IAuthConrtoller {
           "FieldsAreRequired"
         );
       }
-
+      
       const { accessToken, refreshToken } = await this._authService.adminLogin(
         email,
         password
       );
-
+      
       res
-        .cookie("refresh_token", refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
-          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        })
-        .cookie("access_token", accessToken, {
+      .cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      })
+      .cookie("access_token", accessToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
@@ -82,21 +80,21 @@ export class AuthController implements IAuthConrtoller {
       }
     }
   }
-
+  
   //Admin-Logout
   async logOut(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       res
-        .clearCookie("refresh_token", {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
-        })
-        .clearCookie("access_token", {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
-        });
+      .clearCookie("refresh_token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      })
+      .clearCookie("access_token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
       console.log(123);
       return successResponse(res, HttpStatusCode.OK, "Logout successful");
     } catch (error: unknown) {
@@ -108,6 +106,11 @@ export class AuthController implements IAuthConrtoller {
       );
     }
   }
+
+  // async adminRegister(req: Request, res: Response): Promise<void> {
+  //   const { email, password } = req.body;
+  //   const admin = this._authService.register(email, password);
+  // }
 }
 
 export const adminAuthController = new AuthController(adminAuthServices);
