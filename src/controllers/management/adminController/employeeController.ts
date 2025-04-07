@@ -7,6 +7,7 @@ import {
   successResponse,
 } from "../../../integration/responseHandler";
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
+import { AppError } from "../../../middleware/errorHandling";
 
 export class EmployeeController implements IEmployeeController {
   private _emplService: IEmployeeService;
@@ -42,7 +43,7 @@ export class EmployeeController implements IEmployeeController {
       console.log(error, "errorrrrrr");
       if (error instanceof Error) {
         if (error.name === "InvalidPageOrLimit") {
-          ErrorResponse(res, 401, "InvalidPageOrLimit");
+          ErrorResponse(res, 401, "Invalid Page or limit");
           return;
         }
       }
@@ -55,57 +56,46 @@ export class EmployeeController implements IEmployeeController {
     try {
       const { name, email, phone } = req.body;
       if (!name || !email || !phone) {
-
-        res.status(400).json({
-          success: false,
-          message: "Missing required fields",
-          statusCode: 400,
-          data: null,
-        });
-        return;
+        throw new AppError(
+          "All fields are required",
+          HttpStatusCode.BAD_REQUEST,
+          "FieldsAreRequired"
+        );
       }
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
-        res.status(400).json({
-          success: false,
-          message: "Invalid email format",
-          statusCode: 400,
-          data: null,
-        });
-        return;
+        throw new AppError(
+          "Invalid email format",
+          HttpStatusCode.BAD_REQUEST,
+          "InvalidEmailFormat"
+        );
       }
 
       const employeeData = { name, email, phone };
       const result = await this._emplService.addEmployee(employeeData);
 
       if (result) {
-        return successResponse(res, HttpStatusCode.CREATED, 'Employee added successfully. Onboarding email has been sent.', result)
-        // res.status(201).json({
-        //   success: true,
-        //   message:
-        //     "Employee added successfully. Onboarding email has been sent.",
-        //   statusCode: 201,
-        //   data: result,
-        // });
+        return successResponse(
+          res,
+          HttpStatusCode.CREATED,
+          "Employee added successfully. Onboarding email has been sent.",
+          result
+        );
       } else {
-       return  ErrorResponse(res, HttpStatusCode.INTERNAL_SERVER_ERROR, 'Failed to add employee')
-        // res.status(500).json({
-        //   success: false,
-        //   message: "Failed to add employee",
-        //   statusCode: 500,
-        //   data: null,
-        // });
+        return ErrorResponse(
+          res,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          "Failed to add employee"
+        );
       }
     } catch (error) {
       console.log(error, "errorrrrrr");
-      return ErrorResponse(res, HttpStatusCode.INTERNAL_SERVER_ERROR, 'An error occurred while adding employee')
-      // res.status(500).json({
-      //   success: false,
-      //   message: "An error occurred while adding employee",
-      //   statusCode: 500,
-      //   data: null,
-      // });
+      return ErrorResponse(
+        res,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        "An error occurred while adding employee"
+      );
     }
   }
 

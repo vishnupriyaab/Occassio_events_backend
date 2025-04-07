@@ -67,16 +67,16 @@ export class EmployeeService implements IEmployeeService {
         employeeData
       );
 
-      console.log(savedEmployee, "1234567890123456789123456789234567892345678");
+      console.log(savedEmployee, "savedEmployee");
 
       if (savedEmployee) {
         const token = this._jwtService.generateAccessToken({
           id: savedEmployee._id || "",
           role: "employee",
         });
-        console.log(token, "00000000000000000000000000000000000");
+        console.log(token, "token");
         const decode = this._jwtService.verifyAccessToken(token);
-        console.log(decode, "11111111111111111111111111111111");
+        console.log(decode, "decode");
         await this._emplRepository.savePasswordResetToken(
           savedEmployee._id,
           token

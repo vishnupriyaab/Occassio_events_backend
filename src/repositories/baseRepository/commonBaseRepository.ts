@@ -92,7 +92,7 @@ export default class CommonBaseRepository<
       { $set: updateData },
       { new: true, runValidators: true }
     );
-  }
+  } 
 
   findMany<K extends keyof TModels>(
     modelName: K,
