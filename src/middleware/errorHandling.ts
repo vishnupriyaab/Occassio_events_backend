@@ -5,12 +5,14 @@ import { HttpStatusCode } from "../constant/httpStatusCodes";
 export class AppError extends Error {
   status: number;
   isOperational: boolean;
+  metadata?: Record<string, any>;
 
-  constructor(message: string, statusCode: number, name?: string) {
+  constructor(message: string, statusCode: number, name?: string, metadata?: Record<string, any>) {
     super(message);
     this.name = name || this.constructor.name;
     this.status = statusCode;
     this.isOperational = true;
+    this.metadata = metadata;
 
     Error.captureStackTrace(this, this.constructor);
   }
@@ -32,27 +34,51 @@ export function errorMiddleware(
       ? err.status
       : HttpStatusCode.INTERNAL_SERVER_ERROR;
 
-  console.error(`${err.message}`,"wertyuio");
+  console.error(`${err.message}`, "wertyuio");
 
   if (err instanceof SyntaxError && "body" in err) {
-    return ErrorResponse(res, HttpStatusCode.BAD_REQUEST, "Invalid JSON format");
+    return ErrorResponse(
+      res,
+      HttpStatusCode.BAD_REQUEST,
+      "Invalid JSON format"
+    );
   }
 
   switch (err.name) {
     case "AdminNotFound":
       return ErrorResponse(res, HttpStatusCode.NOT_FOUND, "Admin not found");
     case "PasswordIsIncorrect":
-      return ErrorResponse(res, HttpStatusCode.UNAUTHORIZED, "Password is Incorrect");
+      return ErrorResponse(
+        res,
+        HttpStatusCode.UNAUTHORIZED,
+        "Password is Incorrect"
+      );
     case "FieldsAreRequired":
-      return ErrorResponse(res, HttpStatusCode.BAD_REQUEST, err.message || "Required fields are missing");
+      return ErrorResponse(
+        res,
+        HttpStatusCode.BAD_REQUEST,
+        err.message || "Required fields are missing"
+      );
     case "ValidationError":
-      return ErrorResponse(res, HttpStatusCode.BAD_REQUEST, err.message || "Validation failed");
+      return ErrorResponse(
+        res,
+        HttpStatusCode.BAD_REQUEST,
+        err.message || "Validation failed"
+      );
     case "FailedToCreatePayment":
-      return ErrorResponse(res, HttpStatusCode.BAD_REQUEST, "Failed to create Stripe payment link");
+      return ErrorResponse(
+        res,
+        HttpStatusCode.BAD_REQUEST,
+        "Failed to create Stripe payment link"
+      );
     case "UnauthorizedError":
     case "TokenExpiredError":
     case "JsonWebTokenError":
-      return ErrorResponse(res, HttpStatusCode.UNAUTHORIZED, "Authentication failed");
+      return ErrorResponse(
+        res,
+        HttpStatusCode.UNAUTHORIZED,
+        "Authentication failed"
+      );
     case "ForbiddenError":
       return ErrorResponse(res, HttpStatusCode.FORBIDDEN, "Access denied");
     default:
@@ -64,5 +90,5 @@ export function errorMiddleware(
       ErrorResponse(res, statusCode, message);
   }
 
-  next(err); 
+  next(err);
 }

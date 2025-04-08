@@ -39,6 +39,7 @@ export class EmploAuthService implements IEmplAuthService {
   ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
       const employee = await this._emplRepo.findEmplByEmail(email);
+      console.log(employee,"employeeee")
       if (!employee) {
         throw new AppError(
           "Employee not found",
@@ -58,6 +59,8 @@ export class EmploAuthService implements IEmplAuthService {
           "AccountIsBlocked"
         );
       }
+      console.log(password,"passworddd")
+      
       const isPasswordValid = await bcrypt.compare(
         password,
         employee.password as string

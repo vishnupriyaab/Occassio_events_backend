@@ -63,28 +63,54 @@ export class EmployeeService implements IEmployeeService {
 
   async addEmployee(employeeData: IEmplRegData): Promise<IEmplRegData | null> {
     try {
+
+      // const employee = await this._emplRepository.findByEmployeeId(employeeData.email);
+      // if (employee) {
+      //   throw new AppError(
+      //     "An employee with this email already exists",
+      //     HttpStatusCode.CONFLICT,
+      //     "EmployeeAlreadyExists"
+      //   );
+      // }
+
+      const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+";
+      let password = "";
+      for (let i = 0; i < 10; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+
+      const bcrypt = require("bcrypt");
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+      const employeeWithPassword = {
+        ...employeeData,
+        password: hashedPassword,
+      };
+
       const savedEmployee = await this._emplRepository.addNewEmployee(
-        employeeData
+        employeeWithPassword
       );
 
       console.log(savedEmployee, "savedEmployee");
 
       if (savedEmployee) {
-        const token = this._jwtService.generateAccessToken({
-          id: savedEmployee._id || "",
-          role: "employee",
-        });
-        console.log(token, "token");
-        const decode = this._jwtService.verifyAccessToken(token);
-        console.log(decode, "decode");
-        await this._emplRepository.savePasswordResetToken(
-          savedEmployee._id,
-          token
-        );
-        await this._emailService.sendEmployeeOnboardingEmail(
+        // const token = this._jwtService.generateAccessToken({
+        //   id: savedEmployee._id || "",
+        //   role: "employee",
+        // });
+        // console.log(token, "token");
+        // const decode = this._jwtService.verifyAccessToken(token);
+        // console.log(decode, "decode");
+        // await this._emplRepository.savePasswordResetToken(
+        //   savedEmployee._id,
+        //   token
+        // );
+        await this._emailService.sendEmployeeOnboardingEmailwithPassword(
           savedEmployee.name,
           savedEmployee.email,
-          token
+          password
         );
       }
 

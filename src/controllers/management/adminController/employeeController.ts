@@ -43,11 +43,19 @@ export class EmployeeController implements IEmployeeController {
       console.log(error, "errorrrrrr");
       if (error instanceof Error) {
         if (error.name === "InvalidPageOrLimit") {
-          ErrorResponse(res, 401, "Invalid Page or limit");
+          ErrorResponse(
+            res,
+            HttpStatusCode.BAD_REQUEST,
+            "Invalid Page or limit"
+          );
           return;
         }
       }
-      ErrorResponse(res, 500, "Internal Server Error");
+      ErrorResponse(
+        res,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        "Internal Server Error"
+      );
       return;
     }
   }
@@ -89,8 +97,18 @@ export class EmployeeController implements IEmployeeController {
           "Failed to add employee"
         );
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.log(error, "errorrrrrr");
+      if (error instanceof Error) {
+        if (error.name === "EmployeeAlreadyExists") {
+          ErrorResponse(
+            res,
+            HttpStatusCode.CONFLICT,
+            "An employee with this email already exists"
+          );
+          return;
+        }
+      }
       return ErrorResponse(
         res,
         HttpStatusCode.INTERNAL_SERVER_ERROR,

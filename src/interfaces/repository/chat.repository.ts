@@ -7,4 +7,5 @@ export default interface IChatRepository {
     getChat(userId: string): Promise<IConversation>;
     getConversationId(userId: string): Promise<IConversation | null>;
     getConversationData(): Promise<IConversation[]>;
+    getEmployeeChats(employeeId: string): Promise<IConversation[]>
   }

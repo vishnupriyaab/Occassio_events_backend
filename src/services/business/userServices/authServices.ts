@@ -62,6 +62,7 @@ export class UserAuthServices implements IUserAuthService {
         await this._userRepo.updateActivatedStatus(email, true);
       }
 
+      console.log(user.isBlocked,"isBLockeddd")
       if (user.isBlocked) {
         throw new AppError(
           "Your account is blocked",

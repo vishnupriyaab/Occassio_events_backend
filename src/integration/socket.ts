@@ -14,30 +14,40 @@ export class SocketManager {
       console.log("A new user has connected", client.id);
 
       client.on("user-message", async (data) => {
-        console.log(`Message from user ${data.user}: ${data.message}`);
+        console.log(`Message from user ${data.user}: ${data.message}, ${data.userId}, ${data.conversationId}`);
         await chatController.handleNewUserMessage(
           this.io,
           data.conversationId,
           data.message,
+          data.userId
         );
 
         this.io.to(data.conversationId).emit("userMessage", {
-          user: data.user,
+          //   user: data.user,
+          //   message: data.message,
+          //   timestamp: new Date(),
+          senderId: data.userId,
+          senderType: "user",
           message: data.message,
-          timestamp: new Date(),
+          timestamp: new Date(), 
         });
       });
 
       client.on("employee-message", async (data) => {
         console.log(`Employee message from ${data.user}: ${data.message}`);
-        await chatController.handleEmplNewMessage(
+        await chatController.handleEmployeeMessage(
           this.io,
           data.conversationId,
-          data.message
+          data.message,
+          data.employeeId
         );
 
         this.io.to(data.conversationId).emit("employeeMessage", {
-          user: data.user,
+          //   user: data.user,
+          //   message: data.message,
+          //   timestamp: new Date(),
+          senderId: data.employeeId,
+          senderType: "employee",
           message: data.message,
           timestamp: new Date(),
         });

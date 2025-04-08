@@ -23,13 +23,13 @@ export class EmplAuthController implements IEmplAuthController {
         await this._emplService.loginEmployee(email, password);
       res
         .cookie("refresh_token", refreshToken, {
-          httpOnly: true,
+          httpOnly: false,
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
           maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         })
         .cookie("access_token", accessToken, {
-          httpOnly: true,
+          httpOnly: false,
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
           maxAge: 24 * 60 * 60 * 1000, // 1 day

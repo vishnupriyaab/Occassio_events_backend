@@ -30,12 +30,11 @@ export class EmailTemplates {
       `;
   }
 
-  static getEmployeeOnboardingTemplate(
+  static getEmployeeOnboardingWithPasswordTemplate(
     employeeName: string,
     email: string,
-    resetLink: string
+    password: string
   ): string {
-    console.log(resetLink, "resetlink");
     return `
       <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 5px;">
         <div style="text-align: center; margin-bottom: 20px;">
@@ -44,19 +43,14 @@ export class EmailTemplates {
         
         <p>Dear ${employeeName},</p>
         
-        <p>We're excited to have you join our team! Your account has been created with the following email address: <strong>${email}</strong></p>
+        <p>We're excited to have you join our team! Your account has been created with the following credentials:</p>
         
-        <p>To complete your onboarding process, please follow these steps:</p>
-        
-        <ol style="margin-bottom: 20px;">
-          <li>Click on the "Reset Password" button below</li>
-          <li>Follow the instructions to set your new password</li>
-          <li>Once complete, log in with your registered email and newly created password</li>
-        </ol>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${resetLink}" style="background-color: #4a5568; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Reset Password</a>
+        <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #4a5568; margin: 20px 0;">
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Password:</strong> ${password}</p>
         </div>
+        
+        <p>Please use these credentials to log in to our system. For security reasons, we recommend changing your password after your first login.</p>
         
         <div style="background-color: #fffbea; border-left: 4px solid #f6e05e; padding: 12px; margin-bottom: 20px;">
           <p style="margin: 0; font-weight: bold;">Important Security Notice:</p>
@@ -244,23 +238,23 @@ export class EmailService implements IEmailService {
     return await this._emailTransport.sendMail(content);
   }
 
-  async sendEmployeeOnboardingEmail(
+  async sendEmployeeOnboardingEmailwithPassword(
     employeeName: string,
     employeeEmail: string,
-    token: string
+    password: string
   ): Promise<string> {
-    console.log(token, "qwerty");
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    console.log(password, "qwerty");
+    // const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
     const content: EmailContent = {
       from: this._senderEmail!,
       to: employeeEmail,
       subject:
-        "Welcome to the Occasio Event Management Team - Account Setup Instructions",
-      html: EmailTemplates.getEmployeeOnboardingTemplate(
+        "Welcome to the Occasio Event Management Team - Your Login Credentials",
+      html: EmailTemplates.getEmployeeOnboardingWithPasswordTemplate(
         employeeName,
         employeeEmail,
-        resetLink
+        password
       ),
     };
 

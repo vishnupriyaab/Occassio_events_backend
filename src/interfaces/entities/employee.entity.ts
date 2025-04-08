@@ -19,4 +19,5 @@ export interface IEmplRegData {
   name: string;
   email: string;
   phone: string;
+  password?: string;
 }
