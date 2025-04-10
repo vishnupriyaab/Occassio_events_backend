@@ -8,7 +8,8 @@ import {
 } from "../../integration/responseHandler";
 import { HttpStatusCode } from "../../constant/httpStatusCodes";
 import { chatServices } from "../../services/business/chatServices";
-import { Request, Response } from "express";
+import { Response } from "express";
+import { IChatMessageModel } from "../../interfaces/entities/chat.entity";
 
 export class ChatController implements IChatController {
   private _chatService: IChatService;
@@ -16,28 +17,6 @@ export class ChatController implements IChatController {
   constructor(chatService: IChatService) {
     this._chatService = chatService;
   }
-
-  // async handleNewUserMessage(socket: Server, conversationId: string, message: string): Promise<void> {
-  //   try {
-  //     console.log(111);
-
-  //     await this._chatService.sendMessage(conversationId, message);
-  //     socket.emit('userMessage', { conversationId, message });
-  //   } catch (error) {
-  //     console.error('Error handling new message:', error);
-  //   }
-  // }
-
-  // async handleEmplNewMessage(socket: Server, conversationId: string, message: string): Promise<void> {
-  //   try {
-  //     console.log(222);
-
-  //     await this._chatService.employeeSendMessage(conversationId, message);
-  //     socket.to(conversationId).emit('adminMessage', { conversationId, message });
-  //   } catch (error) {
-  //     console.error('Error handling admin message:', error);
-  //   }
-  // }
 
   async handleNewUserMessage(
     socket: Server,
@@ -47,14 +26,8 @@ export class ChatController implements IChatController {
   ): Promise<void> {
     try {
       // console.log(conversationId, message, userId,"00000000000000")
-      await this._chatService.userSendMessage(conversationId, userId, message);
-      socket.to(conversationId).emit("userMessage", {
-        conversationId,
-        message,
-        senderId: userId,
-        senderType: "user",
-        timestamp: new Date(),
-      });
+      const chatMessage: IChatMessageModel =await this._chatService.userSendMessage(conversationId, userId, message);
+      socket.to(conversationId).emit("employeeMessage", chatMessage);
     } catch (error) {
       console.error("Error handling user message:", error);
     }
@@ -67,12 +40,12 @@ export class ChatController implements IChatController {
     employeeId: string
   ): Promise<void> {
     try {
-      await this._chatService.employeeSendMessage(
-        conversationId,
-        employeeId,
-        message
-      );
-      socket.to(conversationId).emit("employeeMessage", {
+      // await this._chatService.employeeSendMessage(
+      //   conversationId,
+      //   employeeId,
+      //   message
+      // );
+      socket.to(conversationId).emit("userMessage", {
         conversationId,
         message,
         senderId: employeeId,
@@ -123,6 +96,7 @@ export class ChatController implements IChatController {
       console.log(4444444444);
 
       const userId = req.id;
+      console.log(typeof userId, "userId");
 
       if (!userId) {
         return ErrorResponse(
@@ -132,12 +106,16 @@ export class ChatController implements IChatController {
         );
       }
 
-      const conversationId = await this._chatService.getConversationId(userId);
+      const conversation = await this._chatService.getConversationId(userId);
+      const chatMessages = await this._chatService.chatMessage(
+        conversation.conversationid
+      );
+      console.log(chatMessages, "chatmessagessss");
       return successResponse(
         res,
         HttpStatusCode.OK,
         "Conversation ID fetched successfully",
-        conversationId
+        { conversation, chatMessages }
       );
     } catch (error: any) {
       if (error.name === "ConversationNotFound") {
@@ -155,9 +133,14 @@ export class ChatController implements IChatController {
     }
   }
 
-  async getConversationData(req: Request, res: Response): Promise<void> {
+  async getConversationData(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
     try {
       console.log(5555555);
+      const employeeId = req.id;
+      console.log(employeeId, "employeeId");
 
       const conversationData = await this._chatService.getConversationData();
       return successResponse(

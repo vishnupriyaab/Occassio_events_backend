@@ -1,7 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { HttpStatusCode } from "../../constant/httpStatusCodes";
 import {
   IChatMessage,
+  IChatMessageModel,
   IConversation,
 } from "../../interfaces/entities/chat.entity";
 import IChatRepository from "../../interfaces/repository/chat.repository";
@@ -31,37 +32,44 @@ export class ChatService implements IChatService {
 
   private toObjectId(id: string): mongoose.Types.ObjectId {
     return new mongoose.Types.ObjectId(id);
-  } 
-
-  async sendMessage(
-    conversationId: string,
-    message: string,
-    senderId: string,
-    senderType: string
-  ): Promise<IConversation | null> {
-    try {
-      const chatMessage: IChatMessage = {
-        user: senderType.toLowerCase(), // "user" or "employee"
-        senderId: this.toObjectId(senderId),
-        senderModel: senderType === "user" ? "User" : "Employee",
-        message: message,
-      };
-
-      return await this._chatRepository.addMessageToConversation(
-        conversationId,
-        chatMessage
-      );
-    } catch (error) {
-      throw error;
-    }
   }
+
+  // async sendMessage(
+  //   conversationId: string,
+  //   message: string,
+  //   senderId: string,
+  //   senderType: string
+  // ): Promise<IConversation | null> {
+  //   try {
+  //     const chatMessage: IChatMessageModel = {
+  //       user: senderType.toLowerCase(), // "user" or "employee"
+  //       senderId: this.toObjectId(senderId),
+  //       conversationid: new mongoose.Types.ObjectId(conversationId),
+  //       senderModel: senderType === "user" ? "User" : "Employee",
+  //       message: message,
+  //     };
+
+  //     return null;
+  //     // return await this._chatRepository.addMessageToConversation(
+  //     //   conversationId,
+  //     //   chatMessage
+  //     // );
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   async userSendMessage(
     conversationId: string,
     userId: string,
     message: string
-  ): Promise<IConversation | null> {
-    return this.sendMessage(conversationId, message, userId, "user");
+  ): Promise<IChatMessageModel> {
+    try {
+      
+    } catch (error) {
+      
+    }
+    return this._chatRepository.sendMessage(conversationId, userId, message, "user");
   }
 
   // async employeeSendMessage(conversationId: string, message: string): Promise<IConversation | null> {
@@ -77,13 +85,13 @@ export class ChatService implements IChatService {
   //   }
   // }
 
-  async employeeSendMessage(
-    conversationId: string,
-    employeeId: string,
-    message: string
-  ): Promise<IConversation | null> {
-    return this.sendMessage(conversationId, message, employeeId, "employee");
-  }
+  // async employeeSendMessage(
+  //   conversationId: string,
+  //   employeeId: string,
+  //   message: string
+  // ): Promise<IConversation | null> {
+  //   return this.sendMessage(conversationId, message, employeeId, "employee");
+  // }
 
   // Get all chats for an employee
   async getEmployeeChats(employeeId: string): Promise<IConversation[]> {
@@ -110,9 +118,20 @@ export class ChatService implements IChatService {
     }
   }
 
+  async chatMessage(conversationId: Types.ObjectId): Promise<IChatMessageModel[]> {
+    try {
+      return await this._chatRepository.ChatMessage(conversationId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getConversationId(userId: string): Promise<IConversation> {
     try {
+      console.log(userId, "userId111111");
       const conversation = await this._chatRepository.getConversationId(userId);
+
+      console.log(conversation, "hry i'm there");
 
       if (!conversation) {
         throw new AppError(
@@ -130,7 +149,7 @@ export class ChatService implements IChatService {
 
   async getConversationData(): Promise<IConversation[]> {
     try {
-        console.log("wertyui");
+      console.log("wertyui");
       return await this._chatRepository.getConversationData();
     } catch (error) {
       throw error;

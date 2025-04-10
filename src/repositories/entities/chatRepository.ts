@@ -1,12 +1,13 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, now, Types } from "mongoose";
 import CommonBaseRepository from "../baseRepository/commonBaseRepository";
 import {
   IChatMessage,
+  IChatMessageModel,
+  IConverationModel,
   IConversation,
 } from "../../interfaces/entities/chat.entity";
 import IChatRepository from "../../interfaces/repository/chat.repository";
-import Conversation from "../../models/chatModel";
-import { v4 as uuidv4 } from "uuid";
+import Conversation, { ChatMessage } from "../../models/chatModel";
 import User from "../../models/userModel";
 import { IUser } from "../../interfaces/entities/user.entity";
 
@@ -14,15 +15,24 @@ export class ChatRepository
   extends CommonBaseRepository<{
     conversation: Document & IConversation;
     user: Document & IUser;
+    chatmessage: Document & IChatMessage
   }>
   implements IChatRepository
 {
   constructor() {
-    super({ conversation: Conversation, user: User });
+    super({ conversation: Conversation, user: User, chatmessage: ChatMessage });
   }
 
   private toObjectId(id: string): mongoose.Types.ObjectId {
     return new mongoose.Types.ObjectId(id);
+  }
+
+  async createRoom(data: IConverationModel): Promise<IConverationModel | null> {
+    try {
+      return this.createData("conversation", data);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getConversationByParticipants(
@@ -30,6 +40,26 @@ export class ChatRepository
   ): Promise<IConversation | null> {
     try {
       return this.findOne("conversation", { participants: userId });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async sendMessage(conversationId: string, userId:string, message:string, user:string):Promise<IChatMessageModel>{
+    try {
+      console.log("qwertyui")
+      const sendModel = user === 'user' ? 'User' : 'Employee'
+      const data: IChatMessageModel = {
+        conversationid: new mongoose.Types.ObjectId(conversationId),
+        message: message,
+        user: user,
+        senderId: new mongoose.Types.ObjectId(userId),
+        senderModel: sendModel,
+        timestamp: new Date(Date.now())
+      }
+      console.log(data,);
+      await this.createData("chatmessage", data);
+      return data;
     } catch (error) {
       throw error;
     }
@@ -93,11 +123,10 @@ export class ChatRepository
       });
 
       if (!conversation) {
-        const newConversation = {
-          conversationid: uuidv4(),
+        const newConversation: IConverationModel = {
+          conversationid: new mongoose.Types.ObjectId(),
           userId: this.toObjectId(userId),
           employeeId: user.assignedEmployee,
-          messages: [],
         };
 
         conversation = await this.createData("conversation", newConversation);
@@ -117,9 +146,18 @@ export class ChatRepository
     }
   }
 
+  async ChatMessage(conversationId: Types.ObjectId): Promise<IChatMessage[]> {
+    try {
+      return await this.findMany("chatmessage",{conversationid : conversationId})
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getConversationId(userId: string): Promise<IConversation | null> {
     try {
-      return this.findOne("conversation", { participants: userId });
+      console.log(userId, "userId22222");
+      return this.findOne("conversation", { userId: userId });
     } catch (error) {
       throw error;
     }

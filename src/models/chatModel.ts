@@ -47,6 +47,10 @@ const chatMessageSchema = new Schema<IChatMessage>({
     enum: ["user", "employee"],
     required: true
   },
+  conversationid: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
   senderId: {
     type: mongoose.Schema.Types.ObjectId,
     refPath: 'senderModel',
@@ -66,10 +70,12 @@ const chatMessageSchema = new Schema<IChatMessage>({
     default: Date.now
   }
 });
+export const ChatMessage = mongoose.model<IChatMessage & Document>("chatmessage", chatMessageSchema)
+
 
 const conversationSchema = new Schema<IConversation>({
   conversationid: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     unique: true,
     required: true
   },
@@ -83,7 +89,6 @@ const conversationSchema = new Schema<IConversation>({
     ref: 'Employee',
     required: true
   },
-  messages: [chatMessageSchema],
   lastUpdated: {
     type: Date,
     default: Date.now

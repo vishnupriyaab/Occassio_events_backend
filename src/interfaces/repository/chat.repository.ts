@@ -1,4 +1,5 @@
-import { IChatMessage, IConversation } from "../entities/chat.entity";
+import { Types } from "mongoose";
+import { IChatMessage, IChatMessageModel, IConverationModel, IConversation } from "../entities/chat.entity";
 
 export default interface IChatRepository {
     getConversationByParticipants(userId: string): Promise<IConversation | null>;
@@ -8,4 +9,9 @@ export default interface IChatRepository {
     getConversationId(userId: string): Promise<IConversation | null>;
     getConversationData(): Promise<IConversation[]>;
     getEmployeeChats(employeeId: string): Promise<IConversation[]>
+    createRoom(
+        data: IConverationModel
+      ): Promise<IConverationModel | null>
+      ChatMessage(conversationId: Types.ObjectId): Promise<IChatMessage[]>
+      sendMessage(conversationId: string, userId:string, message:string, user:string):Promise<IChatMessageModel>
   }

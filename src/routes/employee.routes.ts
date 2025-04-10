@@ -6,6 +6,7 @@ import { emplAuthController } from "../controllers/management/employeeController
 import { emplProfileController } from "../controllers/management/employeeController/profileController";
 import { upload } from "../middleware/claudinaryUpload";
 import { emplClientController } from "../controllers/management/employeeController/clientController";
+import { chatController } from "../controllers/management/chatController";
 
 const employeeRouter = Router()
 const iJwtServices: IJWTService = new JWTService();
@@ -25,5 +26,6 @@ employeeRouter
     .put("/updateProfile", emplProfileController.updateProfile.bind(emplProfileController))
     .put("/profileImage",upload.single("img"), emplProfileController.updateProfileImage.bind(emplProfileController))
     .get("/fetchClient", emplClientController.fetchClients.bind(emplClientController))
+    .get("/getconversationdata", chatController.getConversationData.bind(chatController));
 
 export default employeeRouter;

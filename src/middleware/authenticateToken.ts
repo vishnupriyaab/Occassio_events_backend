@@ -18,7 +18,7 @@ export default class AuthMiddleware {
   //role-based Authentication
   async authenticateToken(
     req: AuthenticatedRequest,
-    res: Response, 
+    res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
@@ -32,7 +32,7 @@ export default class AuthMiddleware {
         return;
       }
       const decode = this._jwtService.verifyAccessToken(token);
-      console.log(decode, "decode111111111111111111111111111111111111");
+      console.log(decode.role, "decode111111111111111111111111111111111111", this.role);
       if (decode.role !== this.role) {
         res.status(HttpStatusCode.UNAUTHORIZED).json({
           message:
@@ -91,6 +91,6 @@ export default class AuthMiddleware {
           .json({ message: "Forbidden: Invalid token" });
       }
       return;
-    } 
+    }
   }
 }

@@ -22,15 +22,12 @@ export class SocketManager {
           data.userId
         );
 
-        this.io.to(data.conversationId).emit("userMessage", {
-          //   user: data.user,
-          //   message: data.message,
-          //   timestamp: new Date(),
-          senderId: data.userId,
-          senderType: "user",
-          message: data.message,
-          timestamp: new Date(), 
-        });
+        // this.io.in(data.conversationId).emit("userMessage", {
+        //   senderId: data.userId,
+        //   senderType: "user",
+        //   message: data.message,
+        //   timestamp: new Date(), 
+        // });
       });
 
       client.on("employee-message", async (data) => {
