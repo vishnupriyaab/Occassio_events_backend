@@ -14,7 +14,9 @@ export class SocketManager {
       console.log("A new user has connected", client.id);
 
       client.on("user-message", async (data) => {
-        console.log(`Message from user ${data.user}: ${data.message}, ${data.userId}, ${data.conversationId}`);
+        console.log(
+          `Message from user ${data.user}: ${data.message}, ${data.userId}, ${data.conversationId}`
+        );
         await chatController.handleNewUserMessage(
           this.io,
           data.conversationId,
@@ -26,7 +28,7 @@ export class SocketManager {
         //   senderId: data.userId,
         //   senderType: "user",
         //   message: data.message,
-        //   timestamp: new Date(), 
+        //   timestamp: new Date(),
         // });
       });
 
@@ -39,15 +41,15 @@ export class SocketManager {
           data.employeeId
         );
 
-        this.io.to(data.conversationId).emit("employeeMessage", {
-          //   user: data.user,
-          //   message: data.message,
-          //   timestamp: new Date(),
-          senderId: data.employeeId,
-          senderType: "employee",
-          message: data.message,
-          timestamp: new Date(),
-        });
+        // this.io.to(data.conversationId).emit("employeeMessage", {
+        //   //   user: data.user,
+        //   //   message: data.message,
+        //   //   timestamp: new Date(),
+        //   senderId: data.employeeId,
+        //   senderType: "employee",
+        //   message: data.message,
+        //   timestamp: new Date(),
+        // });
       });
 
       client.on("join-conversation", (data) => {
@@ -58,6 +60,16 @@ export class SocketManager {
         client.emit("joined-conversation", {
           status: "success",
           message: `Joined conversation ${conversationId}`,
+        });
+      });
+
+      client.on("exit-conversation", (conversationId: string) => {
+        client.leave(conversationId);
+        console.log(`${client.id} exited conversation ${conversationId}`);
+
+        client.emit("exited-conversation", {
+          status: "success",
+          message: `exited conversation ${conversationId}`,
         });
       });
 

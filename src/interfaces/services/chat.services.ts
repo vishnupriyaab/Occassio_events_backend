@@ -13,11 +13,11 @@ export default interface IChatService {
     userId: string,
     message: string
   ): Promise<IChatMessageModel>;
-  // employeeSendMessage(
-  //   conversationId: string,
-  //   employeeId: string,
-  //   message: string
-  // ): Promise<IConversation | null>;
+  employeeSendMessage(
+    conversationId: string,
+    employeeId: string,
+    message: string
+  ): Promise<IChatMessageModel>;
   getEmployeeChats(employeeId: string): Promise<IConversation[]>;
   getUserDetails(userId: string): Promise<any>;
   getChats(userId: string): Promise<IConversation>;

@@ -25,9 +25,8 @@ export class ChatController implements IChatController {
     userId: string
   ): Promise<void> {
     try {
-      // console.log(conversationId, message, userId,"00000000000000")
       const chatMessage: IChatMessageModel =await this._chatService.userSendMessage(conversationId, userId, message);
-      socket.to(conversationId).emit("employeeMessage", chatMessage);
+      socket.to(conversationId).emit("userMessage", chatMessage);
     } catch (error) {
       console.error("Error handling user message:", error);
     }
@@ -40,18 +39,8 @@ export class ChatController implements IChatController {
     employeeId: string
   ): Promise<void> {
     try {
-      // await this._chatService.employeeSendMessage(
-      //   conversationId,
-      //   employeeId,
-      //   message
-      // );
-      socket.to(conversationId).emit("userMessage", {
-        conversationId,
-        message,
-        senderId: employeeId,
-        senderType: "employee",
-        timestamp: new Date(),
-      });
+      const chatMessage: IChatMessageModel = await this._chatService.employeeSendMessage(conversationId, employeeId, message);
+      socket.to(conversationId).emit("employeeMessage", chatMessage);
     } catch (error) {
       console.error("Error handling employee message:", error);
     }
@@ -133,6 +122,7 @@ export class ChatController implements IChatController {
     }
   }
 
+  //notuse
   async getConversationData(
     req: AuthenticatedRequest,
     res: Response

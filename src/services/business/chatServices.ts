@@ -3,6 +3,7 @@ import { HttpStatusCode } from "../../constant/httpStatusCodes";
 import {
   IChatMessage,
   IChatMessageModel,
+  IConverationModel,
   IConversation,
 } from "../../interfaces/entities/chat.entity";
 import IChatRepository from "../../interfaces/repository/chat.repository";
@@ -64,26 +65,16 @@ export class ChatService implements IChatService {
     userId: string,
     message: string
   ): Promise<IChatMessageModel> {
-    try {
-      
-    } catch (error) {
-      
-    }
     return this._chatRepository.sendMessage(conversationId, userId, message, "user");
   }
 
-  // async employeeSendMessage(conversationId: string, message: string): Promise<IConversation | null> {
-  //   try {
-  //     const chatMessage:IChatMessage = {
-  //         user: "employee",
-  //         message: message
-  //     }
-  //     console.log(chatMessage, conversationId,"2222222222");
-  //     return await this._chatRepository.addMessageToConversation(conversationId, chatMessage);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
+  async employeeSendMessage(conversationId: string, employeeId:string, message: string): Promise<IChatMessageModel> {
+    try {
+      return this._chatRepository.sendMessage(conversationId, employeeId, message, "employee");
+    } catch (error) {
+      throw error;
+    }
+  }
 
   // async employeeSendMessage(
   //   conversationId: string,
