@@ -7,7 +7,7 @@ import AuthMiddleware from "../middleware/authenticateToken";
 import { userEntryRegController } from "../controllers/management/userController/entryRegController";
 import { userAuthController } from "../controllers/management/userController/authController";
 import { subClientController } from "../controllers/management/userController/subscribtionClientController";
-import { chatController } from "../controllers/management/chatController";
+import { userChatController } from "../controllers/management/userController/chatController";
 
 const userRouter = Router();
 const iJwtServices: IJWTService = new JWTService();
@@ -25,7 +25,7 @@ userRouter
 userRouter.use(authMiddleware.authenticateToken.bind(authMiddleware));
 
 userRouter.get("/sub-details", subClientController.fetchSubClientData.bind(subClientController));
-userRouter.get('/getchats', chatController.getChats.bind(chatController));
-userRouter.get('/conversation', chatController.getConversationId.bind(chatController));
+userRouter.get('/getchats', userChatController.getChats.bind(userChatController));
+userRouter.get('/conversation', userChatController.getConversationId.bind(userChatController));
 
 export default userRouter;

@@ -8,6 +8,8 @@ import IEmplChatController from "../../../interfaces/controller/employee/chat.co
 import IEmplChatServices from "../../../interfaces/services/employee/chat.services";
 import { AuthenticatedRequest } from "../../../middleware/authenticateToken";
 import { emplChatService } from "../../../services/business/employeeServices/chatServices";
+import { Server } from "socket.io";
+import { IChatMessageModel } from "../../../interfaces/entities/chat.entity";
 
 export class EmplChatController implements IEmplChatController {
   private _chatService: IEmplChatServices;
@@ -16,8 +18,6 @@ export class EmplChatController implements IEmplChatController {
   }
   async getChats(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      console.log(33333333);
-
       const employeeId = req.id;
 
       if (!employeeId) {
@@ -51,7 +51,6 @@ export class EmplChatController implements IEmplChatController {
   ): Promise<void> {
     try {
       console.log(4444444444);
-
       const conversationId = req.params.conversationId;
       console.log(conversationId, "conversationId");
 
@@ -63,7 +62,9 @@ export class EmplChatController implements IEmplChatController {
         );
       }
 
-      const conversation = await this._chatService.getConversationId(conversationId);
+      const conversation = await this._chatService.getConversationId(
+        conversationId
+      );
       const chatMessages = await this._chatService.chatMessage(
         conversation.conversationid
       );
@@ -90,28 +91,45 @@ export class EmplChatController implements IEmplChatController {
     }
   }
 
-    async getConversationData(
-      req: AuthenticatedRequest,
-      res: Response
+  async getConversationData(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
+    try {
+      console.log(5555555);
+      const employeeId = req.id;
+      console.log(employeeId, "employeeId");
+
+      const conversationData = await this._chatService.getConversationData(
+        employeeId!
+      );
+      return successResponse(
+        res,
+        HttpStatusCode.OK,
+        "Conversation data fetched successfully",
+        conversationData
+      );
+    } catch (error) {
+      return ErrorResponse(
+        res,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        "Error fetching conversation data"
+      );
+    }
+  }
+
+    //chat with client
+    async handleEmployeeMessage(
+      socket: Server,
+      conversationId: string,
+      message: string,
+      employeeId: string
     ): Promise<void> {
       try {
-        console.log(5555555);
-        const employeeId = req.id;
-        console.log(employeeId, "employeeId");
-  
-        const conversationData = await this._chatService.getConversationData(employeeId!);
-        return successResponse(
-          res,
-          HttpStatusCode.OK,
-          "Conversation data fetched successfully",
-          conversationData
-        );
+        const chatMessage: IChatMessageModel = await this._chatService.employeeSendMessage(conversationId, employeeId, message);
+        socket.to(conversationId).emit("employeeMessage", chatMessage);
       } catch (error) {
-        return ErrorResponse(
-          res,
-          HttpStatusCode.INTERNAL_SERVER_ERROR,
-          "Error fetching conversation data"
-        );
+        console.error("Error handling employee message:", error);
       }
     }
 

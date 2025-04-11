@@ -3,7 +3,6 @@ import IEntryRegFormData from "../../../interfaces/entities/IEntryFormReg.entity
 import IEntryRegRepository from "../../../interfaces/repository/user/entryReg.repository";
 import EntryRegForm from "../../../models/userEntryDetails";
 import CommonBaseRepository from "../../baseRepository/commonBaseRepository";
-import { IConverationModel } from "../../../interfaces/entities/chat.entity";
 
 export class EntryRegRepository
   extends CommonBaseRepository<{ entryRegForm: Document & IEntryRegFormData }>

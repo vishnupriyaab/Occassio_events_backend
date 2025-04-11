@@ -19,18 +19,16 @@ import { AppError } from "../../../middleware/errorHandling";
 import { EmployeeRepository } from "../../../repositories/entities/adminRepositories.ts/employeeRepository";
 import { UserRepository } from "../../../repositories/entities/userRepositories.ts/authRepository";
 import { EntryRegRepository } from "../../../repositories/entities/userRepositories.ts/entryRegRepository";
-import {
-  chatRepository,
-  ChatRepository,
-} from "../../../repositories/entities/chatRepository";
-import IChatRepository from "../../../interfaces/repository/chat.repository";
+import IUserChatRepository from "../../../interfaces/repository/user/chat.repository";
+import { UserChatRepository } from "../../../repositories/entities/userRepositories.ts/chatRepository";
+
 
 export class EntryRegService implements IEntryRegService {
   private _entryRegRepo: IEntryRegRepository;
   private _emailService: IEmailService;
   private _userRepo: IUserRepository;
   private _employeeRepo: IEmployeeRepository;
-  private _chatrepository: IChatRepository;
+  private _chatrepository: IUserChatRepository;
   private _jwtService: IJWTService;
 
   constructor(
@@ -42,7 +40,7 @@ export class EntryRegService implements IEntryRegService {
     },
     userRepo: IUserRepository,
     employeeRepo: IEmployeeRepository,
-    chatRepository: ChatRepository,
+    chatRepository: IUserChatRepository,
     jwtService: IJWTService
   ) {
     this._entryRegRepo = entryRegRepo;
@@ -204,16 +202,7 @@ export class EntryRegService implements IEntryRegService {
       };
 
       const chatRoomData = await this._chatrepository.createRoom(chatRoom);
-      console.log('1234567890', chatRoomData); //here i got data: {
-      //   conversationid: new ObjectId('67f74a7d3f4353ccfe52cacf'),
-      //   userId: new ObjectId('67f74a7d3f4353ccfe52cac9'),
-      //   employeeId: new ObjectId('67f3d107db1efa4e686b779a'),
-      //   _id: new ObjectId('67f74a7d3f4353ccfe52cad0'),
-      //   lastUpdated: 2025-04-10T04:35:09.848Z,
-      //   createdAt: 2025-04-10T04:35:09.849Z,
-      //   updatedAt: 2025-04-10T04:35:09.849Z,
-      //   __v: 0
-      // }
+      console.log('1234567890', chatRoomData); 
 
       await this._emailService.sendEmployeeAssignedEmailToUser(
         employeeWithLeastAssignments.name,
@@ -238,6 +227,7 @@ const emailConfig = {
 const userEntryRegRepository = new EntryRegRepository();
 const userRepository = new UserRepository();
 const employeeRepository = new EmployeeRepository();
+const chatRepository = new UserChatRepository()
 const IjwtService: IJWTService = new JWTService();
 export const userEntryRegService = new EntryRegService(
   userEntryRegRepository,

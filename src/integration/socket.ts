@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
-import { chatController } from "../controllers/management/chatController";
+import { emplChatController } from "../controllers/management/employeeController/chatController";
+import { userChatController } from "../controllers/management/userController/chatController";
 
 export class SocketManager {
   private io: Server;
@@ -17,39 +18,22 @@ export class SocketManager {
         console.log(
           `Message from user ${data.user}: ${data.message}, ${data.userId}, ${data.conversationId}`
         );
-        await chatController.handleNewUserMessage(
+        await userChatController.handleNewUserMessage(
           this.io,
           data.conversationId,
           data.message,
           data.userId
         );
-
-        // this.io.in(data.conversationId).emit("userMessage", {
-        //   senderId: data.userId,
-        //   senderType: "user",
-        //   message: data.message,
-        //   timestamp: new Date(),
-        // });
       });
 
       client.on("employee-message", async (data) => {
         console.log(`Employee message from ${data.user}: ${data.message}`);
-        await chatController.handleEmployeeMessage(
+        await emplChatController.handleEmployeeMessage(
           this.io,
           data.conversationId,
           data.message,
           data.employeeId
         );
-
-        // this.io.to(data.conversationId).emit("employeeMessage", {
-        //   //   user: data.user,
-        //   //   message: data.message,
-        //   //   timestamp: new Date(),
-        //   senderId: data.employeeId,
-        //   senderType: "employee",
-        //   message: data.message,
-        //   timestamp: new Date(),
-        // });
       });
 
       client.on("join-conversation", (data) => {

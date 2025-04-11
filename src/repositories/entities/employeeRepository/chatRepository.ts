@@ -1,9 +1,9 @@
-import { Document, Types } from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
 import { IEmployee } from "../../../interfaces/entities/employee.entity";
 import IEmplChatRepository from "../../../interfaces/repository/employee/chat.repository";
 import Employee from "../../../models/employeeModel";
 import CommonBaseRepository from "../../baseRepository/commonBaseRepository";
-import { IChatMessage, IConverationModel, IConversation } from "../../../interfaces/entities/chat.entity";
+import { IChatMessage, IChatMessageModel, IConverationModel, IConversation } from "../../../interfaces/entities/chat.entity";
 import Conversation, { ChatMessage } from "../../../models/chatModel";
 
 export class EmplChatRepository
@@ -49,6 +49,26 @@ export class EmplChatRepository
               throw error;
             }
           }
+
+            async sendMessage(conversationId: string, userId:string, message:string, user:string):Promise<IChatMessageModel>{
+              try {
+                console.log("qwertyui")
+                const sendModel = user === 'user' ? 'User' : 'Employee'
+                const data: IChatMessageModel = {
+                  conversationid: new mongoose.Types.ObjectId(conversationId),
+                  message: message,
+                  user: user,
+                  senderId: new mongoose.Types.ObjectId(userId),
+                  senderModel: sendModel,
+                  timestamp: new Date(Date.now())
+                }
+                console.log(data,);
+                await this.createData("chatmessage", data);
+                return data;
+              } catch (error) {
+                throw error;
+              }
+            }
 
 }
 

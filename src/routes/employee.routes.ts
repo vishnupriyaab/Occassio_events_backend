@@ -6,7 +6,6 @@ import { emplAuthController } from "../controllers/management/employeeController
 import { emplProfileController } from "../controllers/management/employeeController/profileController";
 import { upload } from "../middleware/claudinaryUpload";
 import { emplClientController } from "../controllers/management/employeeController/clientController";
-import { chatController } from "../controllers/management/chatController";
 import { emplChatController } from "../controllers/management/employeeController/chatController";
 
 const employeeRouter = Router()

@@ -1,99 +1,70 @@
-// import mongoose, { Document, Schema } from "mongoose";
-// import {
-//   IChatMessage,
-//   IConversation,
-// } from "../interfaces/entities/chat.entity";
-
-// const chatMessageSchema: Schema = new Schema<IChatMessage>({
-//   user: {
-//     type: String,
-//     required: true,
-//   },
-//   message: {
-//     type: String,
-//     required: true,
-//   },
-//   timestamp: {
-//     type: Date,
-//     default: Date.now,
-//   },
-// });
-
-// const conversationSchema: Schema = new Schema<IConversation>({
-//   conversationid: {
-//     type: String,
-//     required: true,
-//     unique: true,
-//   },
-//   participants: [
-//     {
-//       type: mongoose.Schema.Types.ObjectId,
-//       ref: "User",
-//       required: true,
-//     },
-//   ],
-//   messages: [chatMessageSchema],
-// });
-
-// const Conversation = mongoose.model<IConversation & Document>("Chat", conversationSchema)
-// export default Conversation;
-
 import mongoose, { Document, Schema } from "mongoose";
-import { IChatMessage, IConversation } from "../interfaces/entities/chat.entity";
+import {
+  IChatMessage,
+  IConversation,
+} from "../interfaces/entities/chat.entity";
 
 const chatMessageSchema = new Schema<IChatMessage>({
   user: {
     type: String,
     enum: ["user", "employee"],
-    required: true
+    required: true,
   },
   conversationid: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true
+    required: true,
   },
   senderId: {
     type: mongoose.Schema.Types.ObjectId,
-    refPath: 'senderModel',
-    required: true
+    refPath: "senderModel",
+    required: true,
   },
   senderModel: {
     type: String,
-    enum: ['User', 'Employee'],
-    required: true
+    enum: ["User", "Employee"],
+    required: true,
   },
   message: {
     type: String,
-    required: true
+    required: true,
   },
   timestamp: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
-export const ChatMessage = mongoose.model<IChatMessage & Document>("chatmessage", chatMessageSchema)
+export const ChatMessage = mongoose.model<IChatMessage & Document>(
+  "chatmessage",
+  chatMessageSchema
+);
 
+const conversationSchema = new Schema<IConversation>(
+  {
+    conversationid: {
+      type: mongoose.Schema.Types.ObjectId,
+      unique: true,
+      required: true,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    employeeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Employee",
+      required: true,
+    },
+    lastUpdated: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { timestamps: true }
+);
 
-const conversationSchema = new Schema<IConversation>({
-  conversationid: {
-    type: mongoose.Schema.Types.ObjectId,
-    unique: true,
-    required: true
-  },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  employeeId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Employee',
-    required: true
-  },
-  lastUpdated: {
-    type: Date,
-    default: Date.now
-  }
-}, { timestamps: true });
-
-const Conversation = mongoose.model<IConversation & Document>("Conversation", conversationSchema);
+const Conversation = mongoose.model<IConversation & Document>(
+  "Conversation",
+  conversationSchema
+);
 export default Conversation;

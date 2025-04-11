@@ -6,4 +6,5 @@ export default interface IEmplChatServices {
   getConversationId(conversationId: string): Promise<IConversation>
   chatMessage(conversationId: Types.ObjectId): Promise<IChatMessageModel[]>
   getConversationData(employeeId:string): Promise<IConversation[]>
+  employeeSendMessage(conversationId: string, employeeId:string, message: string): Promise<IChatMessageModel>
 }
