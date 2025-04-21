@@ -32,6 +32,14 @@ const chatMessageSchema = new Schema<IChatMessage>({
     type: Date,
     default: Date.now,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false
+  },
+  deletedFor: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
 });
 export const ChatMessage = mongoose.model<IChatMessage & Document>(
   "chatmessage",

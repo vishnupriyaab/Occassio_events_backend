@@ -8,7 +8,6 @@ import IEmplChatRepository from "../../../interfaces/repository/employee/chat.re
 import IEmplChatServices from "../../../interfaces/services/employee/chat.services";
 import {
   emplChatRepository,
-  EmplChatRepository,
 } from "../../../repositories/entities/employeeRepository/chatRepository";
 import { AppError } from "../../../middleware/errorHandling";
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
@@ -85,6 +84,45 @@ export class EmplChatServices implements IEmplChatServices {
       throw error;
     }
   }
+
+    async deleteMessage(
+      messageId: string,
+      userId: string,
+    ): Promise<any> {
+      try {
+        const message = await this._emplChatRepo.getMessageById(messageId);
+  
+        if (!message) {
+          throw new AppError(
+            "Message not found",
+            HttpStatusCode.NOT_FOUND,
+            "MessageNotFound"
+          );
+        }
+  
+        // if (deleteType === "everyone") {
+          if (message.senderId!.toString() !== userId) {
+            throw new AppError(
+              "Only the sender can delete messages for everyone",
+              HttpStatusCode.FORBIDDEN,
+              "UnauthorizedDeletion"
+            );
+          }
+  
+          return await this._emplChatRepo.markMessageDeletedForEveryone(
+            messageId
+          );
+        // } else {
+        //   return await this._chatRepository.markMessageDeletedForUser(
+        //     messageId,
+        //     userId
+        //   );
+        // }
+      } catch (error) {
+        throw error;
+      }
+    }
+
 }
 
 export const emplChatService = new EmplChatServices(emplChatRepository);

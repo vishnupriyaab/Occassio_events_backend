@@ -27,6 +27,7 @@ export default class CommonBaseRepository<
 
     return model.create(data);
   }
+
   updateOne<K extends keyof TModels>(
     modelName: K,
     filter: FilterQuery<TModels[K]>,
@@ -38,6 +39,7 @@ export default class CommonBaseRepository<
 
     return model.updateOne(filter, { $set: updateData }, options);
   }
+
   findById<K extends keyof TModels>(
     modelName: K,
     id: string
@@ -93,6 +95,27 @@ export default class CommonBaseRepository<
       { new: true, runValidators: true }
     );
   } 
+
+
+  findByIdAndUpdate<K extends keyof TModels>(
+    modelName: K,
+    id: string,
+    updateData: UpdateQuery<TModels[K]>,
+    options?: { new?: boolean; runValidators?: boolean }
+  ): Promise<TModels[K] | null> {
+    const model = this._models[modelName];
+    if (!model) throw new Error(`Model ${String(modelName)} not found`);
+    
+    return model.findByIdAndUpdate(
+      id,
+      updateData,
+      {
+        new: options?.new ?? true,
+        runValidators: options?.runValidators ?? true,
+        ...options
+      }
+    );
+  }
 
   findMany<K extends keyof TModels>(
     modelName: K,

@@ -7,8 +7,9 @@ export interface IUser {
   email: string;
   entryId: string;
   phone: number;
-  isVerified?: boolean;
   isBlocked?: boolean;
+  isOnline?: boolean;
+  isVerified?: boolean;
   assignedEmployee?: mongoose.Types.ObjectId;
   resetPasswordToken?: string;
 }

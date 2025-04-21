@@ -35,6 +35,7 @@ export class EmplProfileService implements IEmplProfileService {
         phone: employee.phone,
         imageUrl: employee.imageUrl,
         isVerified: employee.isVerified,
+        isOnline: employee.isOnline,
         assignedUsers: employee.assignedUsers,
         assignedUsersCount: employee.assignedUsersCount,
         resetPasswordToken: employee.resetPasswordToken,

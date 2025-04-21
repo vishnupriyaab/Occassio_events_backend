@@ -7,4 +7,6 @@ export default interface IEmplChatRepository {
   ChatMessage(conversationId: Types.ObjectId): Promise<IChatMessage[]>;
   getConversationData(employeeId:string): Promise<IConversation[]>
   sendMessage(conversationId: string, userId:string, message:string, user:string):Promise<IChatMessageModel>
+  getMessageById(messageId: string): Promise<IChatMessageModel | null>
+  markMessageDeletedForEveryone(messageId: string): Promise<any>
 }

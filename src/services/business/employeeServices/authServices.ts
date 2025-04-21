@@ -59,7 +59,7 @@ export class EmploAuthService implements IEmplAuthService {
           "AccountIsBlocked"
         );
       }
-      console.log(password,"passworddd")
+      console.log(password,"passworddd", employee.password)
       
       const isPasswordValid = await bcrypt.compare(
         password,

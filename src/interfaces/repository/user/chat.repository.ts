@@ -13,4 +13,7 @@ sendMessage(
     user: string
   ): Promise<IChatMessageModel>
   createRoom(data: IConverationModel): Promise<IConverationModel | null>
+  getMessageById(messageId: string): Promise<IChatMessageModel | null>
+  markMessageDeletedForUser(messageId: string, userId: string): Promise<any>
+  markMessageDeletedForEveryone(messageId: string): Promise<any>
 }

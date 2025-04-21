@@ -8,6 +8,7 @@ import { userEntryRegController } from "../controllers/management/userController
 import { userAuthController } from "../controllers/management/userController/authController";
 import { subClientController } from "../controllers/management/userController/subscribtionClientController";
 import { userChatController } from "../controllers/management/userController/chatController";
+import { employeeController } from "../controllers/management/userController/employeeController";
 
 const userRouter = Router();
 const iJwtServices: IJWTService = new JWTService();
@@ -24,8 +25,11 @@ userRouter
   // Protected routes (middleware applied)
 userRouter.use(authMiddleware.authenticateToken.bind(authMiddleware));
 
-userRouter.get("/sub-details", subClientController.fetchSubClientData.bind(subClientController));
-userRouter.get('/getchats', userChatController.getChats.bind(userChatController));
-userRouter.get('/conversation', userChatController.getConversationId.bind(userChatController));
+userRouter.get("/sub-details", subClientController.fetchSubClientData.bind(subClientController))
+  .get('/getchats', userChatController.getChats.bind(userChatController))
+  .get('/conversation', userChatController.getConversationId.bind(userChatController))
+  .get("/getEmployeeDetails/:employeeId", employeeController.fetchEmployeeDetails.bind(employeeController))
+  .delete('/message/:conversationId/:messageId', userChatController.deleteMessage.bind(userChatController))
+
 
 export default userRouter;

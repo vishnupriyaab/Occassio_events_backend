@@ -103,6 +103,8 @@ export class UserChatRepository
         senderId: new mongoose.Types.ObjectId(userId),
         senderModel: sendModel,
         timestamp: new Date(Date.now()),
+        isDeleted: false, //rough
+        deletedFor: [new mongoose.Types.ObjectId(userId)], //rough
       };
       console.log(data);
       await this.createData("chatmessage", data);
@@ -112,7 +114,7 @@ export class UserChatRepository
     }
   }
 
-    async createRoom(data: IConverationModel): Promise<IConverationModel | null> {
+  async createRoom(data: IConverationModel): Promise<IConverationModel | null> {
     try {
       return this.createData("conversation", data);
     } catch (error) {
@@ -120,6 +122,41 @@ export class UserChatRepository
     }
   }
 
+  async getMessageById(messageId: string): Promise<IChatMessageModel | null> {
+    try {
+      return await this.findById("chatmessage", messageId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async markMessageDeletedForUser(
+    messageId: string,
+    userId: string
+  ): Promise<any> {
+    try {
+      return await this.findByIdAndUpdate(
+        "chatmessage",
+        messageId,
+        {
+          $addToSet: { deletedFor: new mongoose.Types.ObjectId(userId) },
+        },
+        { new: true }
+      )
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async markMessageDeletedForEveryone(messageId: string): Promise<any> {
+    try {
+      return await this.findByIdAndUpdate("chatmessage", messageId, {
+        isDeleted: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
-export const userChatRepository = new UserChatRepository();
+export const userChatRepository = new UserChatRepository()

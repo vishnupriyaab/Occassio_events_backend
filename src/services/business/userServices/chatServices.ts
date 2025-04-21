@@ -63,31 +63,57 @@ export class UserChatServices implements IUserChatServices {
     }
   }
 
-  // async employeeSendMessage(
-  //   conversationId: string,
-  //   employeeId: string,
-  //   message: string
-  // ): Promise<IChatMessageModel> {
-  //   try {
-  //     return this._chatRepository.sendMessage(
-  //       conversationId,
-  //       employeeId,
-  //       message,
-  //       "employee"
-  //     );
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
+  async userSendMessage(
+    conversationId: string,
+    userId: string,
+    message: string
+  ): Promise<IChatMessageModel> {
+    return this._chatRepository.sendMessage(
+      conversationId,
+      userId,
+      message,
+      "user"
+    );
+  }
 
-    async userSendMessage(
-      conversationId: string,
-      userId: string,
-      message: string
-    ): Promise<IChatMessageModel> {
-      return this._chatRepository.sendMessage(conversationId, userId, message, "user");
+  async deleteMessage(
+    messageId: string,
+    userId: string,
+    // deleteType: "me" | "everyone"
+  ): Promise<any> {
+    try {
+      const message = await this._chatRepository.getMessageById(messageId);
+
+      if (!message) {
+        throw new AppError(
+          "Message not found",
+          HttpStatusCode.NOT_FOUND,
+          "MessageNotFound"
+        );
+      }
+
+      // if (deleteType === "everyone") {
+        if (message.senderId!.toString() !== userId) {
+          throw new AppError(
+            "Only the sender can delete messages for everyone",
+            HttpStatusCode.FORBIDDEN,
+            "UnauthorizedDeletion"
+          );
+        }
+
+        return await this._chatRepository.markMessageDeletedForEveryone(
+          messageId
+        );
+      // } else {
+      //   return await this._chatRepository.markMessageDeletedForUser(
+      //     messageId,
+      //     userId
+      //   );
+      // }
+    } catch (error) {
+      throw error;
     }
-
+  }
 }
 
 export const userChatService = new UserChatServices(userChatRepository);

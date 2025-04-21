@@ -11,4 +11,9 @@ export default interface IUserChatServices{
         userId: string,
         message: string
       ): Promise<IChatMessageModel>
+      deleteMessage(
+        messageId: string,
+        userId: string,
+        // deleteType: 'me' | 'everyone'
+      ): Promise<any>
 }

@@ -5,6 +5,7 @@ export interface IEmployee {
   name: string;
   email: string;
   phone: string;
+  isOnline: boolean;
   password?: string;
   assignedUsers: Types.ObjectId[]
   assignedUsersCount:number

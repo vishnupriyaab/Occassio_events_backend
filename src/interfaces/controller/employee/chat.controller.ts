@@ -11,4 +11,8 @@ export default interface IEmplChatController{
         req: AuthenticatedRequest,
         res: Response
       ): Promise<void>
+      deleteMessage(
+        req: AuthenticatedRequest,
+        res: Response
+      ): Promise<void>
 }

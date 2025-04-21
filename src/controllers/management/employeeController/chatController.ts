@@ -10,6 +10,7 @@ import { AuthenticatedRequest } from "../../../middleware/authenticateToken";
 import { emplChatService } from "../../../services/business/employeeServices/chatServices";
 import { Server } from "socket.io";
 import { IChatMessageModel } from "../../../interfaces/entities/chat.entity";
+import mongoose from "mongoose";
 
 export class EmplChatController implements IEmplChatController {
   private _chatService: IEmplChatServices;
@@ -132,6 +133,58 @@ export class EmplChatController implements IEmplChatController {
         console.error("Error handling employee message:", error);
       }
     }
+
+        async deleteMessage(
+          req: AuthenticatedRequest,
+          res: Response
+        ): Promise<void> {
+          try {
+            const userId = req.id;
+            console.log(userId,"vishnuUserId");
+            const { conversationId, messageId } = req.params;
+            // const deleteType = req.query.deleteType as 'me' | 'everyone';
+            
+            if (!userId || !conversationId || !messageId ) {
+              return ErrorResponse(
+                res,
+                HttpStatusCode.BAD_REQUEST,
+                "Missing required parameters"
+              );
+            }
+            
+            const conversation = await this._chatService.chatMessage(new mongoose.Types.ObjectId(conversationId));
+            if (!conversation) {
+              return ErrorResponse(
+                res,
+                HttpStatusCode.NOT_FOUND,
+                "Conversation not found"
+              );
+            }
+            
+            
+            const result = await this._chatService.deleteMessage(
+              messageId,
+              userId!,
+              // deleteType
+            );
+            
+            console.log(result,"resultttttttt")
+    
+            return successResponse(
+              res,
+              HttpStatusCode.OK,
+              "Message deleted successfully",
+              result
+            );
+          } catch (error: any) {
+            console.error("Failed to delete message:", error);
+            return ErrorResponse(
+              res,
+              HttpStatusCode.INTERNAL_SERVER_ERROR,
+              error.message || "Failed to delete message"
+            );
+          }
+        }
 
 }
 

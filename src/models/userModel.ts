@@ -38,6 +38,10 @@ const userSchema: Schema = new Schema<IUser>(
       ref: 'Employee',
       default: null
     },
+    isOnline: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );

@@ -28,6 +28,7 @@ employeeRouter
     .get("/fetchClient", emplClientController.fetchClients.bind(emplClientController))
     .get('/getchats', emplChatController.getChats.bind(emplChatController))
     .get("/getconversationdata", emplChatController.getConversationData.bind(emplChatController))
-    .get('/conversation/:conversationId', emplChatController.getConversationId.bind(emplChatController));
-
+    .get('/conversation/:conversationId', emplChatController.getConversationId.bind(emplChatController))
+    .delete('/message/:conversationId/:messageId', emplChatController.deleteMessage.bind(emplChatController))
+    
 export default employeeRouter;
