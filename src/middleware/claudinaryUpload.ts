@@ -9,7 +9,7 @@ const storage = new CloudinaryStorage({
   params: {
     folder: 'events',
     allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
-    type: "authenticated",  // This makes images private
+    type: "authenticated",
     transformation: [{ width: 500, height: 500, crop: 'limit' }]
   } as any
 });

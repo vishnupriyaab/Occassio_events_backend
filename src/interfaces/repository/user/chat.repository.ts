@@ -16,4 +16,5 @@ sendMessage(
   getMessageById(messageId: string): Promise<IChatMessageModel | null>
   markMessageDeletedForUser(messageId: string, userId: string): Promise<any>
   markMessageDeletedForEveryone(messageId: string): Promise<any>
+  saveImageMessage(conversationId: string, employeeId: string, imageUrl:string, user: string):Promise<IChatMessageModel>
 }

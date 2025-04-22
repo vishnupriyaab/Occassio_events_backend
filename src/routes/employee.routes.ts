@@ -30,5 +30,6 @@ employeeRouter
     .get("/getconversationdata", emplChatController.getConversationData.bind(emplChatController))
     .get('/conversation/:conversationId', emplChatController.getConversationId.bind(emplChatController))
     .delete('/message/:conversationId/:messageId', emplChatController.deleteMessage.bind(emplChatController))
+    // .post('/upload-images', upload.array('images', 10), emplChatController.uploadMultipleImages.bind(emplChatController))
     
-export default employeeRouter;
+export default employeeRouter;  

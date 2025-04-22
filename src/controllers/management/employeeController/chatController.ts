@@ -1,4 +1,5 @@
-import { Response } from "express";
+import { Request, Response } from "express";
+
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import {
   ErrorResponse,
@@ -11,10 +12,16 @@ import { emplChatService } from "../../../services/business/employeeServices/cha
 import { Server } from "socket.io";
 import { IChatMessageModel } from "../../../interfaces/entities/chat.entity";
 import mongoose from "mongoose";
+import { ICloudinaryService } from "../../../interfaces/integration/IClaudinary";
+import { CloudinaryService } from "../../../integration/claudinaryService";
+import IHelperService from "../../../interfaces/integration/IHelper";
+import { HelperService } from "../../../integration/helper";
 
 export class EmplChatController implements IEmplChatController {
   private _chatService: IEmplChatServices;
-  constructor(chatService: IEmplChatServices) {
+  constructor(
+    chatService: IEmplChatServices,
+  ) {
     this._chatService = chatService;
   }
   async getChats(req: AuthenticatedRequest, res: Response): Promise<void> {
@@ -119,73 +126,98 @@ export class EmplChatController implements IEmplChatController {
     }
   }
 
-    //chat with client
-    async handleEmployeeMessage(
-      socket: Server,
-      conversationId: string,
-      message: string,
-      employeeId: string
-    ): Promise<void> {
-      try {
-        const chatMessage: IChatMessageModel = await this._chatService.employeeSendMessage(conversationId, employeeId, message);
-        socket.to(conversationId).emit("employeeMessage", chatMessage);
-      } catch (error) {
-        console.error("Error handling employee message:", error);
-      }
+  //chat with client
+  async handleEmployeeMessage(
+    socket: Server,
+    conversationId: string,
+    message: string,
+    employeeId: string
+  ): Promise<void> {
+    try {
+      const chatMessage: IChatMessageModel =
+        await this._chatService.employeeSendMessage(
+          conversationId,
+          employeeId,
+          message
+        );
+      socket.to(conversationId).emit("employeeMessage", chatMessage);
+    } catch (error) {
+      console.error("Error handling employee message:", error);
     }
+  }
 
-        async deleteMessage(
-          req: AuthenticatedRequest,
-          res: Response
-        ): Promise<void> {
-          try {
-            const userId = req.id;
-            console.log(userId,"vishnuUserId");
-            const { conversationId, messageId } = req.params;
-            // const deleteType = req.query.deleteType as 'me' | 'everyone';
-            
-            if (!userId || !conversationId || !messageId ) {
-              return ErrorResponse(
-                res,
-                HttpStatusCode.BAD_REQUEST,
-                "Missing required parameters"
-              );
-            }
-            
-            const conversation = await this._chatService.chatMessage(new mongoose.Types.ObjectId(conversationId));
-            if (!conversation) {
-              return ErrorResponse(
-                res,
-                HttpStatusCode.NOT_FOUND,
-                "Conversation not found"
-              );
-            }
-            
-            
-            const result = await this._chatService.deleteMessage(
-              messageId,
-              userId!,
-              // deleteType
-            );
-            
-            console.log(result,"resultttttttt")
-    
-            return successResponse(
-              res,
-              HttpStatusCode.OK,
-              "Message deleted successfully",
-              result
-            );
-          } catch (error: any) {
-            console.error("Failed to delete message:", error);
-            return ErrorResponse(
-              res,
-              HttpStatusCode.INTERNAL_SERVER_ERROR,
-              error.message || "Failed to delete message"
-            );
-          }
-        }
+  async deleteMessage(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.id;
+      console.log(userId, "vishnuUserId");
+      const { conversationId, messageId } = req.params;
 
+      if (!userId || !conversationId || !messageId) {
+        return ErrorResponse(
+          res,
+          HttpStatusCode.BAD_REQUEST,
+          "Missing required parameters"
+        );
+      }
+
+      const conversation = await this._chatService.chatMessage(
+        new mongoose.Types.ObjectId(conversationId)
+      );
+      if (!conversation) {
+        return ErrorResponse(
+          res,
+          HttpStatusCode.NOT_FOUND,
+          "Conversation not found"
+        );
+      }
+
+      const result = await this._chatService.deleteMessage(
+        messageId,
+        userId!
+        // deleteType
+      );
+
+      console.log(result, "resultttttttt");
+
+      return successResponse(
+        res,
+        HttpStatusCode.OK,
+        "Message deleted successfully",
+        result
+      );
+    } catch (error: any) {
+      console.error("Failed to delete message:", error);
+      return ErrorResponse(
+        res,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        error.message || "Failed to delete message"
+      );
+    }
+  }
+
+  async saveImageMessage(
+    socket:Server,
+    base64Image: string,
+    fileName: string,
+    employeeId: string,
+    conversationId: string
+  ): Promise<void> {
+    try {
+      const chatMessage = await this._chatService.saveImageMessage(
+        base64Image, fileName, employeeId, conversationId
+      );
+      // return imageUrl;
+      socket.to(conversationId).emit("employeeMessage", chatMessage);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  
 }
 
-export const emplChatController = new EmplChatController(emplChatService);
+
+export const emplChatController = new EmplChatController(
+  emplChatService,
+
+);

@@ -1,4 +1,6 @@
 import { Types } from "mongoose";
+import * as fs from "fs";
+import path from "path";
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import {
   IChatMessageModel,
@@ -8,11 +10,23 @@ import IUserChatRepository from "../../../interfaces/repository/user/chat.reposi
 import IUserChatServices from "../../../interfaces/services/user/chat.services";
 import { AppError } from "../../../middleware/errorHandling";
 import { userChatRepository } from "../../../repositories/entities/userRepositories.ts/chatRepository";
+import { ICloudinaryService } from "../../../interfaces/integration/IClaudinary";
+import IHelperService from "../../../interfaces/integration/IHelper";
+import { HelperService } from "../../../integration/helper";
+import { CloudinaryService } from "../../../integration/claudinaryService";
 
 export class UserChatServices implements IUserChatServices {
   private _chatRepository: IUserChatRepository;
-  constructor(chatRepository: IUserChatRepository) {
+  private _helperService: IHelperService;
+  private _cloudinaryService: ICloudinaryService;
+  constructor(
+    chatRepository: IUserChatRepository,
+    cloudinaryService: ICloudinaryService,
+    helperService: IHelperService
+  ) {
     this._chatRepository = chatRepository;
+    this._helperService = helperService;
+    this._cloudinaryService = cloudinaryService;
   }
 
   async getChats(userId: string): Promise<IConversation> {
@@ -78,7 +92,7 @@ export class UserChatServices implements IUserChatServices {
 
   async deleteMessage(
     messageId: string,
-    userId: string,
+    userId: string
     // deleteType: "me" | "everyone"
   ): Promise<any> {
     try {
@@ -93,17 +107,17 @@ export class UserChatServices implements IUserChatServices {
       }
 
       // if (deleteType === "everyone") {
-        if (message.senderId!.toString() !== userId) {
-          throw new AppError(
-            "Only the sender can delete messages for everyone",
-            HttpStatusCode.FORBIDDEN,
-            "UnauthorizedDeletion"
-          );
-        }
-
-        return await this._chatRepository.markMessageDeletedForEveryone(
-          messageId
+      if (message.senderId!.toString() !== userId) {
+        throw new AppError(
+          "Only the sender can delete messages for everyone",
+          HttpStatusCode.FORBIDDEN,
+          "UnauthorizedDeletion"
         );
+      }
+
+      return await this._chatRepository.markMessageDeletedForEveryone(
+        messageId
+      );
       // } else {
       //   return await this._chatRepository.markMessageDeletedForUser(
       //     messageId,
@@ -114,6 +128,64 @@ export class UserChatServices implements IUserChatServices {
       throw error;
     }
   }
+
+  async saveImageMessage(
+    base64Image: string,
+    fileName: string,
+    userId: string,
+    conversationId: string
+  ): Promise<IChatMessageModel> {
+    try {
+      const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, "");
+
+      const tempDir = path.join(__dirname, "../../../temp-uploads");
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+      }
+      const uniqueFilename = `${Date.now()}-${fileName}`;
+      const filePath = path.join(tempDir, uniqueFilename);
+
+      fs.writeFileSync(filePath, base64Data, { encoding: "base64" });
+
+      const file: Express.Multer.File = {
+        fieldname: "image",
+        originalname: fileName,
+        encoding: "7bit",
+        mimetype: this._helperService.getMimeType(fileName),
+        destination: tempDir,
+        filename: uniqueFilename,
+        path: filePath,
+        size: fs.statSync(filePath).size,
+        stream: fs.createReadStream(filePath),
+        buffer: Buffer.from(base64Data, "base64"),
+      } as unknown as Express.Multer.File;
+
+      const uploadedUrls = await this._cloudinaryService.uploadMultipleImages([
+        file,
+      ]);
+      const imageUrl: string = uploadedUrls[0];
+
+      fs.unlinkSync(filePath);
+
+      const savedMessage = await this._chatRepository.saveImageMessage(
+        conversationId,
+        userId,
+        imageUrl,
+        "user"
+      );
+
+      console.log("qwertyu");
+      return savedMessage;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
-export const userChatService = new UserChatServices(userChatRepository);
+const cloudinaryService = new CloudinaryService();
+const helperService = new HelperService();
+export const userChatService = new UserChatServices(
+  userChatRepository,
+  cloudinaryService,
+  helperService
+);

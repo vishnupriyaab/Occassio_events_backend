@@ -12,6 +12,8 @@ export interface IChatMessageModel {
   timestamp?: Date;
   isDeleted: boolean;
   deletedFor: Types.ObjectId[]
+  messageType: "text" | "image";
+
 }
 
 export interface IConversation extends IConverationModel, Document {

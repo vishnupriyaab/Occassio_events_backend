@@ -1,4 +1,6 @@
 import { Types } from "mongoose";
+import * as fs from "fs";
+import path from "path";
 import {
   IChatMessageModel,
   IConverationModel,
@@ -6,16 +8,26 @@ import {
 } from "../../../interfaces/entities/chat.entity";
 import IEmplChatRepository from "../../../interfaces/repository/employee/chat.repository";
 import IEmplChatServices from "../../../interfaces/services/employee/chat.services";
-import {
-  emplChatRepository,
-} from "../../../repositories/entities/employeeRepository/chatRepository";
+import { emplChatRepository } from "../../../repositories/entities/employeeRepository/chatRepository";
 import { AppError } from "../../../middleware/errorHandling";
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
+import IHelperService from "../../../interfaces/integration/IHelper";
+import { ICloudinaryService } from "../../../interfaces/integration/IClaudinary";
+import { HelperService } from "../../../integration/helper";
+import { CloudinaryService } from "../../../integration/claudinaryService";
 
 export class EmplChatServices implements IEmplChatServices {
   private _emplChatRepo: IEmplChatRepository;
-  constructor(emplChatRepo: IEmplChatRepository) {
+  private _helperService: IHelperService;
+  private _cloudinaryService: ICloudinaryService;
+  constructor(
+    emplChatRepo: IEmplChatRepository,
+    cloudinaryService: ICloudinaryService,
+    helperService: IHelperService
+  ) {
     this._emplChatRepo = emplChatRepo;
+    this._helperService = helperService;
+    this._cloudinaryService = cloudinaryService;
   }
 
   async getChats(conversationId: string): Promise<IConverationModel> {
@@ -85,44 +97,92 @@ export class EmplChatServices implements IEmplChatServices {
     }
   }
 
-    async deleteMessage(
-      messageId: string,
-      userId: string,
-    ): Promise<any> {
-      try {
-        const message = await this._emplChatRepo.getMessageById(messageId);
-  
-        if (!message) {
-          throw new AppError(
-            "Message not found",
-            HttpStatusCode.NOT_FOUND,
-            "MessageNotFound"
-          );
-        }
-  
-        // if (deleteType === "everyone") {
-          if (message.senderId!.toString() !== userId) {
-            throw new AppError(
-              "Only the sender can delete messages for everyone",
-              HttpStatusCode.FORBIDDEN,
-              "UnauthorizedDeletion"
-            );
-          }
-  
-          return await this._emplChatRepo.markMessageDeletedForEveryone(
-            messageId
-          );
-        // } else {
-        //   return await this._chatRepository.markMessageDeletedForUser(
-        //     messageId,
-        //     userId
-        //   );
-        // }
-      } catch (error) {
-        throw error;
-      }
-    }
+  async deleteMessage(messageId: string, userId: string): Promise<any> {
+    try {
+      const message = await this._emplChatRepo.getMessageById(messageId);
 
+      if (!message) {
+        throw new AppError(
+          "Message not found",
+          HttpStatusCode.NOT_FOUND,
+          "MessageNotFound"
+        );
+      }
+
+      // if (deleteType === "everyone") {
+      if (message.senderId!.toString() !== userId) {
+        throw new AppError(
+          "Only the sender can delete messages for everyone",
+          HttpStatusCode.FORBIDDEN,
+          "UnauthorizedDeletion"
+        );
+      }
+
+      return await this._emplChatRepo.markMessageDeletedForEveryone(messageId);
+      // } else {
+      //   return await this._chatRepository.markMessageDeletedForUser(
+      //     messageId,
+      //     userId
+      //   );
+      // }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async saveImageMessage(
+    base64Image: string,
+    fileName: string,
+    employeeId: string,
+    conversationId: string
+  ): Promise<IChatMessageModel> {
+    try {
+      const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, "");
+
+      const tempDir = path.join(__dirname, "../../../temp-uploads");
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+      }
+      const uniqueFilename = `${Date.now()}-${fileName}`;
+      const filePath = path.join(tempDir, uniqueFilename);
+
+      fs.writeFileSync(filePath, base64Data, { encoding: "base64" });
+
+      const file: Express.Multer.File = {
+        fieldname: "image",
+        originalname: fileName,
+        encoding: "7bit",
+        mimetype: this._helperService.getMimeType(fileName),
+        destination: tempDir,
+        filename: uniqueFilename,
+        path: filePath,
+        size: fs.statSync(filePath).size,
+        stream: fs.createReadStream(filePath),
+        buffer: Buffer.from(base64Data, "base64"),
+      } as unknown as Express.Multer.File;
+
+      const uploadedUrls = await this._cloudinaryService.uploadMultipleImages([
+        file,
+      ]);
+      const imageUrl: string = uploadedUrls[0];
+
+      fs.unlinkSync(filePath);
+
+      const savedMessage = await this._emplChatRepo.saveImageMessage(conversationId, employeeId, imageUrl, "employee");
+    
+
+      console.log("qwertyu");
+      return savedMessage;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
-export const emplChatService = new EmplChatServices(emplChatRepository);
+const cloudinaryService = new CloudinaryService();
+const helperService = new HelperService();
+export const emplChatService = new EmplChatServices(
+  emplChatRepository,
+  cloudinaryService,
+  helperService
+);

@@ -28,6 +28,11 @@ const chatMessageSchema = new Schema<IChatMessage>({
     type: String,
     required: true,
   },
+  messageType: {
+    type: String,
+    enum: ["text", "image"],
+    default: "text"
+  },
   timestamp: {
     type: Date,
     default: Date.now,
@@ -39,7 +44,7 @@ const chatMessageSchema = new Schema<IChatMessage>({
   deletedFor: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
 });
 export const ChatMessage = mongoose.model<IChatMessage & Document>(
   "chatmessage",

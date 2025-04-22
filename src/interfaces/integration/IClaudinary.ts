@@ -1,5 +1,6 @@
 export interface ICloudinaryService {
-    uploadImage(file: Express.Multer.File): Promise<string>;
+    // uploadImage(file: Express.Multer.File): Promise<string>;
+    uploadMultipleImages(files: Express.Multer.File[]): Promise<string[]>
     deleteImage(publicId: string): Promise<void>;
     uploadGoogleProfileImage(googleImageUrl: string): Promise<string>
   }

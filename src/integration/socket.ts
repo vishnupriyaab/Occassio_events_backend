@@ -39,6 +39,78 @@ export class SocketManager {
         );
       });
 
+      client.on("employee-image-message", async (data) => {
+        console.log(data, "qwertyuiopVishnu");
+        const { employeeId, conversationId, image, fileName } = data;
+        console.log(
+          `📷 Employee image from ${employeeId} in ${conversationId}: ${fileName}`
+        );
+
+        const imageUrl = await emplChatController.saveImageMessage(
+          this.io,
+          image,
+          fileName,
+          employeeId,
+          conversationId
+        );
+
+        // client.emit("employee-image-message", {
+        //   status: "success",
+        //   message: {
+        //     user: "employee",
+        //     type: "image",
+        //     imageUrl: imageUrl,
+        //     timestamp: new Date(),
+        //     conversationId,
+        //   },
+        // });
+
+        // client.to(conversationId).emit("userMessage", {
+        //   user: "employee",
+        //   type: "image",
+        //   imageUrl: imageUrl,
+        //   message: "📷 Image",
+        //   timestamp: new Date(),
+        //   conversationId,
+        // });
+      });
+
+      client.on("user-image-message", async (data) => {
+        console.log(data, "qwertyuiopVishnu");
+        const { userId, conversationId, image, fileName } = data;
+        console.log(
+          `📷 Employee image from ${userId} in ${conversationId}: ${fileName}`
+        );
+
+        const imageUrl = await userChatController.saveImageMessage(
+          this.io,
+          image,
+          fileName,
+          userId,
+          conversationId
+        );
+
+        // client.emit("employee-image-message", {
+        //   status: "success",
+        //   message: {
+        //     user: "employee",
+        //     type: "image",
+        //     imageUrl: imageUrl,
+        //     timestamp: new Date(),
+        //     conversationId,
+        //   },
+        // });
+
+        // client.to(conversationId).emit("userMessage", {
+        //   user: "employee",
+        //   type: "image",
+        //   imageUrl: imageUrl,
+        //   message: "📷 Image",
+        //   timestamp: new Date(),
+        //   conversationId,
+        // });
+      });
+
       client.on("join-conversation", (data) => {
         const conversationId = data.conversationId;
         console.log(`${client.id} joined conversation ${conversationId}`);
@@ -61,49 +133,39 @@ export class SocketManager {
       });
 
       client.on("user-online", async (data: { userId: string }) => {
-        console.log(data,"234567890")
+        console.log(data, "234567890");
         this.onlineUsers.set(data.userId, client.id);
         console.log(`${data.userId} is online`);
         const { userId } = data;
-        // client.broadcast.emit("user-status-change", {
-        //   userId: data.userId,
-        //   status: "online",
-        // });
         await User.findByIdAndUpdate(userId, { isOnline: true });
         this.io.emit("user-status-change", { userId, status: "online" });
       });
       client.on("employee-online", async (data: { employeeId: string }) => {
-        console.log(data,"234567890")
+        console.log(data, "234567890");
         this.onlineUsers.set(data.employeeId, client.id);
         console.log(`${data.employeeId} is online`);
         const { employeeId } = data;
-        // client.broadcast.emit("user-status-change", {
-        //   userId: data.userId,
-        //   status: "online",
-        // });
         await Employee.findByIdAndUpdate(employeeId, { isOnline: true });
-        this.io.emit("employee-status-change", { employeeId, status: "online" });
+        this.io.emit("employee-status-change", {
+          employeeId,
+          status: "online",
+        });
       });
-      
-      client.on("user-offline",async (data: { userId: string }) => {
+
+      client.on("user-offline", async (data: { userId: string }) => {
         this.onlineUsers.delete(data.userId);
         const { userId } = data;
-        // client.broadcast.emit("user-status-change", {
-          //   userId: data.userId,
-          //   status: "offline",
-          // });
-          await User.findByIdAndUpdate(userId, {isOnline: false});
-          this.io.emit("user-status-change", { userId, status: "offline" });
+        await User.findByIdAndUpdate(userId, { isOnline: false });
+        this.io.emit("user-status-change", { userId, status: "offline" });
       });
-      client.on("employee-offline",async (data: { employeeId: string }) => {
+      client.on("employee-offline", async (data: { employeeId: string }) => {
         this.onlineUsers.delete(data.employeeId);
         const { employeeId } = data;
-        // client.broadcast.emit("user-status-change", {
-          //   employeeId: data.employeeId,
-          //   status: "offline",
-          // });
-          await Employee.findByIdAndUpdate(employeeId, {isOnline: false});
-          this.io.emit("employee-status-change", { employeeId, status: "offline" });
+        await Employee.findByIdAndUpdate(employeeId, { isOnline: false });
+        this.io.emit("employee-status-change", {
+          employeeId,
+          status: "offline",
+        });
       });
 
       client.on("disconnect", () => {

@@ -9,4 +9,5 @@ export default interface IEmplChatRepository {
   sendMessage(conversationId: string, userId:string, message:string, user:string):Promise<IChatMessageModel>
   getMessageById(messageId: string): Promise<IChatMessageModel | null>
   markMessageDeletedForEveryone(messageId: string): Promise<any>
+  saveImageMessage(conversationId: string, employeeId: string, imageUrl:string, user: string):Promise<IChatMessageModel>
 }

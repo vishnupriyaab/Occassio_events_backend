@@ -7,9 +7,8 @@ export default interface IEmplChatServices {
   chatMessage(conversationId: Types.ObjectId): Promise<IChatMessageModel[]>
   getConversationData(employeeId:string): Promise<IConversation[]>
   employeeSendMessage(conversationId: string, employeeId:string, message: string): Promise<IChatMessageModel>
-  deleteMessage(
-    messageId: string,
-    userId: string,
+  deleteMessage( messageId: string, userId: string, 
     // deleteType: "me" | "everyone"
   ): Promise<any>
+  saveImageMessage(base64Image: string, fileName: string, employeeId: string, conversationId: string): Promise<IChatMessageModel> 
 }

@@ -99,12 +99,14 @@ export class UserChatRepository
       const data: IChatMessageModel = {
         conversationid: new mongoose.Types.ObjectId(conversationId),
         message: message,
+        messageType: 'text',
         user: user,
         senderId: new mongoose.Types.ObjectId(userId),
         senderModel: sendModel,
         timestamp: new Date(Date.now()),
         isDeleted: false, //rough
         deletedFor: [new mongoose.Types.ObjectId(userId)], //rough
+
       };
       console.log(data);
       await this.createData("chatmessage", data);
@@ -157,6 +159,32 @@ export class UserChatRepository
       throw error;
     }
   }
+
+    async saveImageMessage(conversationId: string, userId: string, imageUrl:string, user: string):Promise<IChatMessageModel>{
+      try {
+        console.log(conversationId, userId, imageUrl, user,"1234567890asdfghjkl\qwertyuigvhj")
+  
+        const sendModel = user === "user" ? "User" : "Employee";
+        const data: IChatMessageModel = {
+          conversationid: new mongoose.Types.ObjectId(conversationId),
+          message: imageUrl,
+          messageType: 'image',
+          user: user,
+          senderId: new mongoose.Types.ObjectId(userId),
+          senderModel: sendModel,
+          timestamp: new Date(Date.now()),
+          isDeleted: false, 
+          deletedFor: [new mongoose.Types.ObjectId(userId)], 
+        };
+        console.log(data);
+        await this.createData("chatmessage", data);
+        return data;
+  
+      } catch (error) {
+        throw error;
+      }
+    }
+
 }
 
 export const userChatRepository = new UserChatRepository()
