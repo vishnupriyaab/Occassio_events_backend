@@ -33,6 +33,17 @@ const chatMessageSchema = new Schema<IChatMessage>({
     enum: ["text", "image"],
     default: "text"
   },
+  reactions: [{
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'User' // or 'Employee' if it can be both, use refPath
+    },
+    emoji: {
+      type: String,
+      required: true
+    }
+  }],
   timestamp: {
     type: Date,
     default: Date.now,

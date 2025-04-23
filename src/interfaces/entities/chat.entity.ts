@@ -3,6 +3,12 @@ import { Document, Types } from "mongoose";
 export interface IChatMessage extends IChatMessageModel, Document {
 
 }
+
+export interface IReaction {
+  userId: Types.ObjectId;
+  emoji: string;
+}
+
 export interface IChatMessageModel {
   user: string;
   conversationid: Types.ObjectId;
@@ -13,7 +19,7 @@ export interface IChatMessageModel {
   isDeleted: boolean;
   deletedFor: Types.ObjectId[]
   messageType: "text" | "image";
-
+  reactions?: IReaction[];
 }
 
 export interface IConversation extends IConverationModel, Document {

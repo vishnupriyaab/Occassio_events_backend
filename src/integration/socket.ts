@@ -89,26 +89,6 @@ export class SocketManager {
           userId,
           conversationId
         );
-
-        // client.emit("employee-image-message", {
-        //   status: "success",
-        //   message: {
-        //     user: "employee",
-        //     type: "image",
-        //     imageUrl: imageUrl,
-        //     timestamp: new Date(),
-        //     conversationId,
-        //   },
-        // });
-
-        // client.to(conversationId).emit("userMessage", {
-        //   user: "employee",
-        //   type: "image",
-        //   imageUrl: imageUrl,
-        //   message: "📷 Image",
-        //   timestamp: new Date(),
-        //   conversationId,
-        // });
       });
 
       client.on("join-conversation", (data) => {
