@@ -37,7 +37,7 @@ const chatMessageSchema = new Schema<IChatMessage>({
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User' // or 'Employee' if it can be both, use refPath
+      ref: 'User' 
     },
     emoji: {
       type: String,

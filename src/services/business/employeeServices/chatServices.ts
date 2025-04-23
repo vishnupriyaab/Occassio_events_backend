@@ -168,8 +168,12 @@ export class EmplChatServices implements IEmplChatServices {
 
       fs.unlinkSync(filePath);
 
-      const savedMessage = await this._emplChatRepo.saveImageMessage(conversationId, employeeId, imageUrl, "employee");
-    
+      const savedMessage = await this._emplChatRepo.saveImageMessage(
+        conversationId,
+        employeeId,
+        imageUrl,
+        "employee"
+      );
 
       console.log("qwertyu");
       return savedMessage;
@@ -177,6 +181,54 @@ export class EmplChatServices implements IEmplChatServices {
       throw error;
     }
   }
+
+  async handleMessageReaction(
+    conversationId: string,
+    messageId: string,
+    emoji: string,
+    userId: string,
+    userType: string
+  ): Promise<IChatMessageModel> {
+    try {
+      console.log(
+        conversationId,
+        messageId,
+        emoji,
+        userId,
+        userType,
+        "1234567890"
+      );
+
+      const message = await this._emplChatRepo.getMessageById(messageId);
+
+      if (!message) {
+        throw new Error("Message not found");
+      }
+
+      const existingReactionIndex = message.reactions?.findIndex(
+        (reaction) =>
+          reaction.userId.toString() === userId && reaction.emoji === emoji
+      );
+
+      if (existingReactionIndex !== -1 && existingReactionIndex !== undefined) {
+        const result = await this._emplChatRepo.removeReaction(
+          messageId,
+          userId,
+          emoji
+        );
+        return result;
+      } else {
+        const result = await this._emplChatRepo.addReaction(
+          messageId,
+          userId,
+          emoji
+        );
+        return result;
+      }
+    } catch (error) {
+      throw error;
+    }
+  } 
 }
 
 const cloudinaryService = new CloudinaryService();

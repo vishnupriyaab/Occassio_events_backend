@@ -17,26 +17,28 @@ export class SocketManager {
     this.io.on("connection", (client) => {
       console.log("A new user has connected", client.id);
 
-      client.on("user-message", async (data) => {
+      client.on("user-message", async (data, callback) => {
         console.log(
           `Message from user ${data.user}: ${data.message}, ${data.userId}, ${data.conversationId}`
         );
-        await userChatController.handleNewUserMessage(
+        const message = await userChatController.handleNewUserMessage(
           this.io,
           data.conversationId,
           data.message,
           data.userId
         );
+        callback({message, status:200})
       });
 
-      client.on("employee-message", async (data) => {
+      client.on("employee-message", async (data, callback) => {
         console.log(`Employee message from ${data.user}: ${data.message}`);
-        await emplChatController.handleEmployeeMessage(
+       const message = await emplChatController.handleEmployeeMessage(
           this.io,
           data.conversationId,
           data.message,
           data.employeeId
         );
+        callback({message, status:200});
       });
 
       client.on("employee-image-message", async (data) => {
@@ -53,26 +55,6 @@ export class SocketManager {
           employeeId,
           conversationId
         );
-
-        // client.emit("employee-image-message", {
-        //   status: "success",
-        //   message: {
-        //     user: "employee",
-        //     type: "image",
-        //     imageUrl: imageUrl,
-        //     timestamp: new Date(),
-        //     conversationId,
-        //   },
-        // });
-
-        // client.to(conversationId).emit("userMessage", {
-        //   user: "employee",
-        //   type: "image",
-        //   imageUrl: imageUrl,
-        //   message: "📷 Image",
-        //   timestamp: new Date(),
-        //   conversationId,
-        // });
       });
 
       client.on("user-image-message", async (data) => {
@@ -146,6 +128,34 @@ export class SocketManager {
           employeeId,
           status: "offline",
         });
+      });
+
+      client.on("message-reaction", async (data) => {
+          const { conversationId, messageId, emoji, userId, userType } = data;
+          console.log(
+            `Reaction from ${userType}: ${emoji} on ${userId} message ${messageId}, ${conversationId}`,
+            typeof emoji
+          ); 
+
+          if (userType === "employee") {
+            await emplChatController.messageReaction(
+              this.io,
+              conversationId,
+              messageId,
+              emoji,
+              userId,
+              userType
+            );
+          } else {
+            await userChatController.messageReaction(
+              this.io,
+              conversationId,
+              messageId,
+              emoji,
+              userId,
+              userType
+            );
+          }
       });
 
       client.on("disconnect", () => {

@@ -109,8 +109,8 @@ export class UserChatRepository
 
       };
       console.log(data);
-      await this.createData("chatmessage", data);
-      return data;
+      const result = await this.createData("chatmessage", data);
+      return result;
     } catch (error) {
       throw error;
     }
@@ -184,6 +184,45 @@ export class UserChatRepository
         throw error;
       }
     }
+
+      async addReaction(messageId: string, userId: string, emoji: string): Promise<IChatMessageModel> {
+        try {
+          const addMessageReaction =  await this.findByIdAndUpdate(
+            "chatmessage",
+            messageId,
+            {
+              $push: {
+                reactions: {
+                  userId: new mongoose.Types.ObjectId(userId),
+                  emoji: emoji
+                }
+              }
+            }
+          );
+          return addMessageReaction!;
+        } catch (error: unknown) {
+          throw error;
+        }
+      }
+      
+      async removeReaction(messageId: string, userId: string, emoji: string): Promise<IChatMessageModel> {
+        try {
+          return (await this.findByIdAndUpdate(
+            "chatmessage",
+            messageId,
+            {
+              $pull: {
+                reactions: {
+                  userId: new mongoose.Types.ObjectId(userId),
+                  emoji: emoji
+                }
+              }
+            }
+          ))!
+        } catch (error) {
+          throw error;
+        }
+      }
 
 }
 

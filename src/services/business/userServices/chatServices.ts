@@ -180,6 +180,54 @@ export class UserChatServices implements IUserChatServices {
       throw error;
     }
   }
+
+  async handleMessageReaction(
+    conversationId: string,
+    messageId: string,
+    emoji: string,
+    userId: string,
+    userType: string
+  ): Promise<IChatMessageModel> {
+    try {
+      console.log(
+        conversationId,
+        messageId,
+        emoji,
+        userId,
+        userType,
+        "1234567890"
+      );
+
+      const message = await this._chatRepository.getMessageById(messageId);
+
+      if (!message) {
+        throw new Error("Message not found");
+      }
+
+      const existingReactionIndex = message.reactions?.findIndex(
+        (reaction) =>
+          reaction.userId.toString() === userId && reaction.emoji === emoji
+      );
+
+      if (existingReactionIndex !== -1 && existingReactionIndex !== undefined) {
+        const result = await this._chatRepository.removeReaction(
+          messageId,
+          userId,
+          emoji
+        );
+        return result;
+      } else {
+        const result = await this._chatRepository.addReaction(
+          messageId,
+          userId,
+          emoji
+        );
+        return result;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const cloudinaryService = new CloudinaryService();

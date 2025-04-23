@@ -22,4 +22,11 @@ export default interface IUserChatServices {
     employeeId: string,
     conversationId: string
   ): Promise<IChatMessageModel>;
+  handleMessageReaction(
+    conversationId: string,
+    messageId: string,
+    emoji: string,
+    userId: string,
+    userType: string
+  ): Promise<IChatMessageModel>
 }

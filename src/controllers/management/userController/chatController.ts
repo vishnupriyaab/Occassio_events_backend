@@ -125,7 +125,7 @@ export class UserChatController implements IUserChatController {
     conversationId: string,
     message: string,
     userId: string
-  ): Promise<void> {
+  ): Promise<IChatMessageModel> {
     try {
       const chatMessage: IChatMessageModel =
         await this._chatService.userSendMessage(
@@ -134,8 +134,10 @@ export class UserChatController implements IUserChatController {
           message
         );
       socket.to(conversationId).emit("userMessage", chatMessage);
+      return chatMessage;
     } catch (error) {
       console.error("Error handling user message:", error);
+      throw error;
     }
   }
 
@@ -190,25 +192,42 @@ export class UserChatController implements IUserChatController {
   }
 
   async saveImageMessage(
-    socket:Server,
+    socket: Server,
     base64Image: string,
     fileName: string,
     userId: string,
     conversationId: string
   ): Promise<void> {
     try {
-      
-     const chatImageMessage = await this._chatService.saveImageMessage(
+      const chatImageMessage = await this._chatService.saveImageMessage(
         base64Image,
         fileName,
         userId,
         conversationId
       );
-      socket.to(conversationId).emit('userMessage', chatImageMessage);
+      socket.to(conversationId).emit("userMessage", chatImageMessage);
     } catch (error) {
       console.log(error);
     }
   }
-}
+
+  async messageReaction(
+    socket: Server,
+    conversationId: string,
+    messageId: string,
+    emoji: string,
+    userId: string,
+    userType: string
+  ): Promise<void> {
+    try {
+      console.log(conversationId, messageId, emoji, userId, userType,"1234567890");
+      const messageReaction: IChatMessageModel = await this._chatService.handleMessageReaction(conversationId, messageId, emoji, userId, userType)
+      console.log(messageReaction,"11111111111111111111111111")
+      socket.to(conversationId).emit("message-reaction-update", messageReaction);
+    } catch (error) {
+      throw error;
+    }
+  }
+} 
 
 export const userChatController = new UserChatController(userChatService);

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import {
@@ -12,16 +12,10 @@ import { emplChatService } from "../../../services/business/employeeServices/cha
 import { Server } from "socket.io";
 import { IChatMessageModel } from "../../../interfaces/entities/chat.entity";
 import mongoose from "mongoose";
-import { ICloudinaryService } from "../../../interfaces/integration/IClaudinary";
-import { CloudinaryService } from "../../../integration/claudinaryService";
-import IHelperService from "../../../interfaces/integration/IHelper";
-import { HelperService } from "../../../integration/helper";
 
 export class EmplChatController implements IEmplChatController {
   private _chatService: IEmplChatServices;
-  constructor(
-    chatService: IEmplChatServices,
-  ) {
+  constructor(chatService: IEmplChatServices) {
     this._chatService = chatService;
   }
   async getChats(req: AuthenticatedRequest, res: Response): Promise<void> {
@@ -132,7 +126,7 @@ export class EmplChatController implements IEmplChatController {
     conversationId: string,
     message: string,
     employeeId: string
-  ): Promise<void> {
+  ): Promise<IChatMessageModel> {
     try {
       const chatMessage: IChatMessageModel =
         await this._chatService.employeeSendMessage(
@@ -141,8 +135,10 @@ export class EmplChatController implements IEmplChatController {
           message
         );
       socket.to(conversationId).emit("employeeMessage", chatMessage);
+      return chatMessage;
     } catch (error) {
       console.error("Error handling employee message:", error);
+      throw error;
     }
   }
 
@@ -196,7 +192,7 @@ export class EmplChatController implements IEmplChatController {
   }
 
   async saveImageMessage(
-    socket:Server,
+    socket: Server,
     base64Image: string,
     fileName: string,
     employeeId: string,
@@ -204,20 +200,34 @@ export class EmplChatController implements IEmplChatController {
   ): Promise<void> {
     try {
       const chatMessage = await this._chatService.saveImageMessage(
-        base64Image, fileName, employeeId, conversationId
+        base64Image,
+        fileName,
+        employeeId,
+        conversationId
       );
-      // return imageUrl;
       socket.to(conversationId).emit("employeeMessage", chatMessage);
     } catch (error) {
       console.log(error);
     }
   }
 
-  
+  async messageReaction(
+    socket: Server,
+    conversationId: string,
+    messageId: string,
+    emoji: string,
+    userId: string,
+    userType: string
+  ): Promise<void> {
+    try {
+
+      const messageReaction: IChatMessageModel = await this._chatService.handleMessageReaction(conversationId, messageId, emoji, userId, userType)
+      console.log(messageReaction,"11111111111111111111111111")
+      socket.to(conversationId).emit("message-reaction-update", messageReaction);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
-
-export const emplChatController = new EmplChatController(
-  emplChatService,
-
-);
+export const emplChatController = new EmplChatController(emplChatService);

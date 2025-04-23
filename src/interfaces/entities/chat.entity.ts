@@ -20,6 +20,7 @@ export interface IChatMessageModel {
   deletedFor: Types.ObjectId[]
   messageType: "text" | "image";
   reactions?: IReaction[];
+  // actionType?: "add" | "remove"
 }
 
 export interface IConversation extends IConverationModel, Document {

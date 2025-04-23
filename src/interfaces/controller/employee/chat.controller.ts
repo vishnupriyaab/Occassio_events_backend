@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../../../middleware/authenticateToken";
+import { Server } from "socket.io";
 
 export default interface IEmplChatController{
     getChats(req: AuthenticatedRequest, res: Response): Promise<void>
@@ -15,4 +16,10 @@ export default interface IEmplChatController{
         req: AuthenticatedRequest,
         res: Response
       ): Promise<void>
+      handleEmployeeMessage(
+          socket: Server,
+          conversationId: string,
+          message: string,
+          employeeId: string
+        ): Promise<IChatMessageModel>
 }
