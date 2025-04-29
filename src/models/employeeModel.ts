@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, Types } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import { IEmployee } from "../interfaces/entities/employee.entity";
 
 const employeeSchema: Schema = new Schema<IEmployee>({

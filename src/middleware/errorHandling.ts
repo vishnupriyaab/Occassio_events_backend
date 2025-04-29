@@ -71,6 +71,7 @@ export function errorMiddleware(
         HttpStatusCode.BAD_REQUEST,
         "Failed to create Stripe payment link"
       );
+      case "ExistingUserError":return ErrorResponse(res, HttpStatusCode.CONFLICT, "Already existing user")
     case "UnauthorizedError":
     case "TokenExpiredError":
     case "JsonWebTokenError":

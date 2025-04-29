@@ -132,6 +132,21 @@ export default class CommonBaseRepository<
       .sort(options?.sort ?? {});
   }
 
+  findManyWithPopulate<K extends keyof TModels>(
+    modelName: K,
+    query: FilterQuery<TModels[K]>,
+    populateOptions: {
+      path: string;
+      model: string;
+      select?: string;
+    }[]
+  ): Promise<TModels[K][]> {
+    const model = this._models[modelName];
+    if (!model) throw new Error(`Model ${String(modelName)} not found`);
+  
+    return model.find(query).populate(populateOptions);
+  }
+
   count<K extends keyof TModels>(
     modelName: K,
     query: FilterQuery<TModels[K]>

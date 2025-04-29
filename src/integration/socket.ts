@@ -27,18 +27,22 @@ export class SocketManager {
           data.message,
           data.userId
         );
-        callback({message, status:200})
+        callback({ message, status: 200 });
       });
 
       client.on("employee-message", async (data, callback) => {
         console.log(`Employee message from ${data.user}: ${data.message}`);
-       const message = await emplChatController.handleEmployeeMessage(
+        const rooms = Array.from(client.rooms).filter(
+          (room) => room !== client.id
+        );
+        console.log("Rooms joined by client:", rooms);
+        const message = await emplChatController.handleEmployeeMessage(
           this.io,
           data.conversationId,
           data.message,
           data.employeeId
         );
-        callback({message, status:200});
+        callback({ message, status: 200 });
       });
 
       client.on("employee-image-message", async (data) => {
@@ -131,31 +135,31 @@ export class SocketManager {
       });
 
       client.on("message-reaction", async (data) => {
-          const { conversationId, messageId, emoji, userId, userType } = data;
-          console.log(
-            `Reaction from ${userType}: ${emoji} on ${userId} message ${messageId}, ${conversationId}`,
-            typeof emoji
-          ); 
+        const { conversationId, messageId, emoji, userId, userType } = data;
+        console.log(
+          `Reaction from ${userType}: ${emoji} on ${userId} message ${messageId}, ${conversationId}`,
+          typeof emoji
+        );
 
-          if (userType === "employee") {
-            await emplChatController.messageReaction(
-              this.io,
-              conversationId,
-              messageId,
-              emoji,
-              userId,
-              userType
-            );
-          } else {
-            await userChatController.messageReaction(
-              this.io,
-              conversationId,
-              messageId,
-              emoji,
-              userId,
-              userType
-            );
-          }
+        if (userType === "employee") {
+          await emplChatController.messageReaction(
+            this.io,
+            conversationId,
+            messageId,
+            emoji,
+            userId,
+            userType
+          );
+        } else {
+          await userChatController.messageReaction(
+            this.io,
+            conversationId,
+            messageId,
+            emoji,
+            userId,
+            userType
+          );
+        }
       });
 
       client.on("disconnect", () => {

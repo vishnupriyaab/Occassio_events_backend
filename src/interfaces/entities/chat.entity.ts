@@ -24,6 +24,7 @@ export interface IChatMessageModel {
 }
 
 export interface IConversation extends IConverationModel, Document {
+  userName:string;
 }
 
 export interface IConverationModel {

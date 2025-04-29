@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import {
@@ -44,6 +44,15 @@ export class EmplChatController implements IEmplChatController {
         HttpStatusCode.INTERNAL_SERVER_ERROR,
         "Failed to get or create conversation"
       );
+    }
+  }
+
+  async getLastMessage(req:Request, res:Response): Promise<void> {
+    try {
+      const conversationId = req.params.conversationId;
+      console.log(conversationId, "conversationId");
+    } catch (error) {
+      throw error;
     }
   }
 
@@ -220,10 +229,18 @@ export class EmplChatController implements IEmplChatController {
     userType: string
   ): Promise<void> {
     try {
-
-      const messageReaction: IChatMessageModel = await this._chatService.handleMessageReaction(conversationId, messageId, emoji, userId, userType)
-      console.log(messageReaction,"11111111111111111111111111")
-      socket.to(conversationId).emit("message-reaction-update", messageReaction);
+      const messageReaction: IChatMessageModel =
+        await this._chatService.handleMessageReaction(
+          conversationId,
+          messageId,
+          emoji,
+          userId,
+          userType
+        );
+      console.log(messageReaction, "11111111111111111111111111");
+      socket
+        .to(conversationId)
+        .emit("message-reaction-update", messageReaction);
     } catch (error) {
       throw error;
     }

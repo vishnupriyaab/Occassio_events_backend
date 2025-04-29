@@ -10,12 +10,16 @@ import {
   IConversation,
 } from "../../../interfaces/entities/chat.entity";
 import Conversation, { ChatMessage } from "../../../models/chatModel";
+import { IUser } from "../../../interfaces/entities/user.entity";
+import User from "../../../models/userModel";
+import { timeStamp } from "console";
 
 export class EmplChatRepository
   extends CommonBaseRepository<{
     employee: Document & IEmployee;
     conversation: Document & IConversation;
     chatmessage: Document & IChatMessage;
+    user: Document & IUser;
   }>
   implements IEmplChatRepository
 {
@@ -24,6 +28,7 @@ export class EmplChatRepository
       employee: Employee,
       conversation: Conversation,
       chatmessage: ChatMessage,
+      user: User,
     });
   }
 
@@ -61,9 +66,61 @@ export class EmplChatRepository
     }
   }
 
+  async getUsers(userId: Types.ObjectId[]): Promise<any> {
+    try {
+      const users = this.findMany("user", { _id: { $in: userId } });
+      console.log(users,"usersssss");
+      return users;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // async getConversationData(employeeId: string): Promise<IConversation[]> {
+  //   try {
+  //     console.log("startok")
+  //     const conversations =  this.findMany("conversation", { employeeId: employeeId });
+  //     const conversationsWithLastMessage = await Promise.all((await conversations).map(async (conversation) => {
+  //       console.log(conversation,"conversation");
+  //       const lastMessage = await this.findOne("chatmessage", 
+  //         { conversationid: conversation._id }
+  //       ).sort({timeStamp: -1}).limit(1)
+
+  //       // const lastMessage = lastMessages.length > 0 ? lastMessages[0] : null;
+  //       console.log(lastMessage,"121212");
+        
+  //       return {
+  //         ...conversation.toObject(),
+  //         lastMessage: lastMessage
+  //       };
+  //     }));
+      
+  //     return conversationsWithLastMessage;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
   async getConversationData(employeeId: string): Promise<IConversation[]> {
     try {
-      return this.findMany("conversation", { employeeId: employeeId });
+      console.log("startok")
+      const conversations = await this.findMany("conversation", { employeeId: employeeId });
+      const conversationsWithLastMessage = await Promise.all(conversations.map(async (conversation) => {
+        const messages = await this.findMany("chatmessage", 
+          { conversationid: conversation.conversationid },
+          { sort: { timestamp: -1 }, limit: 1 }
+        );
+        console.log(messages,"messages")
+  
+        const lastMessage = messages.length > 0 ? messages[0] : null;
+        console.log(lastMessage, "last message");
+        
+        return {
+          ...conversation.toObject(),
+          lastMessage: lastMessage
+        };
+      }));
+      
+      return conversationsWithLastMessage;
     } catch (error) {
       throw error;
     }
@@ -81,7 +138,7 @@ export class EmplChatRepository
       const data: IChatMessageModel = {
         conversationid: new mongoose.Types.ObjectId(conversationId),
         message: message,
-        messageType: 'text',
+        messageType: "text",
         user: user,
         senderId: new mongoose.Types.ObjectId(userId),
         senderModel: sendModel,
@@ -90,7 +147,7 @@ export class EmplChatRepository
         deletedFor: [new mongoose.Types.ObjectId(userId)], //rough
       };
       const result = await this.createData("chatmessage", data);
-      console.log(result,"=======");
+      console.log(result, "=======");
       return result;
     } catch (error) {
       throw error;
@@ -115,43 +172,57 @@ export class EmplChatRepository
     }
   }
 
-  async saveImageMessage(conversationId: string, employeeId: string, imageUrl:string, user: string):Promise<IChatMessageModel>{
+  async saveImageMessage(
+    conversationId: string,
+    employeeId: string,
+    imageUrl: string,
+    user: string
+  ): Promise<IChatMessageModel> {
     try {
-      console.log(conversationId, employeeId, imageUrl, user,"1234567890asdfghjkl\qwertyuigvhj")
+      console.log(
+        conversationId,
+        employeeId,
+        imageUrl,
+        user,
+        "1234567890asdfghjklqwertyuigvhj"
+      );
 
       const sendModel = user === "user" ? "User" : "Employee";
       const data: IChatMessageModel = {
         conversationid: new mongoose.Types.ObjectId(conversationId),
         message: imageUrl,
-        messageType: 'image',
+        messageType: "image",
         user: user,
         senderId: new mongoose.Types.ObjectId(employeeId),
         senderModel: sendModel,
         timestamp: new Date(Date.now()),
-        isDeleted: false, 
-        deletedFor: [new mongoose.Types.ObjectId(employeeId)], 
+        isDeleted: false,
+        deletedFor: [new mongoose.Types.ObjectId(employeeId)],
       };
       console.log(data);
       await this.createData("chatmessage", data);
       return data;
-
     } catch (error) {
       throw error;
     }
   }
 
-  async addReaction(messageId: string, userId: string, emoji: string): Promise<IChatMessageModel> {
+  async addReaction(
+    messageId: string,
+    userId: string,
+    emoji: string
+  ): Promise<IChatMessageModel> {
     try {
-      const addMessageReaction =  await this.findByIdAndUpdate(
+      const addMessageReaction = await this.findByIdAndUpdate(
         "chatmessage",
         messageId,
         {
           $push: {
             reactions: {
               userId: new mongoose.Types.ObjectId(userId),
-              emoji: emoji
-            }
-          }
+              emoji: emoji,
+            },
+          },
         }
       );
       return addMessageReaction!;
@@ -159,8 +230,12 @@ export class EmplChatRepository
       throw error;
     }
   }
-  
-  async removeReaction(messageId: string, userId: string, emoji: string): Promise<IChatMessageModel> {
+
+  async removeReaction(
+    messageId: string,
+    userId: string,
+    emoji: string
+  ): Promise<IChatMessageModel> {
     try {
       const removeMessageReaction = await this.findByIdAndUpdate(
         "chatmessage",
@@ -169,9 +244,9 @@ export class EmplChatRepository
           $pull: {
             reactions: {
               userId: new mongoose.Types.ObjectId(userId),
-              emoji: emoji
-            }
-          }
+              emoji: emoji,
+            },
+          },
         }
       );
       return removeMessageReaction!;
@@ -179,8 +254,6 @@ export class EmplChatRepository
       throw error;
     }
   }
-
-
 }
 
 export const emplChatRepository = new EmplChatRepository();

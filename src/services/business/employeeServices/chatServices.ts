@@ -15,6 +15,7 @@ import IHelperService from "../../../interfaces/integration/IHelper";
 import { ICloudinaryService } from "../../../interfaces/integration/IClaudinary";
 import { HelperService } from "../../../integration/helper";
 import { CloudinaryService } from "../../../integration/claudinaryService";
+import { IUser } from "../../../interfaces/entities/user.entity";
 
 export class EmplChatServices implements IEmplChatServices {
   private _emplChatRepo: IEmplChatRepository;
@@ -74,7 +75,23 @@ export class EmplChatServices implements IEmplChatServices {
   async getConversationData(employeeId: string): Promise<IConversation[]> {
     try {
       console.log("wertyui");
-      return await this._emplChatRepo.getConversationData(employeeId);
+      const conversationData = await this._emplChatRepo.getConversationData(employeeId);
+      const userIds = conversationData.map(conversation => conversation.userId);
+      const users = await this._emplChatRepo.getUsers(userIds);
+      console.log(users,"resultttttt")
+      const userMap = new Map();
+      users.forEach((user: { _id: { toString: () => any; }; name: any; }) => {
+        userMap.set(user._id.toString(), user.name); // Assuming user has a 'name' field
+      });
+      const conversationsWithUsernames = conversationData.map(conversation => {
+        const userId = conversation.userId?.toString();
+        return {
+          ...conversation.toObject ? conversation.toObject() : conversation,
+          username: userId ? userMap.get(userId) : 'Unknown User'
+        };
+      });
+      
+      return conversationsWithUsernames;
     } catch (error) {
       throw error;
     }

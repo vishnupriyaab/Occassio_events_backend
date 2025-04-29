@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { IChatMessage, IChatMessageModel, IConverationModel, IConversation } from "../../entities/chat.entity";
 
 export default interface IEmplChatRepository {
+  getUsers(userId: Types.ObjectId[]): Promise<any>
   getChat(userId: string): Promise<IConverationModel>;
   getConversationId(userId: string): Promise<IConversation | null>;
   ChatMessage(conversationId: Types.ObjectId): Promise<IChatMessage[]>;

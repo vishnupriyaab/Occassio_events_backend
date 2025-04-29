@@ -7,6 +7,7 @@ import { emplProfileController } from "../controllers/management/employeeControl
 import { upload } from "../middleware/claudinaryUpload";
 import { emplClientController } from "../controllers/management/employeeController/clientController";
 import { emplChatController } from "../controllers/management/employeeController/chatController";
+import { emplNoteController } from "../controllers/management/employeeController/noteController";
 
 const employeeRouter = Router()
 const iJwtServices: IJWTService = new JWTService();
@@ -29,7 +30,11 @@ employeeRouter
     .get('/getchats', emplChatController.getChats.bind(emplChatController))
     .get("/getconversationdata", emplChatController.getConversationData.bind(emplChatController))
     .get('/conversation/:conversationId', emplChatController.getConversationId.bind(emplChatController))
+    .get('/lastMessage/:conversationId', emplChatController.getLastMessage.bind(emplChatController))
     .delete('/message/:conversationId/:messageId', emplChatController.deleteMessage.bind(emplChatController))
+    .post("/notes", emplNoteController.saveNote.bind(emplNoteController))
+    .get("/notes", emplNoteController.getNotes.bind(emplNoteController))
+    .put("/notes/:noteId", emplNoteController.editNotes.bind(emplNoteController))
     // .post('/upload-images', upload.array('images', 10), emplChatController.uploadMultipleImages.bind(emplChatController))
     
 export default employeeRouter;  
