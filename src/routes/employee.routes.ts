@@ -8,6 +8,7 @@ import { upload } from "../middleware/claudinaryUpload";
 import { emplClientController } from "../controllers/management/employeeController/clientController";
 import { emplChatController } from "../controllers/management/employeeController/chatController";
 import { emplNoteController } from "../controllers/management/employeeController/noteController";
+import { emplEstimationController } from "../controllers/management/employeeController/estimationController";
 
 const employeeRouter = Router()
 const iJwtServices: IJWTService = new JWTService();
@@ -35,6 +36,8 @@ employeeRouter
     .post("/notes", emplNoteController.saveNote.bind(emplNoteController))
     .get("/notes", emplNoteController.getNotes.bind(emplNoteController))
     .put("/notes/:noteId", emplNoteController.editNotes.bind(emplNoteController))
+    .post("/estimation",emplEstimationController.saveEstimation.bind(emplEstimationController))
+    .get("/estimation", emplEstimationController.fetchEstimation.bind(emplEstimationController))
     // .post('/upload-images', upload.array('images', 10), emplChatController.uploadMultipleImages.bind(emplChatController))
     
 export default employeeRouter;  

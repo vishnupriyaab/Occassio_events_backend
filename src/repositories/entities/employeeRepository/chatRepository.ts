@@ -12,7 +12,6 @@ import {
 import Conversation, { ChatMessage } from "../../../models/chatModel";
 import { IUser } from "../../../interfaces/entities/user.entity";
 import User from "../../../models/userModel";
-import { timeStamp } from "console";
 
 export class EmplChatRepository
   extends CommonBaseRepository<{
