@@ -1,6 +1,7 @@
 export interface JWTPayload {
   id: string; 
   role:string; 
+  name?:string;
 }
 
 export interface TokenConfig {

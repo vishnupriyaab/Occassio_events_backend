@@ -9,6 +9,7 @@ import { emplClientController } from "../controllers/management/employeeControll
 import { emplChatController } from "../controllers/management/employeeController/chatController";
 import { emplNoteController } from "../controllers/management/employeeController/noteController";
 import { emplEstimationController } from "../controllers/management/employeeController/estimationController";
+import { emplVideoCallController } from "../controllers/management/employeeController/videoCallController";
 
 const employeeRouter = Router()
 const iJwtServices: IJWTService = new JWTService();
@@ -38,6 +39,8 @@ employeeRouter
     .put("/notes/:noteId", emplNoteController.editNotes.bind(emplNoteController))
     .post("/estimation",emplEstimationController.saveEstimation.bind(emplEstimationController))
     .get("/estimation", emplEstimationController.fetchEstimation.bind(emplEstimationController))
-    // .post('/upload-images', upload.array('images', 10), emplChatController.uploadMultipleImages.bind(emplChatController))
+    .post('/initiate', emplVideoCallController.initiateCall.bind(emplVideoCallController))
+    .patch('/status/:callId', emplVideoCallController.updateCallStatus.bind(emplVideoCallController))
+    .get('/history/:conversationId', emplVideoCallController.getCallHistory.bind(emplVideoCallController))
     
 export default employeeRouter;  

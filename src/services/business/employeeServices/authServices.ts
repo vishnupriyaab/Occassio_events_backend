@@ -72,7 +72,7 @@ export class EmploAuthService implements IEmplAuthService {
           "InvalidPassword"
         );
       }
-      const payload = { id: employee._id, role: "employee" };
+      const payload = { id: employee._id, role: "employee", name: employee.name };
       const accessToken = this._jwtService.generateAccessToken(payload);
       const refreshToken = this._jwtService.generateRefreshToken(payload);
       return { accessToken, refreshToken };
@@ -98,6 +98,7 @@ export class EmploAuthService implements IEmplAuthService {
       const token = this._jwtService.generateAccessToken({
         id: employee._id,
         role: "employee",
+        name: employee.name
       });
       await this._emplRepo.savePasswordResetToken(employee._id, token);
       const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;

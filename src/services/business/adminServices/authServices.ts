@@ -43,7 +43,7 @@ export class authService implements IAuthService {
         );
       }
 
-      const payload = { id: admin._id, role: "admin" };
+      const payload = { id: admin._id, role: "admin", };
       const accessToken = this._IjwtSevice.generateAccessToken(payload);
       const refreshToken = this._IjwtSevice.generateRefreshToken(payload);
       console.log(accessToken, refreshToken);

@@ -16,16 +16,6 @@ export class EmplEstimationServices implements IEmplEstimationServices {
     employeeId: string
   ): Promise<any> {
     try {
-    //   console.log(
-    //     "estimationData",
-    //     estimationData,
-    //     "grandTotal",
-    //     grandTotal,
-    //     "userId",
-    //     userId,
-    //     "employeeId",
-    //     employeeId
-    //   );
       const savedData:IEstimation = {
         userId: userId,
         employeeId: employeeId,

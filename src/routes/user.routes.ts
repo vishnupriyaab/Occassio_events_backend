@@ -1,6 +1,4 @@
 import { Router } from "express";
-import express from "express";
-
 import { IJWTService } from "../interfaces/integration/IJwt";
 import { JWTService } from "../integration/jwtServices";
 import AuthMiddleware from "../middleware/authenticateToken";
@@ -9,6 +7,8 @@ import { userAuthController } from "../controllers/management/userController/aut
 import { subClientController } from "../controllers/management/userController/subscribtionClientController";
 import { userChatController } from "../controllers/management/userController/chatController";
 import { employeeController } from "../controllers/management/userController/employeeController";
+import { userEstiController } from "../controllers/management/userController/estimationController";
+import { userVideoCallController } from "../controllers/management/userController/videoCallController";
 
 const userRouter = Router();
 const iJwtServices: IJWTService = new JWTService();
@@ -30,6 +30,9 @@ userRouter.get("/sub-details", subClientController.fetchSubClientData.bind(subCl
   .get('/conversation', userChatController.getConversationId.bind(userChatController))
   .get("/getEmployeeDetails/:employeeId", employeeController.fetchEmployeeDetails.bind(employeeController))
   .delete('/message/:conversationId/:messageId', userChatController.deleteMessage.bind(userChatController))
-
+  .get("/estimation", userEstiController.fetchEstimation.bind(userEstiController))
+  .post('/initiate', userVideoCallController.initiateCall.bind(userVideoCallController))
+  .patch('/status/:callId', userVideoCallController.updateCallStatus.bind(userVideoCallController))
+  .get('/history/:conversationId', userVideoCallController.getCallHistory.bind(userVideoCallController))
 
 export default userRouter;

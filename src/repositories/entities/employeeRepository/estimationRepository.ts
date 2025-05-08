@@ -28,15 +28,10 @@ export class EmplEstimationRepository
     }
   }
 
-  async fetchEstimation(userId: string): Promise<any> {
+  async fetchEstimation(userId: string): Promise<IEstimation> {
     try {
       const estimation = await this.findOne("estimation", { userId });
-
-      //   console.log(estimation,"estimation in repos")
-
-      //   const userDetails = await this.findOne("entryRegForm", { _id: userId });
-
-      return estimation;
+      return estimation!;
     } catch (error) {
       throw error;
     }

@@ -81,7 +81,7 @@ export class UserAuthServices implements IUserAuthService {
           "InvalidPassword"
         );
       }
-      const payload = { id: user._id || "", role: "user" };
+      const payload = { id: user._id || "", role: "user", name: user.name };
       const accessToken = this._jwtService.generateAccessToken(payload);
       const refreshToken = this._jwtService.generateRefreshToken(payload);
       return { accessToken, refreshToken };
@@ -144,7 +144,7 @@ export class UserAuthServices implements IUserAuthService {
         await this._userRepo.createUser(userData);
         console.log("New user created successfully");
       }
-      const payload = { id: existingUser!._id || "", role: "user" };
+      const payload = { id: existingUser!._id || "", role: "user", name: existingUser!.name };
       console.log(payload, "payload");
       const accessToken = this._jwtService.generateAccessToken(payload);
       const refreshToken = this._jwtService.generateRefreshToken(payload);
@@ -211,6 +211,7 @@ export class UserAuthServices implements IUserAuthService {
       const token = this._jwtService.generateAccessToken({
         id: user._id || "",
         role: "user",
+        name: user.name
       });
       await this._userRepo.savePasswordResetToken(user._id, token);
       const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
