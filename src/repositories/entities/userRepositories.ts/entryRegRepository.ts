@@ -12,11 +12,10 @@ export class EntryRegRepository
     super({ entryRegForm: EntryRegForm });
   }
 
-  async createEntryReg(
-    data: IEntryRegFormData
-  ): Promise<IEntryRegFormData | null> {
+  async createEntryReg(data: IEntryRegFormData): Promise<IEntryRegFormData> {
     try {
-      return this.createData("entryRegForm", data);
+      const result = await this.createData("entryRegForm", data);
+      return result!;
     } catch (error) {
       throw error;
     }
@@ -35,19 +34,24 @@ export class EntryRegRepository
     entryId: string,
     transactionId: string,
     status: "pending" | "completed" | "failed" | "refund"
-  ): Promise<IEntryRegFormData | null> {
+  ): Promise<IEntryRegFormData> {
     try {
-      return this.updateById("entryRegForm", entryId, {
+      const result = await this.updateById("entryRegForm", entryId, {
         "entryPayment.status": status,
         "entryPayment.transactionId": transactionId,
       });
+      return result!;
     } catch (error) {
       throw error;
     }
   }
 
-  async findUserById(entryId: string): Promise<IEntryRegFormData | null> {
-    return this.findById("entryRegForm", entryId);
+  async findUserById(entryId: string): Promise<IEntryRegFormData> {
+    try {
+      const result = await this.findById("entryRegForm", entryId);
+      return result!;
+    } catch (error) {
+      throw error;
+    }
   }
-  
 }

@@ -9,6 +9,7 @@ import { userChatController } from "../controllers/management/userController/cha
 import { employeeController } from "../controllers/management/userController/employeeController";
 import { userEstiController } from "../controllers/management/userController/estimationController";
 import { userVideoCallController } from "../controllers/management/userController/videoCallController";
+import { paymentController } from "../controllers/management/userController/paymentController";
 
 const userRouter = Router();
 const iJwtServices: IJWTService = new JWTService();
@@ -34,5 +35,7 @@ userRouter.get("/sub-details", subClientController.fetchSubClientData.bind(subCl
   .post('/initiate', userVideoCallController.initiateCall.bind(userVideoCallController))
   .patch('/status/:callId', userVideoCallController.updateCallStatus.bind(userVideoCallController))
   .get('/history/:conversationId', userVideoCallController.getCallHistory.bind(userVideoCallController))
+  .post("/one-third-payment", paymentController.oneByThirdPayment.bind(paymentController))
+  .get("/booking/:estimatedId", subClientController.fetchBooking.bind(subClientController))
 
 export default userRouter;

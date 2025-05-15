@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import ISubClientController from "../../../interfaces/controller/user/subscription.client.controller";
 import ISubClientService from "../../../interfaces/services/user/subscription.client.services";
 import { subClientService } from "../../../services/business/userServices/subscriptionClientServices";
@@ -9,6 +9,7 @@ import {
   ErrorResponse,
   successResponse,
 } from "../../../integration/responseHandler";
+import { IBookingEstimation } from "../../../interfaces/entities/booking.entity";
 
 export class SubClientController implements ISubClientController {
   private _subClientService: ISubClientService;
@@ -37,7 +38,7 @@ export class SubClientController implements ISubClientController {
         clientData
       );
     } catch (error: unknown) {
-      console.log(error,'error');
+      console.log(error, "error");
       if (error instanceof Error) {
         if (error.name === "ClientIDIsRequired") {
           return ErrorResponse(
@@ -62,6 +63,42 @@ export class SubClientController implements ISubClientController {
         HttpStatusCode.INTERNAL_SERVER_ERROR,
         "Entry registration failed. Please try again."
       );
+    }
+  }
+
+  async fetchBooking(req: Request, res: Response): Promise<void> {
+    try {
+      const estimatedId = req.params.estimatedId;
+      console.log(estimatedId, "sdfghjk");
+
+      const fetchBooking = await this._subClientService.fetchBooking(
+        estimatedId
+      );
+      console.log(fetchBooking, "fetchBooking in controller");
+
+      const fetchEstimatedData =
+        await this._subClientService.fetchEstimatedData(estimatedId);
+
+      const bookingDetails: IBookingEstimation = {
+        bookingStatus: fetchBooking.bookingStatus,
+        paidAmount: fetchBooking.paidAmount,
+        paymentMethod: fetchBooking.paymentMethod,
+        additionalCharge: fetchBooking.additionalCharge,
+        venue: fetchEstimatedData.venue,
+        seating: fetchEstimatedData.seating,
+        food: fetchEstimatedData.food,
+        soundSystem: fetchEstimatedData.soundSystem,
+        PhotoAndVideo: fetchEstimatedData.PhotoAndVideo,
+        Decoration: fetchEstimatedData.Decoration,
+        grandTotal: fetchEstimatedData.grandTotal,
+        eventName: fetchBooking.eventName,
+        firstPayment: fetchBooking.firstPayment,
+        guestNumber: fetchBooking.guestCount,
+        name: fetchBooking.userName,
+      };
+      return successResponse(res, HttpStatusCode.OK, "Booking details fetched successfully", bookingDetails)
+    } catch (error) {
+      throw error;
     }
   }
 }

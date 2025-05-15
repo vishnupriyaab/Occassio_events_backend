@@ -7,8 +7,8 @@ import logger from "./logger";
 import userRouter from "../routes/user.routes";
 import refreshTokenRoute from "../routes/refresh.routes";
 import { errorMiddleware } from "../middleware/errorHandling";
-import { userEntryRegController } from "../controllers/management/userController/entryRegController";
 import employeeRouter from "../routes/employee.routes";
+import { paymentController } from "../controllers/management/userController/paymentController";
 
 const app = express();
 const corsOptions = {
@@ -31,7 +31,7 @@ app.use("/webhook", express.raw({ type: "application/json" }));
 
 app.post(
   "/webhook",
-  userEntryRegController.handlePaymentWebhook.bind(userEntryRegController)
+  paymentController.handlePaymentWebhook.bind(paymentController)
 );
 
 app.use(express.json({ limit: "50mb" }));

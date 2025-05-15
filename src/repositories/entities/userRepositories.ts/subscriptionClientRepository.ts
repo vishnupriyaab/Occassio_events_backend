@@ -5,32 +5,43 @@ import { IClientData, IUser } from "../../../interfaces/entities/user.entity";
 import User from "../../../models/userModel";
 import IEntryRegFormData from "../../../interfaces/entities/IEntryFormReg.entity";
 import EntryRegForm from "../../../models/userEntryDetails";
+import { IBooking } from "../../../interfaces/entities/booking.entity";
+import Booking from "../../../models/bookingModel";
+import IEstimation from "../../../interfaces/entities/estimation.entity";
+import Estimation from "../../../models/estimationModel";
 
 export class SubClientRepository
   extends CommonBaseRepository<{
     user: Document & IUser;
     entryRegForm: Document & IEntryRegFormData;
+    booking: IBooking & Document;
+    estimation: IEstimation & Document;
   }>
   implements ISubClientRepository
 {
   constructor() {
-    super({ user: User, entryRegForm: EntryRegForm });
+    super({
+      user: User,
+      entryRegForm: EntryRegForm,
+      booking: Booking,
+      estimation: Estimation,
+    });
   }
 
-  async findUserById(userId: string): Promise<IUser | null> {
+  async findUserById(userId: string): Promise<IUser> {
     try {
       const user = await this.findById("user", userId);
-      return user;
+      return user!;
     } catch (error) {
       console.error("Error finding user by ID:", error);
       throw error;
     }
   }
 
-  async findEntryFormById(entryId: string): Promise<IEntryRegFormData | null> {
+  async findEntryFormById(entryId: string): Promise<IEntryRegFormData> {
     try {
       const entryForm = await this.findById("entryRegForm", entryId);
-      return entryForm;
+      return entryForm!;
     } catch (error) {
       console.error("Error finding entry form by ID:", error);
       throw error;
@@ -83,4 +94,37 @@ export class SubClientRepository
       throw error;
     }
   }
+
+
+  async fetchBookingData(estimatedId: string): Promise<IBooking> {
+    try {
+      const result = await this.findOne("booking", {
+        estimatedId: estimatedId,
+      });
+      return result!;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async fetchEstimation(estimatedId: string): Promise<IEstimation> {
+    try {
+      const estimationData = await this.findOne("estimation", {
+        _id: estimatedId,
+      });
+      return estimationData!;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async fetchEntryDetails(entryId:string):Promise<IEntryRegFormData>{
+    try {
+      const entryDetails = await this.findOne("entryRegForm", {_id: entryId})
+      return entryDetails!;
+    } catch (error) {
+      throw error
+    }
+  }
+  
 }

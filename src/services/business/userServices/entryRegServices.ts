@@ -52,9 +52,10 @@ export class EntryRegService implements IEntryRegService {
   }
   async registerEntry(
     data: IEntryRegFormData
-  ): Promise<IEntryRegFormData | null> {
+  ): Promise<IEntryRegFormData> {
     try {
-      return await this._entryRegRepo.createEntryReg(data);
+      const result = await this._entryRegRepo.createEntryReg(data);
+      return result!
     } catch (error: unknown) {
       throw error;
     }
@@ -82,6 +83,7 @@ export class EntryRegService implements IEntryRegService {
         metadata: {
           email,
           entryId,
+          paymentType: "entry",
         },
       });
 
@@ -112,14 +114,15 @@ export class EntryRegService implements IEntryRegService {
     entryId: string,
     transactionId: string,
     status: "pending" | "completed" | "failed" | "refund"
-  ): Promise<IEntryRegFormData | null> {
+  ): Promise<IEntryRegFormData> {
     try {
+      console.log(typeof(entryId),"entryId")
       const updatedEntry = await this._entryRegRepo.updatePaymentStatus(
         entryId,
         transactionId,
         status
       );
-      return updatedEntry;
+      return updatedEntry!;
     } catch (error) {
       console.error("Error updating payment status:", error);
       throw error;
@@ -127,7 +130,7 @@ export class EntryRegService implements IEntryRegService {
   }
   async createUserDb(
     entryId: string
-  ): Promise<IEntryRegFormData | null | undefined> {
+  ): Promise<IEntryRegFormData> {
     try {
       const entryUser = await this._entryRegRepo.findUserById(entryId);
       console.log(entryUser, "12121212123232");
@@ -158,8 +161,10 @@ export class EntryRegService implements IEntryRegService {
 
       await this.assignEmployeeToUser(createdUser);
 
-      return entryUser;
-    } catch (error) {}
+      return entryUser!;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async assignEmployeeToUser(user: IUser): Promise<IConversation| null | undefined> {
