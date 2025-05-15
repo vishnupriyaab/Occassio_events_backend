@@ -17,10 +17,10 @@ import IEntryRegRepository from "../../../interfaces/repository/user/entryReg.re
 import IEntryRegService from "../../../interfaces/services/user/entryReg.services";
 import { AppError } from "../../../middleware/errorHandling";
 import { EmployeeRepository } from "../../../repositories/entities/adminRepositories.ts/employeeRepository";
-import { UserRepository } from "../../../repositories/entities/userRepositories.ts/authRepository";
-import { EntryRegRepository } from "../../../repositories/entities/userRepositories.ts/entryRegRepository";
+import { UserRepository } from "../../../repositories/entities/userRepositories/authRepository";
+import { EntryRegRepository } from "../../../repositories/entities/userRepositories/entryRegRepository";
 import IUserChatRepository from "../../../interfaces/repository/user/chat.repository";
-import { UserChatRepository } from "../../../repositories/entities/userRepositories.ts/chatRepository";
+import { UserChatRepository } from "../../../repositories/entities/userRepositories/chatRepository";
 
 
 export class EntryRegService implements IEntryRegService {

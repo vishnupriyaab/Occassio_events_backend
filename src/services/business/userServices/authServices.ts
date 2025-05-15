@@ -9,7 +9,7 @@ import { IEmailService } from "../../../interfaces/integration/IEmail";
 import { IJWTService } from "../../../interfaces/integration/IJwt";
 import IUserRepository from "../../../interfaces/repository/user/auth.repository";
 import IUserAuthService from "../../../interfaces/services/user/auth.services";
-import { UserRepository } from "../../../repositories/entities/userRepositories.ts/authRepository";
+import { UserRepository } from "../../../repositories/entities/userRepositories/authRepository";
 import bcrypt from "bcrypt";
 import { ICloudinaryService } from "../../../interfaces/integration/IClaudinary";
 import { CloudinaryService } from "../../../integration/claudinaryService";

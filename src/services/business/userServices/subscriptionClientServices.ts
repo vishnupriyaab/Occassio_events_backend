@@ -6,7 +6,7 @@ import { IClientData } from "../../../interfaces/entities/user.entity";
 import ISubClientRepository from "../../../interfaces/repository/user/subscription.client.repository";
 import ISubClientService from "../../../interfaces/services/user/subscription.client.services";
 import { AppError } from "../../../middleware/errorHandling";
-import { SubClientRepository } from "../../../repositories/entities/userRepositories.ts/subscriptionClientRepository";
+import { SubClientRepository } from "../../../repositories/entities/userRepositories/subscriptionClientRepository";
 
 export class SubClientService implements ISubClientService {
   private _subClientRepository: ISubClientRepository;

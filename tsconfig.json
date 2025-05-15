@@ -9,6 +9,6 @@
       "strict": true,
       "skipLibCheck": true
     },
-    "include": ["src/**/*.ts"],
+    "include": ["src/**/*.ts", "src/repositories/entities/userRepositories"],
     "exclude": ["node_modules", "dist"]
   }

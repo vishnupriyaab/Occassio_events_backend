@@ -7,7 +7,7 @@ import { IEmailService } from "../../../interfaces/integration/IEmail";
 import IPaymentRepository from "../../../interfaces/repository/user/payment.repository";
 import IPaymentServices from "../../../interfaces/services/user/payment.services";
 import { AppError } from "../../../middleware/errorHandling";
-import { PaymentRepository } from "../../../repositories/entities/userRepositories.ts/paymentRepository";
+import { PaymentRepository } from "../../../repositories/entities/userRepositories/paymentRepository";
 
 export class PaymentServices implements IPaymentServices {
   private _paymentRepository: IPaymentRepository;

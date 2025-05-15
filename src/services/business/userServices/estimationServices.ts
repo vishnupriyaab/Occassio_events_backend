@@ -1,7 +1,7 @@
 import IEstimation from "../../../interfaces/entities/estimation.entity";
 import IUserEstimationRepository from "../../../interfaces/repository/user/estimation.repository";
 import IUserEstimationService from "../../../interfaces/services/user/estimation.services";
-import { UserEstimationRepository } from "../../../repositories/entities/userRepositories.ts/estimationRepository";
+import { UserEstimationRepository } from "../../../repositories/entities/userRepositories/estimationRepository";
 
 export class UserEstimationService implements IUserEstimationService {
   private _userEstiRepo: IUserEstimationRepository;

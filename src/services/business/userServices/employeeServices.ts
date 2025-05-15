@@ -1,7 +1,7 @@
 import { IEmployee } from "../../../interfaces/entities/employee.entity";
 import IEmployeeRepository from "../../../interfaces/repository/user/employee.repository";
 import IEmployeeServices from "../../../interfaces/services/user/employee.services";
-import { employeeRepository } from "../../../repositories/entities/userRepositories.ts/employeeRepository";
+import { employeeRepository } from "../../../repositories/entities/userRepositories/employeeRepository";
 
 export class EmployeeService implements IEmployeeServices {
   private _employeeRepository: IEmployeeRepository;

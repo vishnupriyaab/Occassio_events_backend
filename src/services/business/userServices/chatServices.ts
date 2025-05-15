@@ -9,7 +9,7 @@ import {
 import IUserChatRepository from "../../../interfaces/repository/user/chat.repository";
 import IUserChatServices from "../../../interfaces/services/user/chat.services";
 import { AppError } from "../../../middleware/errorHandling";
-import { userChatRepository } from "../../../repositories/entities/userRepositories.ts/chatRepository";
+import { userChatRepository } from "../../../repositories/entities/userRepositories/chatRepository";
 import { ICloudinaryService } from "../../../interfaces/integration/IClaudinary";
 import IHelperService from "../../../interfaces/integration/IHelper";
 import { HelperService } from "../../../integration/helper";
