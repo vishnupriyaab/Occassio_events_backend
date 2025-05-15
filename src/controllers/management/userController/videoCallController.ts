@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
-import { successResponse } from "../../../integration/responseHandler";
+import {
+  ErrorResponse,
+  successResponse,
+} from "../../../integration/responseHandler";
 import IVideoCallController from "../../../interfaces/controller/user/videoCall.controller";
 import IVideoCallUserServices from "../../../interfaces/services/user/videoCall.services";
 import { userVideoCallService } from "../../../services/business/userServices/videoCallServices";
@@ -41,9 +44,19 @@ export class VideoCallController implements IVideoCallController {
         roomId
       );
       console.log(callData, "in my controllererer");
-      return successResponse(res, HttpStatusCode.OK, "Successfully initaite the call",callData);
-    } catch (error) {
+      return successResponse(
+        res,
+        HttpStatusCode.OK,
+        "Successfully initaite the call",
+        callData
+      );
+    } catch (error: unknown) {
       console.log(error);
+      return ErrorResponse(
+        res,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        "Internal server error"
+      );
     }
   }
 
@@ -68,8 +81,13 @@ export class VideoCallController implements IVideoCallController {
         "Successfully updated call status",
         updatedCall
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.log(error);
+      return ErrorResponse(
+        res,
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        "Internal server error"
+      );
     }
   }
 
@@ -88,11 +106,12 @@ export class VideoCallController implements IVideoCallController {
         "Call history retrieved successfully",
         callHistory
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.log(error);
+      return ErrorResponse(res, HttpStatusCode.INTERNAL_SERVER_ERROR, "Internal server error")
     }
   }
 }
 export const userVideoCallController = new VideoCallController(
-    userVideoCallService
+  userVideoCallService
 );

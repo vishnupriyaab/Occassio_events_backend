@@ -2,10 +2,11 @@ import { HttpStatusCode } from "../../../constant/httpStatusCodes";
 import { CryptoService } from "../../../integration/cryptoServices";
 import { EmailService } from "../../../integration/emailServices";
 import { JWTService } from "../../../integration/jwtServices";
+import { IsAuthenticatedUseCaseRES } from "../../../interfaces/common/IIsAuthenticated";
 import { IEmployee } from "../../../interfaces/entities/employee.entity";
 import ICryptoService from "../../../interfaces/integration/ICrypto";
 import { IEmailService } from "../../../interfaces/integration/IEmail";
-import { IJWTService } from "../../../interfaces/integration/IJwt";
+import { IJWTService, JWTPayload } from "../../../interfaces/integration/IJwt";
 import IEmplAuthRepository from "../../../interfaces/repository/employee/empl.auth.repository";
 import IEmplAuthService from "../../../interfaces/services/employee/empl.auth.services";
 import { AppError } from "../../../middleware/errorHandling";
@@ -147,6 +148,9 @@ export class EmploAuthService implements IEmplAuthService {
       throw error;
     }
   }
+
+
+
 }
 
 const emplAuthRepository = new EmplAuthRepository();

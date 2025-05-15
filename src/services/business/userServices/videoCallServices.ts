@@ -1,6 +1,5 @@
 import { Types } from "mongoose";
 import IVideoCallRepository from "../../../interfaces/repository/employee/videoCall.repository";
-import { videoCallRepository } from "../../../repositories/entities/employeeRepository/videoCallRepository";
 import { IVideoCall } from "../../../interfaces/entities/videoCall.entity";
 import IVideoCallUserServices from "../../../interfaces/services/user/videoCall.services";
 import { videoCallUserRepository } from "../../../repositories/entities/userRepositories.ts/videoCallRepository";

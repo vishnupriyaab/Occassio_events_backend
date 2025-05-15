@@ -1,11 +1,12 @@
 import bcrypt from "bcrypt";
 import { JWTService } from "../../../integration/jwtServices";
-import { IJWTService } from "../../../interfaces/integration/IJwt";
+import { IJWTService, JWTPayload } from "../../../interfaces/integration/IJwt";
 import IAdminRepository from "../../../interfaces/repository/admin/auth.repository";
 import { authRepository } from "../../../repositories/entities/adminRepositories.ts/authRepository";
 import IAuthService from "../../../interfaces/services/admin/auth.services";
 import { AppError } from "../../../middleware/errorHandling";
 import { HttpStatusCode } from "../../../constant/httpStatusCodes";
+import { IsAuthenticatedUseCaseRES } from "../../../interfaces/common/IIsAuthenticated";
 
 export class authService implements IAuthService {
   private _adminRepo: IAdminRepository;
@@ -52,6 +53,27 @@ export class authService implements IAuthService {
         refreshToken,
       };
     } catch (error:unknown) {
+      throw error;
+    }
+  }
+
+      //isAuthenticated
+  async isAuthenticated(
+    token: string | undefined
+  ): Promise<IsAuthenticatedUseCaseRES> {
+    try {
+      if (!token) {
+        return { message: "Unauthorized: No token provided", status: 401 };
+      }
+      const decoded = this._IjwtSevice.verifyAccessToken(token) as JWTPayload;
+      if (decoded.role?.toLowerCase() !== "admin") {
+        const error = new Error("No access admin");
+        error.name = "NoAccessAdmin";
+        throw error;
+      }
+
+      return { message: "Admin is Authenticated", status: HttpStatusCode.OK };
+    } catch (error) {
       throw error;
     }
   }

@@ -20,7 +20,6 @@ export class UserChatController implements IUserChatController {
 
   async getChats(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      console.log(33333333);
 
       const userId = req.id;
 

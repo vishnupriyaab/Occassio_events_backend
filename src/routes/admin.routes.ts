@@ -12,6 +12,7 @@ const authMiddleware = new AuthMiddleware("admin", iJwtServices);
 
 //private - routes
 adminRouter.post( "/login", adminAuthController.adminLogin.bind(adminAuthController))
+.get("/isAuthenticate", adminAuthController.isAuthenticated.bind(adminAuthController))
 // adminRouter.post("/register",adminAuthController.adminRegister.bind(adminAuthController))
 
 // Protected routes (middleware applied)

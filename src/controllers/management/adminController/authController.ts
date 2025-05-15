@@ -107,6 +107,21 @@ export class AuthController implements IAuthConrtoller {
     }
   }
 
+    //isAuthenticated
+  async isAuthenticated(req: Request, res: Response): Promise<void> {
+    try {
+      console.log(req.cookies, "qwertyu");
+      const token = req.cookies.access_token;
+      console.log(token, "authenticatedToken");
+      const responseObj = await this._authService.isAuthenticated(token);
+      console.log(responseObj, "qwertyuiopertyuiop");
+
+      return successResponse(res, HttpStatusCode.OK, "Admin is Authenticated");
+    } catch (error: unknown) {
+      console.log(error);
+    }
+  }
+
   // async adminRegister(req: Request, res: Response): Promise<void> {
   //   const { email, password } = req.body;
   //   const admin = this._authService.register(email, password);
