@@ -12,7 +12,6 @@ const chatMessageSchema = new Schema<IChatMessage>({
   },
   conversationid: {
     type: mongoose.Schema.Types.ObjectId,
-    unique: true,
     required: true,
   },
   senderId: {
