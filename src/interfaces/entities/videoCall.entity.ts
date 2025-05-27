@@ -14,7 +14,7 @@ export interface IVideoCall extends Document {
   duration?: number;
 }
 
-export interface callData{
+export interface callData {
   conversationId: mongoose.Types.ObjectId;
   callerId: mongoose.Types.ObjectId;
   receiverId: mongoose.Types.ObjectId;
@@ -24,4 +24,10 @@ export interface callData{
   roomId: string; // ZegoCloud room ID
   status: string;
   startedAt: Date;
+}
+
+export interface VideoCallUpdateData {
+  status: string;
+  endedAt?: Date;
+  duration?: number;
 }

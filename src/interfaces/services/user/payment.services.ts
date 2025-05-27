@@ -2,7 +2,7 @@ import { IBooking } from "../../entities/booking.entity";
 
 export default interface IPaymentServices {
   alreadyDoneBooking(estimatedId: string): Promise<IBooking>;
-  createBooking(estimatedId: string): Promise<any>;
+  createBooking(estimatedId: string): Promise<IBooking>;
   fetchEmail(
     estimatedId: string
   ): Promise<{ email: string; grandTotal: Number }>;
@@ -17,5 +17,5 @@ export default interface IPaymentServices {
     transactionId: string,
     paymentStatus: "pending" | "completed" | "failed" | "refund",
     paidAmount: string
-  ): Promise<any>;
+  ): Promise<IBooking>;
 }

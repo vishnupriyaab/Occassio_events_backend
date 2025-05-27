@@ -24,30 +24,36 @@ export class PaymentServices implements IPaymentServices {
     this._emailService = new EmailService(emailConfig);
   }
 
-  async alreadyDoneBooking(estimatedId:string):Promise<IBooking>{
+  async alreadyDoneBooking(estimatedId: string): Promise<IBooking> {
     try {
-      const alreadyExisted = await this._paymentRepository.alreadyDoneBooking(estimatedId);
-      return alreadyExisted!
-    } catch (error) {
+      const alreadyExisted = await this._paymentRepository.alreadyDoneBooking(
+        estimatedId
+      );
+      return alreadyExisted!;
+    } catch (error: unknown) {
       throw error;
     }
   }
 
-  async createBooking(estimatedId: string): Promise<any> {
+  async createBooking(estimatedId: string): Promise<IBooking> {
     try {
       const fetchEstimatedData =
         await this._paymentRepository.fetchEstimatedData(estimatedId);
       console.log(fetchEstimatedData, "fetchEstimatedData");
 
-      const user = await this._paymentRepository.fetchUserDetails(fetchEstimatedData.userId!)
+      const user = await this._paymentRepository.fetchUserDetails(
+        fetchEstimatedData.userId!
+      );
 
-      const entryDetails = await this._paymentRepository.fetchEntryDetails(user.entryId);
+      const entryDetails = await this._paymentRepository.fetchEntryDetails(
+        user.entryId
+      );
 
       const bookingData: IBooking = {
         estimatedId: new mongoose.Types.ObjectId(estimatedId),
         userId: new mongoose.Types.ObjectId(fetchEstimatedData.userId),
-        userName:user.name,
-        eventName:entryDetails.eventName,
+        userName: user.name,
+        eventName: entryDetails.eventName,
         guestCount: entryDetails.guestCount,
         employeeId: new mongoose.Types.ObjectId(fetchEstimatedData.employeeId),
         additionalCharge: 0,
@@ -59,9 +65,11 @@ export class PaymentServices implements IPaymentServices {
           transactionId: "",
         },
       };
-      const createBooking = await this._paymentRepository.createBooking(bookingData)
-      return createBooking!
-    } catch (error) {
+      const createBooking = await this._paymentRepository.createBooking(
+        bookingData
+      );
+      return createBooking!;
+    } catch (error: unknown) {
       throw error;
     }
   }
@@ -80,7 +88,7 @@ export class PaymentServices implements IPaymentServices {
       );
       const email = userDetails.email;
       return { email, grandTotal };
-    } catch (error) {
+    } catch (error: unknown) {
       throw error;
     }
   }
@@ -88,7 +96,7 @@ export class PaymentServices implements IPaymentServices {
   async createFirstPaymentLink(
     email: string,
     grandTotal: number,
-    estimatedId: string,
+    estimatedId: string
   ): Promise<string> {
     try {
       console.log(grandTotal, "grandTotal");
@@ -116,7 +124,7 @@ export class PaymentServices implements IPaymentServices {
           email,
           estimatedId,
           paymentType: "first",
-          oneThirdAmount
+          oneThirdAmount,
         },
       });
 
@@ -139,7 +147,7 @@ export class PaymentServices implements IPaymentServices {
   ): Promise<void> {
     try {
       await this._emailService.sendPaymentLinkEmail(email, `${paymentLink}`);
-    } catch (error) {
+    } catch (error: unknown) {
       throw error;
     }
   }
@@ -148,8 +156,8 @@ export class PaymentServices implements IPaymentServices {
     estimatedId: string,
     transactionId: string,
     paymentStatus: "pending" | "completed" | "failed" | "refund",
-    paidAmount:string
-  ): Promise<any> {
+    paidAmount: string
+  ): Promise<IBooking> {
     try {
       console.log("Muneerr");
       const updatedStatus = await this._paymentRepository.updatePaymentStatus(
@@ -158,8 +166,9 @@ export class PaymentServices implements IPaymentServices {
         paymentStatus,
         paidAmount
       );
+      console.log(updatedStatus, "updatedStatus");
       return updatedStatus!;
-    } catch (error) {
+    } catch (error: unknown) {
       throw error;
     }
   }

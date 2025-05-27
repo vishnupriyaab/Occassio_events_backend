@@ -120,7 +120,7 @@ export class PaymentRepository
         { upsert: true }
       );
       return updatedBooking;
-    } catch (error) {
+    } catch (error:unknown) {
       console.error("Error updating payment status:", error);
       throw error;
     }

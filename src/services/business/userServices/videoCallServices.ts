@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import IVideoCallRepository from "../../../interfaces/repository/employee/videoCall.repository";
-import { IVideoCall } from "../../../interfaces/entities/videoCall.entity";
+import { IVideoCall, VideoCallUpdateData } from "../../../interfaces/entities/videoCall.entity";
 import IVideoCallUserServices from "../../../interfaces/services/user/videoCall.services";
 import { videoCallUserRepository } from "../../../repositories/entities/userRepositories/videoCallRepository";
 
@@ -49,7 +49,8 @@ export class VideoCallService implements IVideoCallUserServices {
     duration?: number
   ): Promise<IVideoCall> {
     try {
-      const updateData: any = { status };
+
+      const updateData: VideoCallUpdateData = { status };
 
       if (status === "ended" && endedAt) {
         updateData.endedAt = endedAt;

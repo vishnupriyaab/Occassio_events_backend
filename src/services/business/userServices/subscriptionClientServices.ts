@@ -44,7 +44,7 @@ export class SubClientService implements ISubClientService {
     try {
       const bookingData = await this._subClientRepository.fetchBookingData(estimatedId);
       return bookingData!;
-    } catch (error) {
+    } catch (error:unknown) {
       throw error;
     }
   }
@@ -53,7 +53,7 @@ export class SubClientService implements ISubClientService {
     try {
       const estimationData = await this._subClientRepository.fetchEstimation(estimatedId);
       return estimationData!;
-    } catch (error) {
+    } catch (error:unknown) {
       throw error;
     }
   }

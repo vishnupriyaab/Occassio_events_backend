@@ -136,12 +136,6 @@ export class EmplChatServices implements IEmplChatServices {
       }
 
       return await this._emplChatRepo.markMessageDeletedForEveryone(messageId);
-      // } else {
-      //   return await this._chatRepository.markMessageDeletedForUser(
-      //     messageId,
-      //     userId
-      //   );
-      // }
     } catch (error) {
       throw error;
     }

@@ -77,13 +77,15 @@ export class UserChatController implements IUserChatController {
         "Conversation ID fetched successfully",
         { conversation, chatMessages }
       );
-    } catch (error: any) {
-      if (error.name === "ConversationNotFound") {
-        return ErrorResponse(
-          res,
-          HttpStatusCode.NOT_FOUND,
-          "Conversation not found"
-        );
+    } catch (error: unknown) {
+      if(error instanceof Error){
+        if (error.name === "ConversationNotFound") {
+          return ErrorResponse(
+            res,
+            HttpStatusCode.NOT_FOUND,
+            "Conversation not found"
+          );
+        }
       }
       return ErrorResponse(
         res,
@@ -180,13 +182,15 @@ export class UserChatController implements IUserChatController {
         "Message deleted successfully",
         result
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to delete message:", error);
-      return ErrorResponse(
-        res,
-        HttpStatusCode.INTERNAL_SERVER_ERROR,
-        error.message || "Failed to delete message"
-      );
+      if(error instanceof Error){
+        return ErrorResponse(
+          res,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          error.message || "Failed to delete message"
+        );
+      }
     }
   }
 
