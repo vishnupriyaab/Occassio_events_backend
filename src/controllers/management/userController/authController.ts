@@ -18,8 +18,8 @@ export class UserAuthController implements IUserAuthController {
   //User-Login
   async userLogin(req: Request, res: Response): Promise<void> {
     try {
-      const { email, password } = req.body;
-      console.log(email, password);
+      const { email, password } = req.body.loginData;
+      console.log( email, password );
       const { accessToken, refreshToken } = await this._userService.loginUser(
         email,
         password

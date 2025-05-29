@@ -16,7 +16,7 @@ export class EmplAuthController implements IEmplAuthController {
 
   //login
   async employeeLogin(req: Request, res: Response): Promise<void> {
-    const { email, password } = req.body;
+    const { email, password } = req.body.loginData;
     console.log(email, password, "employeelogin");
     try {
       const { accessToken, refreshToken } =
