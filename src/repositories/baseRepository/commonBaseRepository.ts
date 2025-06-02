@@ -80,7 +80,7 @@ export default class CommonBaseRepository<
 
     return model.findByIdAndDelete(id).exec();
   }
-  
+
   findOneAndUpdate<K extends keyof TModels>(
     modelName: K,
     filter: FilterQuery<TModels[K]>,
@@ -94,8 +94,7 @@ export default class CommonBaseRepository<
       { $set: updateData },
       { new: true, runValidators: true }
     );
-  } 
-
+  }
 
   findByIdAndUpdate<K extends keyof TModels>(
     modelName: K,
@@ -105,16 +104,12 @@ export default class CommonBaseRepository<
   ): Promise<TModels[K] | null> {
     const model = this._models[modelName];
     if (!model) throw new Error(`Model ${String(modelName)} not found`);
-    
-    return model.findByIdAndUpdate(
-      id,
-      updateData,
-      {
-        new: options?.new ?? true,
-        runValidators: options?.runValidators ?? true,
-        ...options
-      }
-    );
+
+    return model.findByIdAndUpdate(id, updateData, {
+      new: options?.new ?? true,
+      runValidators: options?.runValidators ?? true,
+      ...options,
+    });
   }
 
   findMany<K extends keyof TModels>(
@@ -143,7 +138,7 @@ export default class CommonBaseRepository<
   ): Promise<TModels[K][]> {
     const model = this._models[modelName];
     if (!model) throw new Error(`Model ${String(modelName)} not found`);
-  
+
     return model.find(query).populate(populateOptions);
   }
 
@@ -155,5 +150,15 @@ export default class CommonBaseRepository<
     if (!model) throw new Error(`Model ${String(modelName)} not found`);
 
     return model.countDocuments(query);
+  }
+
+  aggregate<K extends keyof TModels>(
+    modelName: K,
+    pipeline: any[]
+  ): Promise<any[]> {
+    const model = this._models[modelName];
+    if (!model) throw new Error(`Model ${String(modelName)} not found`);
+
+    return model.aggregate(pipeline);
   }
 }

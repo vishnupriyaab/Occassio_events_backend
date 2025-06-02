@@ -1,5 +1,8 @@
 import IDashboardRepository from "../../../interfaces/repository/admin/dashboard.repository";
-import IDashboardServices, { DashboardStats } from "../../../interfaces/services/admin/dashboard.services";
+import IDashboardServices, {
+  DashboardStats,
+  MonthlyRevenue,
+} from "../../../interfaces/services/admin/dashboard.services";
 import { DashboardRepository } from "../../../repositories/entities/adminRepositories.ts/dashboardRepository";
 
 export class DashboardService implements IDashboardServices {
@@ -9,23 +12,32 @@ export class DashboardService implements IDashboardServices {
   }
   async getDashboardStatistics(): Promise<DashboardStats> {
     try {
-      // Use Promise.all for concurrent execution
-      const [totalUsers, totalBookings, totalRevenue, totalEvents] = await Promise.all([
-        this._dashboardRepository.getTotalUsers(),
-        this._dashboardRepository.getTotalBookings(),
-        this._dashboardRepository.getTotalRevenue(),
-        this._dashboardRepository.getTotalEvents()
-      ]);
+      const [totalUsers, totalBookings, totalRevenue, totalEvents] =
+        await Promise.all([
+          this._dashboardRepository.getTotalUsers(),
+          this._dashboardRepository.getTotalBookings(),
+          this._dashboardRepository.getTotalRevenue(),
+          this._dashboardRepository.getTotalEvents(),
+        ]);
 
       return {
         totalUsers,
         totalBookings,
         totalRevenue,
-        totalEvents
+        totalEvents,
       };
     } catch (error) {
       console.error("Error fetching dashboard statistics:", error);
       throw new Error("Failed to fetch dashboard statistics");
+    }
+  }
+
+  async getMonthlyRevenue(): Promise<MonthlyRevenue[]> {
+    try {
+      return await this._dashboardRepository.getMonthlyRevenue();
+    } catch (error: unknown) {
+      console.error("Error in dashboard service - getMonthlyRevenue:", error);
+      throw new Error("Failed to retrieve monthly revenue data");
     }
   }
 }

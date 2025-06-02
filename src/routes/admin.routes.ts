@@ -20,6 +20,7 @@ adminRouter.post( "/login", adminAuthController.adminLogin.bind(adminAuthControl
 adminRouter.use(authMiddleware.authenticateToken.bind(authMiddleware))
 adminRouter.post( "/logOut", adminAuthController.logOut.bind(adminAuthController))
 adminRouter.get("/dashboard", adminDashboardController.getDashboardStats.bind(adminDashboardController))
+adminRouter.get("/dashboard/monthly-revenue", adminDashboardController.getMonthlyRevenue.bind(adminDashboardController))
 
 
 /////////////////////////////////////////////////        Employee - Management          /////////////////////////////////////////////////////////////

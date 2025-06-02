@@ -93,7 +93,6 @@ export class UserChatServices implements IUserChatServices {
   async deleteMessage(
     messageId: string,
     userId: string
-    // deleteType: "me" | "everyone"
   ): Promise<any> {
     try {
       const message = await this._chatRepository.getMessageById(messageId);
