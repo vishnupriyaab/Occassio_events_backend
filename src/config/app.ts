@@ -12,7 +12,7 @@ import { paymentController } from "../controllers/management/userController/paym
 
 const app = express();
 const corsOptions = {
-  origin: "http://localhost:4200",
+  origin: "https://occasio.sbs",
   credentials: true,
   methods: ["PUT", "GET", "POST", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: [
