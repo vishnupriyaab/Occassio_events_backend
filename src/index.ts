@@ -12,7 +12,7 @@ const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: 'https://api.occasio.sbs',
+    origin: 'https://occasio.sbs',
     methods: ["GET", "POST"],
     credentials: true
   }
