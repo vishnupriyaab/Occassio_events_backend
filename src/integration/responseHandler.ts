@@ -4,7 +4,6 @@ import {
   ISuccessResponseType,
 } from "../interfaces/common/IIsAuthenticated";
 
-//success - response
 export const successResponse = (
   res: Response,
   statusCode: number,
