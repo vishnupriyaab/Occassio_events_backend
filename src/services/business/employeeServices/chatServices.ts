@@ -81,7 +81,7 @@ export class EmplChatServices implements IEmplChatServices {
       console.log(users,"resultttttt")
       const userMap = new Map();
       users.forEach((user: { _id: { toString: () => any; }; name: any; }) => {
-        userMap.set(user._id.toString(), user.name); // Assuming user has a 'name' field
+        userMap.set(user._id.toString(), user.name); 
       });
       const conversationsWithUsernames = conversationData.map(conversation => {
         const userId = conversation.userId?.toString();

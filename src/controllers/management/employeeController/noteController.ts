@@ -17,6 +17,7 @@ export class NoteController implements INoteController {
     try {
       console.log(req.body, "boddyyy");
       const { content, employeeId, conversationId, userId } = req.body;
+      console.log(content, employeeId, conversationId, userId);
       if (!content || !employeeId || !conversationId || !userId) {
         return ErrorResponse(
           res,

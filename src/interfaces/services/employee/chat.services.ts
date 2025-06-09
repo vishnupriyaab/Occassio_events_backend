@@ -18,7 +18,6 @@ export default interface IEmplChatServices {
   deleteMessage(
     messageId: string,
     userId: string
-    // deleteType: "me" | "everyone"
   ): Promise<any>;
   saveImageMessage(
     base64Image: string,
