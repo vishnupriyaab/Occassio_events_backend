@@ -90,14 +90,11 @@ export class UserChatServices implements IUserChatServices {
     );
   }
 
-  async deleteMessage(
-    messageId: string,
-    userId: string
-  ): Promise<any> {
+  async deleteMessage(messageId: string, userId: string): Promise<any> {
     try {
       const message = await this._chatRepository.getMessageById(messageId);
 
-      console.log(message,"message", userId,"userId")
+      console.log(message, "message", userId, "userId");
 
       if (!message) {
         throw new AppError(
@@ -108,6 +105,7 @@ export class UserChatServices implements IUserChatServices {
       }
 
       // if (deleteType === "everyone") {
+      console.log((message.senderId?.toString()))
       if (message.senderId!.toString() !== userId) {
         throw new AppError(
           "Only the sender can delete messages for everyone",
