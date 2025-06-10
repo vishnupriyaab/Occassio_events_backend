@@ -97,6 +97,8 @@ export class UserChatServices implements IUserChatServices {
     try {
       const message = await this._chatRepository.getMessageById(messageId);
 
+      console.log(message,"message", userId,"userId")
+
       if (!message) {
         throw new AppError(
           "Message not found",
