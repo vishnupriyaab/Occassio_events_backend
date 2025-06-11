@@ -19,7 +19,7 @@ export class UserAuthController implements IUserAuthController {
   async userLogin(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body.loginData;
-      console.log( email, password );
+      console.log(email, password);
       const { accessToken, refreshToken } = await this._userService.loginUser(
         email,
         password
@@ -73,13 +73,13 @@ export class UserAuthController implements IUserAuthController {
   //googleLogin
   async googleLogin(req: Request, res: Response): Promise<void> {
     try {
-       console.log("=== GOOGLE LOGIN START ===");
-    console.log("Request body:", JSON.stringify(req.body, null, 2));
+      console.log("=== GOOGLE LOGIN START ===");
+      console.log("Request body:", JSON.stringify(req.body, null, 2));
 
       const { credential } = req.body;
       const jwtToken = credential.credential;
 
-      console.log(jwtToken,"token credentials")
+      console.log(jwtToken, "token credentials");
 
       if (!jwtToken) {
         throw new AppError(
@@ -93,7 +93,7 @@ export class UserAuthController implements IUserAuthController {
         jwtToken
       );
 
-      console.log(accessToken, refreshToken, "TOKENNNNNNNNNNNNNSSS")
+      console.log(accessToken, refreshToken, "TOKENNNNNNNNNNNNNSSS");
 
       res
         .cookie("refresh_token", refreshToken, {
@@ -110,7 +110,7 @@ export class UserAuthController implements IUserAuthController {
           domain: ".occasio.sbs",
           maxAge: 24 * 60 * 60 * 1000, // 1 day
         });
-        console.log("enddedededed")
+      console.log("enddedededed");
       return successResponse(
         res,
         HttpStatusCode.OK,
@@ -139,14 +139,14 @@ export class UserAuthController implements IUserAuthController {
           );
           return;
         }
-         if (error.name === "UserCreationFailed") {
-        ErrorResponse(
-          res,
-          HttpStatusCode.INTERNAL_SERVER_ERROR,
-          "Failed to create user account"
-        );
-        return;
-      }
+        if (error.name === "UserCreationFailed") {
+          ErrorResponse(
+            res,
+            HttpStatusCode.INTERNAL_SERVER_ERROR,
+            "Failed to create user account"
+          );
+          return;
+        }
       }
       return ErrorResponse(
         res,
