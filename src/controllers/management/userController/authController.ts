@@ -73,8 +73,13 @@ export class UserAuthController implements IUserAuthController {
   //googleLogin
   async googleLogin(req: Request, res: Response): Promise<void> {
     try {
+       console.log("=== GOOGLE LOGIN START ===");
+    console.log("Request body:", JSON.stringify(req.body, null, 2));
+
       const { credential } = req.body;
       const jwtToken = credential.credential;
+
+      console.log(jwtToken,"token credentials")
 
       if (!jwtToken) {
         throw new AppError(
@@ -87,6 +92,8 @@ export class UserAuthController implements IUserAuthController {
       const { accessToken, refreshToken } = await this._userService.googleLogin(
         jwtToken
       );
+
+      console.log(accessToken, refreshToken, "qwertyuiop")
 
       res
         .cookie("refresh_token", refreshToken, {
