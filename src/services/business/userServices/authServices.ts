@@ -94,7 +94,7 @@ export class UserAuthServices implements IUserAuthService {
     token: string
   ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
-      console.log(token, "qwertyuiop");
+      console.log(token, "1111111111111");
       const tokenPayload = await this._googleAuthService.verifyIdToken(token);
       console.log(tokenPayload,"tokenPayload");
       if (!tokenPayload) {
