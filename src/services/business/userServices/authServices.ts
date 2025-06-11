@@ -96,6 +96,7 @@ export class UserAuthServices implements IUserAuthService {
     try {
       console.log(token, "qwertyuiop");
       const tokenPayload = await this._googleAuthService.verifyIdToken(token);
+      console.log(tokenPayload,"tokenPayload");
       if (!tokenPayload) {
         throw new AppError(
           "Invalid token",
@@ -105,6 +106,7 @@ export class UserAuthServices implements IUserAuthService {
       }
 
       const googleImageUrl = tokenPayload.picture as string;
+      console.log(googleImageUrl,"googleImageUrl")
       let cloudinaryImageUrl: string;
       try {
         cloudinaryImageUrl =

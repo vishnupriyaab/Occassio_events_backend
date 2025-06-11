@@ -134,6 +134,7 @@ export default class AuthMiddleware {
       }
     } else if (role === "user") {
       const user = await User.findById(id);
+      console.log(user, "it is userrr")
       if (!user) {
         throw new AppError(
           "User not found",
