@@ -93,7 +93,7 @@ export class UserAuthController implements IUserAuthController {
         jwtToken
       );
 
-      console.log(accessToken, refreshToken, "qwertyuiop")
+      console.log(accessToken, refreshToken, "TOKENNNNNNNNNNNNNSSS")
 
       res
         .cookie("refresh_token", refreshToken, {
