@@ -100,12 +100,14 @@ export class UserAuthController implements IUserAuthController {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
+          domain: ".occasio.sbs",
           maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         })
         .cookie("access_token", accessToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
+          domain: ".occasio.sbs",
           maxAge: 24 * 60 * 60 * 1000, // 1 day
         });
         console.log("enddedededed")

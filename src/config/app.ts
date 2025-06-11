@@ -20,7 +20,7 @@ const corsOptions = {
     "Authorization",
     "X-Requested-With",
     "Accept",
-  ],
+  ],  
 };
 
 app.use(cors(corsOptions));
