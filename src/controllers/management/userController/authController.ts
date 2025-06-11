@@ -108,6 +108,7 @@ export class UserAuthController implements IUserAuthController {
           sameSite: "strict",
           maxAge: 24 * 60 * 60 * 1000, // 1 day
         });
+        console.log("enddedededed")
       return successResponse(
         res,
         HttpStatusCode.OK,
