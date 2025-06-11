@@ -13,8 +13,16 @@ export class UserRepository
   }
   async createUser(userData: IUser): Promise<IUser | null> {
     try {
-      console.log("aaaaaaaaaaaaaaaaaaa");
-      return this.createData("user", userData);
+      console.log("Creating user with data:", userData);
+      const result = await this.createData("user", userData);
+
+      if (!result) {
+        console.error("Failed to create user - createData returned null");
+        return null;
+      }
+
+      console.log("User created successfully:", result);
+      return result;
     } catch (error) {
       throw error;
     }

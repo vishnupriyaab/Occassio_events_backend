@@ -118,7 +118,7 @@ export class UserAuthServices implements IUserAuthService {
 
       console.log(cloudinaryImageUrl, "cloudinaryImageUrl");
 
-      const existingUser = await this._userRepo.findUserByEmail(
+      let existingUser = await this._userRepo.findUserByEmail(
         tokenPayload.email as string
       );
       console.log(existingUser, "user in userUseCase");
@@ -130,21 +130,50 @@ export class UserAuthServices implements IUserAuthService {
             "UserIsBlocked"
           );
         }
+      }else{
+        const userData: IUser = {
+        name: tokenPayload.name,
+        email: tokenPayload.email,
+        imageUrl: cloudinaryImageUrl,
+        isVerified: true,
+        isBlocked: false,
+      } as unknown as IUser;
+      
+      console.log(userData, "userDataaaaaaaaaaaaaa");
+      
+      try {
+        existingUser = await this._userRepo.createUser(userData);
+        if (!existingUser) {
+          throw new AppError(
+            "Failed to create user",
+            HttpStatusCode.INTERNAL_SERVER_ERROR,
+            "UserCreationFailed"
+          );
+        }
+        console.log("New user created successfully");
+      } catch (createError) {
+        console.error("Error creating user:", createError);
+        throw new AppError(
+          "Failed to create user account",
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          "UserCreationFailed"
+        );
+      }
       }
 
-      if (!existingUser) {
-        const userData: IUser = {
-          name: tokenPayload.name,
-          email: tokenPayload.email,
-          imageUrl: cloudinaryImageUrl,
-          isVerified: true,
-          isBlocked: false,
-        } as unknown as IUser;
-        console.log(userData, "userDataaaaaaaaaaaaaa");
-        await this._userRepo.createUser(userData);
-        console.log("New user created successfully");
-      }
-      const payload = { id: existingUser!._id || "", role: "user", name: existingUser!.name };
+      // if (!existingUser) {
+      //   const userData: IUser = {
+      //     name: tokenPayload.name,
+      //     email: tokenPayload.email,
+      //     imageUrl: cloudinaryImageUrl,
+      //     isVerified: true,
+      //     isBlocked: false,
+      //   } as unknown as IUser;
+      //   console.log(userData, "userDataaaaaaaaaaaaaa");
+      //   await this._userRepo.createUser(userData);
+      //   console.log("New user created successfully");
+      // }
+      const payload = { id: existingUser._id || "", role: "user", name: existingUser.name };
       console.log(payload, "payload");
       const accessToken = this._jwtService.generateAccessToken(payload);
       const refreshToken = this._jwtService.generateRefreshToken(payload);
