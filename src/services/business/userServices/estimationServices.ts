@@ -38,9 +38,11 @@ export class UserEstimationService implements IUserEstimationService {
           "EntryIdNotFound"
         );
       }
+      console.log(entryId,"entryId");
 
       const fetchEntryDataDetails =
         await this._userEstiRepo.findEntryUserDetails(entryId!);
+        console.log(fetchEntryDataDetails,"fetchEntryDataDetails")
       if (!fetchEntryDataDetails) {
         throw new AppError(
           "Entry data details not found",
