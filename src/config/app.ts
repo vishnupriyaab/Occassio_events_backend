@@ -12,8 +12,8 @@ import { paymentController } from "../controllers/management/userController/paym
 
 const app = express();
 const corsOptions = {
-  origin: "https://occasio.sbs",
-  credentials: true,
+  origin: "*",
+  credentials: false,
   methods: ["PUT", "GET", "POST", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: [
     "Content-Type",
