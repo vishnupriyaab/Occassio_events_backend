@@ -29,14 +29,22 @@ export class UserEstimationRepository
     }
   }
   async findUserById(userId: string): Promise<IUser> {
-    const result = await this.findOne("user", { _id: userId });
-    console.log(result, "User in repo");
-    return result!;
+    try {
+      const result = await this.findOne("user", { _id: userId });
+      console.log(result, "User in repo");
+      return result!;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async findEntryUserDetails(entryId: string): Promise<IEntryRegFormData> {
-    const entryDetails = await this.findOne("entryRegForm", { _id: entryId });
-    console.log(entryDetails, "entryDetails in repo");
-    return entryDetails!;
+    try {
+      const entryDetails = await this.findOne("entryRegForm", { _id: entryId });
+      console.log(entryDetails, "entryDetails in repo");
+      return entryDetails!;
+    } catch (error) {
+      throw error;
+    }
   }
 }
