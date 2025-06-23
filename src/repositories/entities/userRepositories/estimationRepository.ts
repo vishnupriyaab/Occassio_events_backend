@@ -40,6 +40,7 @@ export class UserEstimationRepository
 
   async findEntryUserDetails(entryId: string): Promise<IEntryRegFormData> {
     try {
+      console.log(entryId,"entryIddd")
       const entryDetails = await this.findOne("entryRegForm", { _id: entryId });
       console.log(entryDetails, "entryDetails in repo");
       return entryDetails!;
