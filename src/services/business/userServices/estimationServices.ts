@@ -14,14 +14,6 @@ export class UserEstimationService implements IUserEstimationService {
     try {
       const fetchEstimation = await this._userEstiRepo.fetchEstimation(userId);
 
-      // if (!fetchEstimation) {
-      //   throw new AppError(
-      //     "Estimation not found",
-      //     HttpStatusCode.NOT_FOUND,
-      //     "EstimationNotFound"
-      //   );
-      // }
-
       const fetchUserDetails = await this._userEstiRepo.findUserById(userId);
       if (!fetchUserDetails) {
         throw new AppError(

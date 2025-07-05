@@ -121,10 +121,6 @@ export class PaymentController implements IPaymentController {
 
           console.log(paymentType,"paymentType")
 
-          //   if (!email || !entryId || !paymentType) {
-          //   return ErrorResponse(res, HttpStatusCode.BAD_GATEWAY, "Invalid metadata in webhook")
-          // }
-
           switch (paymentType) {
             case "entry":
               await this._entryRegService.updatePaymentStatus(

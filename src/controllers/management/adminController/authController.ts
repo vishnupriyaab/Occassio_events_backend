@@ -41,13 +41,13 @@ export class AuthController implements IAuthConrtoller {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
-          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+          maxAge:parseInt(process.env.REFRESH_TOKEN_COOKIE_MAX_AGE || '2592000000'), // 30 days
         })
         .cookie("access_token", accessToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
-          maxAge: 24 * 60 * 60 * 1000, // 1 day
+          maxAge: parseInt(process.env.ACCESS_TOKEN_COOKIE_MAX_AGE || '2592000000'), // 1 day
         });
       return successResponse(
         res,

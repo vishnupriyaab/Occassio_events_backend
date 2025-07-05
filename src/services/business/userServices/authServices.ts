@@ -162,19 +162,6 @@ export class UserAuthServices implements IUserAuthService {
         );
       }
       }
-
-      // if (!existingUser) {
-      //   const userData: IUser = {
-      //     name: tokenPayload.name,
-      //     email: tokenPayload.email,
-      //     imageUrl: cloudinaryImageUrl,
-      //     isVerified: true,
-      //     isBlocked: false,
-      //   } as unknown as IUser;
-      //   console.log(userData, "userDataaaaaaaaaaaaaa");
-      //   await this._userRepo.createUser(userData);
-      //   console.log("New user created successfully");
-      // }
       const payload = { id: existingUser._id || "", role: "user", name: existingUser.name };
       console.log(payload, "payload");
       const accessToken = this._jwtService.generateAccessToken(payload);

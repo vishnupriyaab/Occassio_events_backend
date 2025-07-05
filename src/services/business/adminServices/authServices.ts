@@ -78,12 +78,6 @@ export class authService implements IAuthService {
     }
   }
 
-  // async register(email:string,password:string):Promise<void>{
-  //   const hashedPassword = await this._cryptoService.hashData(
-  //     password
-  //   );
-  //   const admin = await this._adminRepo.createAdmin(email,hashedPassword);
-  // }
 }
 
 const adminAuthRepository = new authRepository();

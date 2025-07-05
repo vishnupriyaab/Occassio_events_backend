@@ -78,18 +78,6 @@ export class PaymentRepository
     }
   }
 
-  // async updateBookingStatus(estimatedId:string):Promise<any>{
-  //   try {
-  //     const updatedBookingStatus = await this.updateById("booking", estimatedId, {
-  //       "bookingStatus": "Confirmed"
-  //     })
-  //     console.log(updatedBookingStatus,"updatedBookingStatus")
-  //     return updatedBookingStatus!
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
-
   async updatePaymentStatus(
     estimatedId: string,
     transactionId: string,

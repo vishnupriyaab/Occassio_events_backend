@@ -75,30 +75,6 @@ export class EmplChatRepository
     }
   }
 
-  // async getConversationData(employeeId: string): Promise<IConversation[]> {
-  //   try {
-  //     console.log("startok")
-  //     const conversations =  this.findMany("conversation", { employeeId: employeeId });
-  //     const conversationsWithLastMessage = await Promise.all((await conversations).map(async (conversation) => {
-  //       console.log(conversation,"conversation");
-  //       const lastMessage = await this.findOne("chatmessage", 
-  //         { conversationid: conversation._id }
-  //       ).sort({timeStamp: -1}).limit(1)
-
-  //       // const lastMessage = lastMessages.length > 0 ? lastMessages[0] : null;
-  //       console.log(lastMessage,"121212");
-        
-  //       return {
-  //         ...conversation.toObject(),
-  //         lastMessage: lastMessage
-  //       };
-  //     }));
-      
-  //     return conversationsWithLastMessage;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
   async getConversationData(employeeId: string): Promise<IConversation[]> {
     try {
       console.log("startok")

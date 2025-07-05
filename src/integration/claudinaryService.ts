@@ -5,15 +5,6 @@ import { configureCloudinary } from "../config/claudinary";
 export class CloudinaryService implements ICloudinaryService {
   private _cloudinary = configureCloudinary();
 
-  // async uploadImage(file: Express.Multer.File): Promise<string> {
-  //   try {
-  //     const result = await this._cloudinary.uploader.upload(file.path);
-  //     return result.secure_url;
-  //   } catch (error) {
-  //     throw new Error("Failed to upload image to Cloudinary");
-  //   }
-  // }
-
   async uploadMultipleImages(files: Express.Multer.File[]): Promise<string[]> {
     try {
       const uploadPromises = files.map(file => this._cloudinary.uploader.upload(file.path));

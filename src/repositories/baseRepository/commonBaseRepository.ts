@@ -50,14 +50,6 @@ export default class CommonBaseRepository<
     return model.findById(id);
   }
 
-  // findAll<K extends keyof TModels>(
-  //   modelName: K,
-  //   query: FilterQuery<TModels[K]>
-  // ): Promise<TModels[K][]> {
-  //   const model = this._models[modelName];
-  //   if (!model) throw new Error(`Model ${String(modelName)} not found`);
-  //   return model.find(query);
-  // }
   updateById<K extends keyof TModels>(
     modelName: K,
     id: string,

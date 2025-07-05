@@ -20,15 +20,6 @@ export class EntryRegRepository
       throw error;
     }
   }
-  // async createRoom(
-  //   data: IConverationModel
-  // ): Promise<IConverationModel | null> {
-  //   try {
-  //     return this.createData("entryRegForm", data);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
 
   async updatePaymentStatus(
     entryId: string,

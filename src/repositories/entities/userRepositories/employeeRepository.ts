@@ -13,12 +13,8 @@ export class EmployeeRepository
   }
 
   async fetchEmployeeDetails(employeeId:string):Promise<IEmployee | null>{
-    // try {
         console.log(employeeId,"employeeId");
         return this.findById("employee", employeeId).exec();
-    // } catch (error) {
-        // throw error;
-    // }
   }
 }
 

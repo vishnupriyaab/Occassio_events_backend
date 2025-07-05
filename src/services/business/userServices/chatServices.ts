@@ -117,12 +117,6 @@ export class UserChatServices implements IUserChatServices {
       return await this._chatRepository.markMessageDeletedForEveryone(
         messageId
       );
-      // } else {
-      //   return await this._chatRepository.markMessageDeletedForUser(
-      //     messageId,
-      //     userId
-      //   );
-      // }
     } catch (error) {
       throw error;
     }
